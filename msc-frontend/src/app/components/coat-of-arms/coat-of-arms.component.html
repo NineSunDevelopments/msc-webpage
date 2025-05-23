@@ -1,0 +1,12 @@
+<div class="wrapper"
+     [class.clickable]="clickable && corps.url !== ''" (click)="openCorpsWebsite()">
+  <div class="coat-of-arms" [style.background-image]="'url(' + getUrl() + ')'">
+  </div>
+  @if (showName) {
+    <div class="label">
+      <svg viewBox="0 0 15 12">
+        <text text-anchor="middle" x="50%" y="80%" >{{ corps.name }}</text>
+      </svg>
+    </div>
+  }
+</div>

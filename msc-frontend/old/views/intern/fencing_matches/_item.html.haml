@@ -1,0 +1,8 @@
+.fencing-match-item{data: {fdid: fencing_day.id, fmid: fencing_match.id}}
+  .value
+    = "#{I18n.l(fencing_match.time_start.in_time_zone, format: :am) if fencing_match.time_start.present?} #{fencing_match.art_text} #{fencing_match.corp_first} #{"(Paukarzt: #{fencing_match.corp_first_doctor})" if fencing_match.corp_first_doctor.present?} #{fencing_match.corp_first_match} : #{fencing_match.corp_second_match} #{fencing_match.corp_second} #{"(Paukarzt: #{fencing_match.corp_second_doctor})" if fencing_match.corp_second_doctor.present?}".html_safe
+    - if params[:action].eql?("show")
+      - if can?(:edit, fencing_match)
+        = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), edit_intern_fencing_day_fencing_match_path(fencing_day, fencing_match), {class: "btn btn-primary btn-xs edit-fencing-matches", data: {fmid: fencing_match.id, fdid: fencing_day.id, toggle: "modal", target: "#fencing-matches-modal"}}
+      - if can?(:destroy, fencing_match)
+        = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), "javascript: void(0);", {class: "btn btn-danger btn-xs destroy-fencing-matches", data: {fmid: fencing_match.id, fdid: fencing_day.id, ct: I18n.t(:"fencing_days.destroy_fencing_matches_confirm")}}

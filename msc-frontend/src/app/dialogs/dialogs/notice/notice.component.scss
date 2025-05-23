@@ -1,0 +1,35 @@
+@use 'variables' as var;
+
+.progress-bar {
+  position: absolute;
+  right: 0;
+  height: 1px;
+  width: 0;
+  background-color: var.$highlight;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: 75px 1fr;
+  overflow: hidden;
+}
+
+.info, .success, .warning, .error {
+  font-size: 30px;
+}
+
+.info {
+  color: var.$grey;
+}
+
+.success {
+  color: var.$highlight;
+}
+
+.warning {
+  color: var.$warning;
+}
+
+.error {
+  color: var.$error;
+}

@@ -1,0 +1,80 @@
+﻿// _text.scss
+@use 'variables' as var;
+
+.text-highlight {
+  color: var.$highlight !important;
+}
+
+.text-warning {
+  color: var.$warning !important;
+}
+
+
+.text-error {
+  color: var.$error !important;
+}
+
+
+.text-white {
+  color: var.$white !important;
+}
+
+.text-grey {
+  color: var.$grey !important;
+}
+
+.text-light-grey {
+  color: var.$light-grey !important;
+}
+
+.text-black {
+  color: var.$black !important;
+}
+
+.text-semibold {
+  font-weight: var.$font-weight-semibold;
+}
+
+.text-bold {
+  font-weight: var.$font-weight-bold;
+}
+
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-align-center {
+  text-align: center !important;
+}
+
+.text-align-left {
+  text-align: left !important;
+}
+
+.text-align-right {
+  text-align: right !important;
+}
+
+[class^="text-indentation-"], [class*=" text-indentation-"] {
+  &.text-indentation-5 {
+    margin-left: 5px;
+  }
+
+  &.text-indentation-10 {
+    margin-left: 10px;
+  }
+
+  &.text-indentation-15 {
+    margin-left: 15px;
+  }
+
+  &.text-indentation-20 {
+    margin-left: 20px;
+  }
+
+  &.text-indentation-25 {
+    margin-left: 25px;
+  }
+}

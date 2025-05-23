@@ -1,0 +1,27 @@
+.sidebar-item
+  = form_tag intern_events_path, {class: "nav nav-sidebar navbar-form", method: :get, id: "search-query-lists-form", style: "padding-left: 0; padding-right: 0;"} do
+    #search-params-container.invisible
+      = hidden_field_tag "visibility", params[:visibility]
+      - if params[:status].is_a?(Array)
+        - params[:status].each do |s|
+          = check_box_tag "status[]", s, true
+      - if params[:corp_ids].is_a?(Array)
+        - params[:corp_ids].each do |corp_id|
+          = hidden_field_tag "corp_ids[]", corp_id
+    = text_field_tag :query, params[:query], {class: "form-control", placeholder: I18n.t(:"events.filter.default_search"), style: "width: 100%;"}
+    = submit_tag I18n.t(:search_button), {class: "invisible"}
+.sidebar-item.filter-with-multiselect
+  = select_tag :corps_select, options_from_collection_for_select(@corps, :id, :title, {selected: Array.wrap(params[:corp_ids]).map(&:to_i)}), {prompt: I18n.t(:select_all_corps), data: {placeholder: I18n.t(:select_all_corps)}, class: "form-control with-chosen", multiple: true, size: 5 }
+.sidebar-item.with-filter-links
+  = link_to "#{content_tag(:span, nil, {class: "glyphicon glyphicon-#{(Array(params[:status]).blank? or !Array(params[:status]).all?{|a| a.in?(%w(actual old))} or Array(params[:status]).include?("actual")) ? 'check' : 'unchecked'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.actual")}".html_safe, refine_filter_event_status(:actual)
+
+  = link_to "#{content_tag(:span, nil, {class: "glyphicon glyphicon-#{(Array(params[:status]).include?("old")) ? 'check' : 'unchecked'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.old")}".html_safe, refine_filter_event_status(:old)
+
+.sidebar-item.with-filter-links
+  .sidebar-item-header= I18n.t(:"events.filter.refine_by_visibility")
+  = link_to "#{content_tag(:span, nil, {class: "glyphicon glyphicon-#{(params[:visibility].blank? or !params[:visibility].in?(%w(1 0))) ? 'check' : 'unchecked'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.extern_all")}".html_safe, params_excludes(:visibility)
+  = link_to "#{content_tag(:span, nil, {class: "glyphicon glyphicon-#{params[:visibility].eql?("1") ? 'check' : 'unchecked'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.for_extern")}".html_safe, refine_filter_event_visibility("1")
+  = link_to "#{content_tag(:span, nil, {class: "glyphicon glyphicon-#{params[:visibility].eql?("0") ? 'check' : 'unchecked'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.non_extern")}".html_safe, refine_filter_event_visibility("0")
+.sidebar-item.reset-filter-link
+  = link_to I18n.t(:reset_filter), intern_events_path
+

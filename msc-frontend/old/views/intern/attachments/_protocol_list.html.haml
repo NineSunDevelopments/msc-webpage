@@ -1,0 +1,28 @@
+%table.table.table-striped
+  %thead
+    %tr
+      %th{style: "width: 55%;"}
+        = header
+      %th{style: "width: 25%;"}
+        = Attachment.human_attribute_name(:updated_at)
+      %th{style: "width: 20%;"}
+        = "&nbsp;".html_safe
+  %tbody
+    - attachments.each do |attachment|
+      %tr{data: {id: attachment.id}}
+        %td
+          .content{class: "#{'invisible' if @attachment.present? and @attachment.eql?(attachment)}"}
+            = link_to attachment.data_file.file.filename, attachment.data_file.url, { target: '_blank' }
+          - if can?(:update, attachment)
+            - attachment.from_action = from_action
+            .form{class: "#{'invisible' if @attachment.blank? or !@attachment.eql?(attachment)}"}
+              = render "form", attachment: (@attachment.present? ? @attachment : attachment)
+        %td= attachment.typecast.to_s.in?(%w(ocsc_protocol osc_protocol cash_sheet)) ? I18n.l(attachment.updated_at, format: :am_um) : I18n.l(attachment.updated_at, format: :date)
+        %td
+          - if can?(:destroy, attachment) or can?(:update, attachment)
+            - if can?(:destroy, attachment)
+              = link_to(content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), "javascript: void(0);", {class: "btn btn-xs btn-danger delete-protocols-link", data: {id: attachment.id, ct: I18n.t(:"attachments.delete_confirmation")}})
+            - if can?(:update, attachment)
+              = link_to(content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), "javascript: void(0);", {class: "btn btn-xs btn-primary edit-protocols-link", data: {id: attachment.id}})
+          - else
+            = "&nbsp;".html_safe

@@ -1,0 +1,51 @@
+- content_for(:sidebar) do
+  = render "intern/shared/fencing_sidebar"
+.main-padding
+  %h1.page-header
+    - if can?(:create, FencingDay)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-plus"}) + " #{FencingDay.model_name.human}", new_intern_fencing_day_path, {class: "btn btn-primary pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"fencing_days.create_new_button")}
+    = FencingDay.model_name.human(count: 2)
+  .row
+    - if @fencing_days.present?
+      - @fencing_days.each do |fencing_day|
+        .list-box-item.col-xs-12.col-sm-12.col-md-6.col-lg-6{ data: {fdid: fencing_day.id} }
+          .fd-padding
+            .actions.mobile-visibility
+              - if can?(:read, fencing_day)
+                = link_to content_tag(:span, nil, {class: "fa fa-file-pdf-o"}), export_intern_export_index_path(export_type: "fencing_days", fd: fencing_day.id), {class: "btn btn-xs btn-info"}
+                = "&nbsp;".html_safe
+              - if can?(:update, fencing_day)
+                = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), [:edit, :intern, fencing_day], {class: "btn btn-xs btn-primary"}
+                = "&nbsp;".html_safe
+              - if can?(:destroy, fencing_day)
+                = link_to(content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), "javascript: void(0);", {class: "btn btn-xs btn-danger destroy-fencing-days", data: {fdid: fencing_day.id, ct: I18n.t(:"fencing_days.destroy_confirm")}})
+              .clearfix
+            .values
+              %a.cont{href: intern_fencing_day_path(fencing_day)}
+                .fd-title= fencing_day.art_text
+                .fd-item
+                  = "#{FencingDay.human_attribute_name(:location)}: #{fencing_day.location}"
+                .fd-item
+                  = "#{FencingDay.human_attribute_name(:held_on)} #{fencing_day.held_on.present? ? I18n.l(fencing_day.held_on, format: :am_um) : I18n.t(:k_a)}"
+                - if fencing_day.description.present?
+                  .fd-item= fencing_day.description
+              .fencing-match-content{data: {fdid: fencing_day.id}}
+                .page-header
+                  - if can?(:create, FencingMatch)
+                    = link_to I18n.t(:"fencing_days.add_nested_match"), new_intern_fencing_day_fencing_match_path(fencing_day), {class: "btn btn-default btn-xs create-fencing-matches pull-right", data: {fdid: fencing_day.id, toggle: "modal", target: "#fencing-matches-modal"}}
+                  %h5= FencingMatch.model_name.human(count: 2)
+                - if fencing_day.fencing_matches.order("fencing_matches.time_start ASC").present?
+                  - fencing_day.fencing_matches.order("fencing_matches.time_start ASC").each do |fm|
+                    = render "intern/fencing_matches/item", fencing_day: fencing_day, fencing_match: fm
+                - else
+                  .no-items-container= I18n.t(:"fencing_days.no_fencing_matches")
+
+
+      %nav.with-pagination
+        = will_paginate @fencing_days, renderer: BootstrapPagination::Rails
+    - else
+      .no-items-container= (params.keys & %w(query)).present? ? I18n.t(:no_entries_found) : I18n.t(:no_entries)
+
+= render "intern/fencing_matches/dialog"
+.invisible
+  #no-fms-container.no-items-container= I18n.t(:"fencing_days.no_fencing_matches")

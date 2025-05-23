@@ -1,0 +1,26 @@
+= form_for([:intern, @event]) do |f|
+  - if @event.errors.any?
+    %ul.form-errors.alert-danger
+      = @event.errors.full_messages.map { |msg| content_tag(:li, msg) }.join.html_safe
+  - if params[:action].in?(%w(new create)) and !current_user.regular?
+    .form-group
+      %div= f.label :corp_id, "#{Event.human_attribute_name(:corp_id)} #{required_asterix}".html_safe
+      = f.select :corp_id, options_from_collection_for_select(@corps, "id", "title", selected: @event.corp_id), {}, {class: "form-control chzn-select"}
+  .form-group
+    %div= f.label :title, "#{Event.human_attribute_name(:title)} #{required_asterix}".html_safe
+    = f.text_field :title, {class: "form-control"}
+  .form-group
+    %div= f.label :description
+    = f.text_area :description, {class: "form-control"}
+  .form-group
+    %div= f.label :event_at, "#{Event.human_attribute_name(:event_at)} #{required_asterix}".html_safe
+    = f.text_field :event_at , {value: (f.object.event_at.present? ? I18n.l(f.object.event_at, format: :very_strong) : nil), class: "datetimepicker"}
+  .form-group
+    = f.check_box :for_extern
+    = f.label :for_extern
+  .form-group
+    = f.submit I18n.t(:save), {class: "btn btn-primary pull-right"}
+    .clearfix
+  .form-group.required-explaination
+    = required_asterix
+    = I18n.t(:required_explain)

@@ -1,0 +1,17 @@
+%section.devise-form
+  = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+    .col-md-4.col-md-offset-4
+      .devise-form-header
+        .fa.fa-user
+      .devise-form-container.ui-corner-top
+        %h2= I18n.t(:"authorization.please_signin")
+        .form-group
+          = f.email_field :email, autofocus: true , class: "form-control", placeholder: User.human_attribute_name(:email)
+        .form-group.with-submit-button
+          = f.password_field :password, autocomplete: "off" , class: "form-control", placeholder: User.human_attribute_name(:password)
+          %button.btn.btn-default.btn-circle{type: "submit", data: { toggle: "tooltip", placement: "bottom" }, title: I18n.t(:"authorization.signin")}
+            %span.glyphicon.glyphicon-arrow-right
+        .form-group.checkbox.checkbox-info
+          = f.check_box :remember_me, {class: "checkbox-primary"}
+          = f.label :remember_me
+      = render "devise/shared/form_footer"

@@ -1,0 +1,46 @@
+@use 'variables' as var;
+@use 'sass:color';
+::ng-deep {
+  p, div {
+    color: var.$light-grey;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var.$accent;
+    border-bottom: none;
+    text-align: left;
+  }
+}
+
+.wrapper {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: row;
+
+
+}
+
+.sidebar {
+  height: 100%;
+  padding: 125px 0 0 0;
+  overflow-y: auto;
+  background-color: color.adjust(var.$darker-grey, $lightness: 1%);
+  box-shadow: 8px 0 17px 0 rgba(0, 0, 0, 0.12), 6px 0 20px 0 rgba(0, 0, 0, 0.14);
+  border-right: 1px solid var.$darker-grey;
+  position: relative;
+  z-index: 100;
+
+  sidebar {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.content {
+  flex: 1;
+  padding: 20px 60px;
+  background-color: color.adjust(var.$grey, $lightness: -20%);
+}

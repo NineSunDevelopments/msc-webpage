@@ -1,0 +1,113 @@
+= form_for([:intern, @corp, @semester, @inventory_report], html: {id: "report-form", data: {status: "unconfirmed"}}) do |f|
+  - if @inventory_report.errors.any?
+    %ul.form-errors.alert-danger
+      = @inventory_report.errors.full_messages.map { |msg| content_tag(:li, msg) }.join.html_safe
+  .invisible
+    = f.check_box :accept_report, {id: "accept-reports-checkbox"}
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.eb_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :eb_count
+    = f.number_field :eb_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :eb_names
+    = f.text_area :eb_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.cb_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :cb_count
+    = f.number_field :cb_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :cb_names
+    = f.text_area :cb_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.f_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :f_count
+    = f.number_field :f_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :f_names
+    = f.text_area :f_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.oiacb_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :oiacb_count
+    = f.number_field :oiacb_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :oiacb_names
+    = f.text_area :oiacb_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.aiacb_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :aiacb_count
+    = f.number_field :aiacb_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :aiacb_names
+    = f.text_area :aiacb_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.idc_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :idc_count
+    = f.number_field :idc_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :idc_names
+    = f.text_area :idc_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.ck_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :ck_count
+    = f.number_field :ck_count, {class: "form-control", style: "width: 100px;"}
+  .form-group
+    %div= f.label :ck_names
+    = f.text_area :ck_names, {class: "form-control"}
+
+  .page-header
+    %h1
+      = I18n.t(:"inventory_reports.form_headers.ah_data")
+  %p.form-helper-item
+    = I18n.t(:"inventory_reports.form_helper")
+  .form-group
+    %div= f.label :ah_count , "#{InventoryReport.human_attribute_name(:ah_count)} #{required_asterix}".html_safe
+    = f.number_field :ah_count, {class: "form-control", style: "width: 100px;"}
+
+  .form-group{style: "text-align: right;"}
+    - if @inventory_report.persisted? and @inventory_report.reported_at.present?
+      = f.submit I18n.t(:"inventory_reports.save_changes_button"), {id: "save-changes-report-button", class: "btn btn-primary", style: "margin-right: 10px;"}
+    - else
+      = f.submit I18n.t(:"inventory_reports.save_button"), {id: "save-report-button", class: "btn btn-warning", style: "margin-right: 10px;"}
+      = f.submit I18n.t(:"inventory_reports.report_button"), {id: "send-report-button", class: "btn btn-primary"}
+    .clearfix
+  .form-group.required-explaination
+    = required_asterix
+    = I18n.t(:required_explain)
+  .invisible
+    %span#save-changes-confirmation= I18n.t(:"inventory_reports.save_changes_confirmation")
+    %span#save-report-confirmation= I18n.t(:"inventory_reports.save_report_confirmation")
+    %span#send-report-confirmation= I18n.t(:"inventory_reports.send_report_confirmation")

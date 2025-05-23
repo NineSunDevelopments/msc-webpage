@@ -1,0 +1,31 @@
+@use 'variables' as var;
+@use 'sass:color';
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 0;
+  overflow: hidden;
+  background: linear-gradient(
+      0,
+      color.adjust(var.$light-background-color, $lightness: -5%),
+      color.adjust(var.$light-background-color, $lightness: 0%)
+  );
+  color: var.$low_level_highlight;
+  z-index: 50;
+  opacity: 0;
+  transition: 0.3s;
+  padding: 0 60px;
+  border-bottom: 1px solid color.adjust(var.$light-background-color, $lightness: -5%);
+
+  &.active {
+    opacity: 1;
+    height: 50px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}

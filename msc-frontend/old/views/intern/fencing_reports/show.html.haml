@@ -1,0 +1,57 @@
+.main-padding
+  %h1.page-header
+    - if can?(:read, FencingReport)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-arrow-left"}), intern_reports_path, {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:back_to_the_list)}
+    - if can?(:read, @fencing_report)
+      = link_to content_tag(:span, nil, {class: "fa fa-file-pdf-o"}), export_intern_export_index_path(export_type: "fencing_reports", cid: @corp.id, rid: @fencing_report.id, sid: @semester.id), {class: "btn btn-info local-nav-links pull-right"}
+    - if can?(:update, @fencing_report)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), edit_intern_corp_semester_fencing_report_path(@corp, @semester, @fencing_report), {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"fencing_reports.edit_link_title")}
+    - if can?(:destroy, @fencing_report)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), intern_corp_semester_fencing_report_path(@corp, @semester, @fencing_report), {id: "delete-reports-link", class: "btn btn-danger local-nav-links pull-right", data: {status: "unconfirmed", toggle: "tooltip", placement: "bottom", ct: I18n.t(:"fencing_reports.#{@fencing_report.reported_at.blank? ? 'unreported' : 'reported'}_destroy_confirmation")}, title: I18n.t(:"fencing_reports.destroy_link_title")}
+    = I18n.t(:"fencing_reports.site_header", semester: @semester.title)
+    %small
+      - if @fencing_report.reported_at.present?
+        = "#{FencingReport.human_attribute_name(:reported_at)} #{I18n.l(@fencing_report.reported_at, format: :am_um)}"
+      - else
+        = content_tag(:span, I18n.t(:"fencing_reports.not_reported"), {style: "color: #cc0000;"})
+  - if @fencing_report.reported_at.present? and @fencing_report.updated_at > @fencing_report.reported_at
+    %small
+      = "#{FencingReport.human_attribute_name(:updated_at)} #{I18n.l(@fencing_report.updated_at, format: :am_um)}"
+  .show-content.row
+    .col-md-8.col-md-offset-2
+      .wappen-container
+        = image_tag "wappen/#{@corp.image}"
+      .row
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:fencing_days_count)}:"
+          .value= @fencing_report.fencing_days_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:fencing_match_count)}:"
+          .value= @fencing_report.fencing_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:good_match_count)}:"
+          .value= @fencing_report.good_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:first_match_count)}:"
+          .value= @fencing_report.first_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:second_match_count)}:"
+          .value= @fencing_report.second_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:third_match_count)}:"
+          .value= @fencing_report.third_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:fourth_match_count)}:"
+          .value= @fencing_report.fourth_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:fifth_match_count)}:"
+          .value= @fencing_report.fifth_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:sixth_match_count)}:"
+          .value= @fencing_report.sixth_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:bad_match_count)}:"
+          .value= @fencing_report.bad_match_count.presence || I18n.t(:n_a)
+        .item
+          .attr-title= "#{FencingReport.human_attribute_name(:high_match_count)}:"
+          .value= @fencing_report.high_match_count.presence || I18n.t(:n_a)

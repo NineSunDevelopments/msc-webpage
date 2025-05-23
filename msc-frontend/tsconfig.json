@@ -5,10 +5,11 @@
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
     "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns" : true,
+    "noImplicitAny": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch" : false,
+    "strictNullChecks" : false,
     "skipLibCheck": true,
     "isolatedModules": true,
     "esModuleInterop": true,
@@ -16,7 +17,12 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022"
+    "module": "ES2022",
+    "paths": {
+      "@shared/*": ["../shared/src/*"],
+      "@app/*": ["./src/app/*"],
+      "@dialogs/*": ["./src/app/dialogs/*"]
+    }
   },
   "references": [
     { "path": "../shared" }

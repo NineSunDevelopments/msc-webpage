@@ -1,0 +1,27 @@
+.container
+  %h1.page-header
+    = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-arrow-left"}), intern_reports_path, {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:back_to_the_list)}
+    = link_to content_tag(:span, nil, {class: "fa fa-file-pdf-o"}), export_intern_export_index_path(export_type: "statistics", cid: params[:corp_id], sa: params[:sum_attr], sm: params[:sum_model]), {target: '_blank', class: "btn btn-danger local-nav-links pull-right", style: "margin-right: 5px"}
+    = I18n.t(:"#{@sum_model.table_name}.statistics")
+  %div
+    Statistik wurde erstellt anhand der abgegebenen #{@sum_model.model_name.human(count: 2)}
+    - if @corps.length > 1
+      von
+      = select_tag :statistics_corps_select, options_from_collection_for_select(@corps, :id, :title, {selected: @selected_corp.try(:id)}), {prompt: I18n.t(:from_all_corps), class: "form-control", style: "width: 250px"}
+    - else
+      vom Corps #{@selected_corp.title}.
+    %br
+    %br
+    Der angezeigte Wert ist
+    = select_tag :sum_attr, options_for_select(@attrs.map{|a| [@sum_model.human_attribute_name(a), a]}, selected: @selected_attr.to_s), {class: "form-control", style: "width: 250px"}
+  #chart_div{style: "width: 100%; height: 500px;"}
+
+  .invisible
+    %span#stat-semester= Semester.model_name.human
+    %span#stat-attr= @sum_model.human_attribute_name(@selected_attr)
+    %span#stat-number= I18n.t(:stat_number)
+
+:javascript
+  var statistics_json = #{@semesters.html_safe};
+  google.charts.load('visualization', '1', {packages: ['corechart', 'bar']});
+  google.charts.setOnLoadCallback(function () {drawCurveTypes(statistics_json)});

@@ -1,0 +1,12 @@
+$mobile: Mobile;
+$tablet: Tablet;
+$desktop: Desktop;
+$full: Full;
+$grid-breakpoints: ($mobile: 1px, $tablet: 768px, $desktop: 1200px, $full: 99999999px);
+
+$header-height-default: 56px;
+$header-height-mobile: 54px;
+$sidebar-min-width: 60px;
+$sidebar-max-width: 250px;
+
+$content-max-width: 1280px;

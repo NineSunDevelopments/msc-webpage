@@ -1,0 +1,41 @@
+@use 'variables' as var;
+@use 'sass:color';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  cursor: pointer;
+  list-style: none;
+  background-color: color.adjust(var.$darker-grey, $lightness: -1%);
+  padding: 20px 40px;
+  margin: 5px 0;
+  width: 300px;
+  font-size: 1.5rem;
+  font-variant: small-caps;
+
+  transition: 0.15s;
+  color: color.adjust(var.$accent, $saturation: -50%);
+  border-left: 2px solid transparent;
+  border-right: 2px solid transparent;
+
+  &:hover {
+    background-color: color.adjust(var.$darker-grey, $lightness: 2%);
+    color: color.adjust(var.$accent, $saturation: -25%);
+  }
+
+  &.active {
+    color: color.adjust(var.$accent, $saturation: 0%);
+    border-left: 2px solid color.adjust(var.$accent, $lightness: 15%);
+    border-right: 2px solid color.adjust(var.$accent, $lightness: 15%);
+  }
+}

@@ -1,0 +1,66 @@
+%p
+  Sehr geehrte Herren,
+%p
+  - if @art.eql?(:reported)
+    das Corps #{@fencing_report.corp.try(:title)} hat über das MSC-Online-Portal einen neuen Fechtfragenbogen für #{@fencing_report.semester.title} abgegeben.
+  - elsif @art.eql?(:updated)
+    das Corps #{@fencing_report.corp.try(:title)} hat über das MSC-Online-Portal den am #{I18n.l(@fencing_report.reported_at)} abgegebenen Fechtfragenbogen für #{@fencing_report.semester.title} geändert.
+  - elsif @art.eql?(:destroyed)
+    das Corps #{@fencing_report.corp.try(:title)} hat über das MSC-Online-Portal den am #{I18n.l(@fencing_report.reported_at)} abgegebenen Fechtfragenbogen für #{@fencing_report.semester.title} unwiderruflich gelöscht.
+%p
+  Sie erhalten diese E-Mail, weil Ihre E-Mail-Adresse als E-Mail-Adresse des präsidierenden oder des nächstpräsidierenden Corps eingetragen ist. Sollte das nicht mehr stimmen, so kontaktieren Sie bitte umgehend das präsidierende Corps.
+
+- unless @art.eql?(:destroyed)
+  %h1{style: "text-align: center; border-bottom: 1px solid #E5E5E5"}
+    %a{href: @url, style: "color: #333333;"}
+      Fechtfragen vom Corps #{@fencing_report.corp.try(:title)} für #{@fencing_report.semester.title}.
+      %br
+      %small
+        - if @art.eql?(:reported)
+          Abgegeben am #{I18n.l(@fencing_report.reported_at)}
+        - else
+          Geändert am #{I18n.l(@fencing_report.updated_at)}
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:fencing_days_count)}: "
+    = @fencing_report.fencing_days_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:fencing_match_count)}: "
+    = @fencing_report.fencing_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:good_match_count)}: "
+    = @fencing_report.good_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:first_match_count)}: "
+    = @fencing_report.first_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:second_match_count)}: "
+    = @fencing_report.second_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:third_match_count)}: "
+    = @fencing_report.third_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:fourth_match_count)}: "
+    = @fencing_report.fourth_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:fifth_match_count)}: "
+    = @fencing_report.fifth_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:sixth_match_count)}: "
+    = @fencing_report.sixth_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:bad_match_count)}: "
+    = @fencing_report.bad_match_count.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{FencingReport.human_attribute_name(:high_match_count)}: "
+    = @fencing_report.high_match_count.presence || I18n.t(:n_a)

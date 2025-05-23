@@ -1,0 +1,19 @@
+%section.devise-form
+  = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
+    = f.hidden_field :reset_password_token
+    .col-md-4.col-md-offset-4
+      .devise-form-header
+        .fa.fa-envelope
+      .devise-form-container.ui-corner-top
+        - if resource.errors.any?
+          %ul.devise-errors
+            - resource.errors.full_messages.each do |message|
+              %li= message
+        %h2= I18n.t(:"authorization.please_insert_new_password")
+        .form-group.with-submit-button
+          = f.password_field :password, autofocus: true, autocomplete: "off", class: "form-control", placeholder: User.human_attribute_name(:password)
+        .form-group.with-submit-button
+          = f.password_field :password_confirmation, autocomplete: "off", class: "form-control", placeholder: User.human_attribute_name(:password_confirmation)
+          %button.btn.btn-default.btn-circle{type: "submit", data: { toggle: "tooltip", placement: "bottom" }, title: I18n.t(:"authorization.set_new_password")}
+            %span.glyphicon.glyphicon-arrow-right
+      = render "devise/shared/form_footer"

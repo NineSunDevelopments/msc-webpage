@@ -1,0 +1,247 @@
+%p
+  Sehr geehrte Herren,
+%p
+  - if @art.eql?(:reported)
+    das Corps #{@cc_report.corp.try(:title)} hat über das MSC-Online-Portal eine neue CC-Meldung für #{@cc_report.semester.title} abgegeben.
+  - elsif @art.eql?(:updated)
+    das Corps #{@cc_report.corp.try(:title)} hat über das MSC-Online-Portal die am #{I18n.l(@cc_report.reported_at)} abgegebene CC-Meldung für #{@cc_report.semester.title} geändert.
+  - elsif @art.eql?(:destroyed)
+    das Corps #{@cc_report.corp.try(:title)} hat über das MSC-Online-Portal die am #{I18n.l(@cc_report.reported_at)} abgegebene CC-Meldung für #{@cc_report.semester.title} unwiderruflich gelöscht.
+%p
+  Sie erhalten diese E-Mail, weil Ihre E-Mail-Adresse als E-Mail-Adresse des präsidierenden oder des nächstpräsidierenden Corps eingetragen ist. Sollte das nicht mehr stimmen, so kontaktieren Sie bitte umgehend das präsidierende Corps.
+
+- unless @art.eql?(:destroyed)
+  %h1{style: "text-align: center; border-bottom: 1px solid #E5E5E5"}
+    %a{href: @url, style: "color: #333333;"}
+      CC-Meldung vom Corps #{@cc_report.corp.try(:title)} für #{@cc_report.semester.title}.
+      %br
+      %small
+        - if @art.eql?(:reported)
+          Abgegeben am #{I18n.l(@cc_report.reported_at)}
+        - else
+          Geändert am #{I18n.l(@cc_report.updated_at)}
+  %h3
+    = I18n.t(:"cc_reports.form_headers.past_chargen")
+  %p
+    %strong= "#{CcReport.human_attribute_name(:past_senior_short)}: "
+    = @cc_report.past_senior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:past_consenior_short)}: "
+    = @cc_report.past_consenior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:past_subsenior_short)}: "
+    = @cc_report.past_subsenior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:past_fuchsmajor_short)}: "
+    = @cc_report.past_fuchsmajor
+
+  - if @cc_report.amt_changes.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.amt_changes")
+    - @cc_report.amt_changes.each do |amt_change|
+      %p
+        %strong= "#{AmtChange.human_attribute_name(:changed_at)}: "
+        = amt_change.changed_at.present? ? I18n.l(amt_change.changed_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{AmtChange.human_attribute_name(:description)}: "
+        = amt_change.description.presence || I18n.t(:n_a)
+
+  - if @cc_report.awards.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.awards")
+    - @cc_report.awards.each do |award|
+      %p
+        %strong= "#{Award.human_attribute_name(:awarded_at)}: "
+        = award.awarded_at.present? ? I18n.l(award.awarded_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Award.human_attribute_name(:full_name)}: "
+        = award.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.acceptions.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.acceptions")
+    - @cc_report.acceptions.each do |acception|
+      %p
+        %strong= "#{Acception.human_attribute_name(:accepted_at)}: "
+        = acception.accepted_at.present? ? I18n.l(acception.accepted_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Acception.human_attribute_name(:full_name)}: "
+        = acception.full_name.presence || I18n.t(:n_a)
+        %br
+        %strong= "#{Acception.human_attribute_name(:study)}: "
+        = acception.study.presence || I18n.t(:n_a)
+        %br
+        %strong= "#{Acception.human_attribute_name(:place_of_origin)}: "
+        = acception.place_of_origin.presence || I18n.t(:n_a)
+
+  - if @cc_report.receptions.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.receptions")
+    - @cc_report.receptions.each do |reception|
+      %p
+        %strong= "#{Reception.human_attribute_name(:recepted_at)}: "
+        = reception.recepted_at.present? ? I18n.l(reception.recepted_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Reception.human_attribute_name(:full_name)}: "
+        = reception.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.reactivations.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.reactivations")
+    - @cc_report.reactivations.each do |reactivation|
+      %p
+        %strong= "#{Reactivation.human_attribute_name(:reactivated_at)}: "
+        = reactivation.reactivated_at.present? ? I18n.l(reactivation.reactivated_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Reactivation.human_attribute_name(:full_name)}: "
+        = reactivation.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.absences.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.absences")
+    - @cc_report.absences.each do |absence|
+      %p
+        %strong= "#{Absence.human_attribute_name(:absenced_at)}: "
+        = absence.absenced_at.present? ? I18n.l(absence.absenced_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Absence.human_attribute_name(:full_name)}: "
+        = absence.full_name.presence || I18n.t(:n_a)
+        %br
+        %strong= "#{Absence.human_attribute_name(:location)}: "
+        = absence.location.presence || I18n.t(:n_a)
+
+  - if @cc_report.inactivations.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.inactivations")
+    - @cc_report.inactivations.each do |inactivation|
+      %p
+        %strong= "#{Inactivation.human_attribute_name(:inactivated_at)}: "
+        = inactivation.inactivated_at.present? ? I18n.l(inactivation.inactivated_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Inactivation.human_attribute_name(:full_name)}: "
+        = inactivation.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.reinactivations.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.reinactivations")
+    - @cc_report.reinactivations.each do |reinactivation|
+      %p
+        %strong= "#{Reinactivation.human_attribute_name(:reinactivated_at)}: "
+        = reinactivation.reinactivated_at.present? ? I18n.l(reinactivation.reinactivated_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Reinactivation.human_attribute_name(:full_name)}: "
+        = reinactivation.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.punishments.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.punishments")
+    - @cc_report.punishments.each do |punishment|
+      %p
+        %strong= "#{Punishment.human_attribute_name(:punished_start)}: "
+        = punishment.punished_start.present? ? I18n.l(punishment.punished_start) : I18n.t(:n_a)
+        %br
+        %strong= "#{Punishment.human_attribute_name(:punished_end)}: "
+        = punishment.punished_end.present? ? I18n.l(punishment.punished_end) : I18n.t(:n_a)
+        %br
+        %strong= "#{Punishment.human_attribute_name(:full_name)}: "
+        = punishment.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.suspensions.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.suspensions")
+    - @cc_report.suspensions.each do |suspension|
+      %p
+        %strong= "#{Suspension.human_attribute_name(:suspended_start)}: "
+        = suspension.suspended_start.present? ? I18n.l(suspension.suspended_start) : I18n.t(:n_a)
+        %br
+        %strong= "#{Suspension.human_attribute_name(:suspended_end)}: "
+        = suspension.suspended_end.present? ? I18n.l(suspension.suspended_end) : I18n.t(:n_a)
+        %br
+        %strong= "#{Suspension.human_attribute_name(:full_name)}: "
+        = suspension.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.philistrations.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.philistrations")
+    - @cc_report.philistrations.each do |philistration|
+      %p
+        %strong= "#{Philistration.human_attribute_name(:philistered_at)}: "
+        = philistration.philistered_at.present? ? I18n.l(philistration.philistered_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Philistration.human_attribute_name(:full_name)}: "
+        = philistration.full_name.presence || I18n.t(:n_a)
+        %br
+        %strong= "#{Philistration.human_attribute_name(:address)}: "
+        = philistration.address.presence || I18n.t(:n_a)
+
+  - if @cc_report.eternities.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.eternities")
+    - @cc_report.eternities.each do |eternity|
+      %p
+        %strong= "#{Eternity.human_attribute_name(:died_at)}: "
+        = eternity.died_at.present? ? I18n.l(eternity.died_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Eternity.human_attribute_name(:full_name)}: "
+        = eternity.full_name.presence || I18n.t(:n_a)
+
+  - if @cc_report.dismissals.present?
+    %h3
+      = I18n.t(:"cc_reports.form_headers.dismissals")
+    - @cc_report.dismissals.each do |dismissal|
+      %p
+        %strong= "#{Dismissal.human_attribute_name(:dismissed_at)}: "
+        = dismissal.dismissed_at.present? ? I18n.l(dismissal.dismissed_at) : I18n.t(:n_a)
+        %br
+        %strong= "#{Dismissal.human_attribute_name(:full_name)}: "
+        = dismissal.full_name.presence || I18n.t(:n_a)
+        %br
+        %strong= "#{Dismissal.human_attribute_name(:art)}: "
+        = dismissal.art_text
+
+  %h3
+    = I18n.t(:"cc_reports.form_headers.vacation")
+  %p
+    %strong= "#{CcReport.human_attribute_name(:vacation_start_short)}: "
+    = @cc_report.vacation_start.present? ? I18n.l(@cc_report.vacation_start) : I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:vacation_end_short)}: "
+    = @cc_report.vacation_end.present? ? I18n.l(@cc_report.vacation_end) : I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:vacation_full_name)}: "
+    = @cc_report.vacation_full_name.presence || I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:vacation_address)}: "
+    = @cc_report.vacation_address.presence || I18n.t(:n_a)
+
+  %p
+    %strong= "#{CcReport.human_attribute_name(:new_senior_short)}: "
+    = @cc_report.new_senior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:new_consenior_short)}: "
+    = @cc_report.new_consenior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:new_subsenior_short)}: "
+    = @cc_report.new_subsenior
+    %br
+    %strong= "#{CcReport.human_attribute_name(:new_fuchsmajor_short)}: "
+    = @cc_report.new_fuchsmajor
+
+  %h3
+    = I18n.t(:"cc_reports.form_headers.judge")
+  %p
+    %br
+    %strong= "#{CcReport.human_attribute_name(:honour_judge_first_name)}: "
+    = @cc_report.honour_judge_first_name.presence || I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:honour_judge_first_address)}: "
+    = @cc_report.honour_judge_first_address.presence || I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:honour_judge_second_name)}: "
+    = @cc_report.honour_judge_second_name.presence || I18n.t(:n_a)
+    %br
+    %strong= "#{CcReport.human_attribute_name(:honour_judge_second_address)}: "
+    = @cc_report.honour_judge_second_address.presence || I18n.t(:n_a)
+
+
+

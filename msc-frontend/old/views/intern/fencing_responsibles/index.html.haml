@@ -1,0 +1,37 @@
+.main-padding
+  %h1.page-header
+    = I18n.t(:"fencing_responsibles.area_header")
+  .row
+    - if @fencing_responsibles.present?
+      %table.table.table-striped
+        %thead
+          %tr
+            %th
+              = FencingResponsible.human_attribute_name(:corp_id)
+            %th.phone-hide
+              = FencingResponsible.human_attribute_name(:full_name)
+            %th.phone-hide
+              = FencingResponsible.human_attribute_name(:phone)
+            %th
+              = FencingResponsible.human_attribute_name(:email)
+            %th.phone-hide
+              = FencingResponsible.human_attribute_name(:updated_at)
+            %th
+              = "&nbsp;".html_safe
+        %tbody
+          - @fencing_responsibles.each do |fr|
+            %tr
+              %td= fr.corp.try(:title).presence || I18n.t(:"fencing_responsibles.without_corp_title")
+              %td.phone-hide= fr.full_name
+              %td.phone-hide= fr.phone
+              %td= fr.email
+              %td.phone-hide= I18n.l(fr.updated_at, format: :date)
+              %td
+                - if can?(:update, fr)
+                  = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), [:edit, :intern, fr], {class: "btn btn-xs btn-primary"}
+                  = "&nbsp;".html_safe
+
+              .clearfix
+
+    - else
+      .no-items-container= (params.keys & %w(query)).present? ? I18n.t(:no_entries_found) : I18n.t(:no_entries)

@@ -1,0 +1,28 @@
+= form_for([:intern, @fencing_doctor]) do |f|
+  - if @fencing_doctor.errors.any?
+    %ul.form-errors.alert-danger
+      = @fencing_doctor.errors.full_messages.map { |msg| content_tag(:li, msg) }.join.html_safe
+  .form-group
+    %div= f.label :full_name, "#{FencingDoctor.human_attribute_name(:full_name)} #{required_asterix}".html_safe
+    = f.text_field :full_name, {class: "form-control"}
+  .form-group
+    %div= f.label :email
+    = f.email_field :email, {class: "form-control"}
+  .form-group
+    %div= f.label :phone_private
+    = f.phone_field :phone_private, {class: "form-control"}
+  .form-group
+    %div= f.label :phone_practice
+    = f.phone_field :phone_practice, {class: "form-control"}
+  .form-group
+    %div= f.label :phone_mobil
+    = f.phone_field :phone_mobil, {class: "form-control"}
+  .form-group
+    %div= f.label :description
+    = f.text_area :description, {class: "form-control"}
+  .form-group
+    = f.submit I18n.t(:save), {class: "btn btn-primary pull-right"}
+    .clearfix
+  .form-group.required-explaination
+    = required_asterix
+    = I18n.t(:required_explain)

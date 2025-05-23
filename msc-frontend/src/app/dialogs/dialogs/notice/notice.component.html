@@ -1,0 +1,17 @@
+<dialog-wrapper (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()" [closeX]="false" [dialogRef]="dialogRef">
+    <ng-template #body>
+        <div class="wrapper align-center">
+            <ng-container ngSwitch="type">
+                <span *ngSwitchDefault class="info icon-info"></span>
+                <span *ngSwitchCase="NoticeType.Success" class="success icon-check"></span>
+                <span *ngSwitchCase="NoticeType.Warning" class="warning icon-warnung"></span>
+                <span *ngSwitchCase="NoticeType.Error" class="error icon-fehler"></span>
+            </ng-container>
+            <p class="align-left">
+                {{data?.message}}
+            </p>
+        </div>
+        <br>
+        <div [style.width.%]="100 - ((current / ttl) * 100)" class="progress-bar"></div>
+    </ng-template>
+</dialog-wrapper>

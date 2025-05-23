@@ -1,0 +1,18 @@
+.main-padding
+  %h1.page-header
+    - if can?(:read, FencingDoctor)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-arrow-left"}), back_index_path(intern_fencing_doctors_path), {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:back_to_the_list)}
+    - if can?(:update, @fencing_doctor)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), edit_intern_fencing_doctor_path(@fencing_doctor), {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:edit_item)}
+    - if can?(:create, FencingDoctor)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-plus"}), new_intern_fencing_doctor_path, {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"fencing_doctors.create_new_button")}
+    = FencingDoctor.model_name.human
+
+  .show-content.row.col-md-6.col-md-offset-3
+    - %w(full_name email phone_private phone_practice phone_mobil description).each do |attr|
+      .item
+        .attr-title= "#{FencingDoctor.human_attribute_name(attr)}:"
+        .value= @fencing_doctor.attributes[attr].presence || I18n.t(:n_a)
+
+
+

@@ -1,0 +1,47 @@
+- content_for(:sidebar) do
+  = render "sidebar"
+.main-padding
+  %h1.page-header
+    - if can?(:create, Event)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-plus"}) + " #{Event.model_name.human}", new_intern_event_path, {class: "btn btn-primary pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"events.create_new_button")}
+    = Event.model_name.human(count: 2)
+  .row
+    - if @events.present?
+      %table.table.table-striped
+        %thead
+          %tr
+            %th
+              = Event.human_attribute_name(:corp_id)
+            %th
+              = Event.human_attribute_name(:title)
+            %th
+              = Event.human_attribute_name(:event_at)
+            %th.phone-hide
+              = Event.human_attribute_name(:description)
+            %th.phone-hide
+              = Event.human_attribute_name(:visibility)
+            %th{style: "width: 110px;"}
+              = "&nbsp;".html_safe
+        %tbody
+          - @events.each do |event|
+            %tr.events-table-item{ data: {id: event.id} }
+              %td= event.corp.try(:title)
+              %td= event.title
+              %td= I18n.l(event.event_at, format: :long)
+              %td.phone-hide= event.description
+              %td.phone-hide= event.for_extern ? I18n.t(:"events.visible_for_all") : I18n.t(:"events.visible_for_intern")
+              %td
+                - if can?(:read, event)
+                  = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-eye-open"}), [ :intern, event], {class: "btn btn-xs btn-info"}
+                  = "&nbsp;".html_safe
+                - if can?(:update, event)
+                  = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), [:edit, :intern, event], {class: "btn btn-xs btn-primary"}
+                  = "&nbsp;".html_safe
+                - if can?(:destroy, event)
+                  = link_to(content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), "javascript: void(0);", {class: "btn btn-xs btn-danger delete-event-link", data: {id: event.id, ch: "intern/events", ct: I18n.t(:"events.delete_event_confirmation")}})
+              .clearfix
+
+      %nav.with-pagination
+        = will_paginate @events, renderer: BootstrapPagination::Rails
+    - else
+      .no-items-container= (params.keys & %w(query)).present? ? I18n.t(:no_entries_found) : I18n.t(:no_entries)

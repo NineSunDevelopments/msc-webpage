@@ -1,0 +1,25 @@
+= form_for([:intern, @fencing_impartial]) do |f|
+  - if @fencing_impartial.errors.any?
+    %ul.form-errors.alert-danger
+      = @fencing_impartial.errors.full_messages.map { |msg| content_tag(:li, msg) }.join.html_safe
+  .form-group
+    %div= f.label :corp_name, "#{FencingImpartial.human_attribute_name(:corp_name)} #{required_asterix}".html_safe
+    = f.text_field :corp_name, {class: "form-control"}
+  .form-group
+    %div= f.label :full_name, "#{FencingImpartial.human_attribute_name(:full_name)} #{required_asterix}".html_safe
+    = f.text_field :full_name, {class: "form-control"}
+  .form-group
+    %div= f.label :phone, "#{FencingImpartial.human_attribute_name(:phone)} #{required_asterix}".html_safe
+    = f.text_field :phone, {class: "form-control"}
+  .form-group
+    %div= f.label :email, FencingImpartial.human_attribute_name(:email).html_safe
+    = f.text_field :email, {class: "form-control"}
+  .form-group
+    %div= f.label :description
+    = f.text_area :description, {class: "form-control"}
+  .form-group
+    = f.submit I18n.t(:save), {class: "btn btn-primary pull-right"}
+    .clearfix
+  .form-group.required-explaination
+    = required_asterix
+    = I18n.t(:required_explain)

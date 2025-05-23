@@ -1,0 +1,17 @@
+<dialog-wrapper [closeX]="data.closeX" [dialogRef]="dialogRef">
+  <ng-template #header *ngIf="data.title !== undefined">
+    <span>{{data.title}}</span>
+  </ng-template>
+  <ng-template #body>
+    <div [innerHtml]="data.message" class="body"></div>
+  </ng-template>
+  <ng-template #footer>
+    <button (click)="onCancel()" *ngIf="data.closeX" mat-raised-button>
+        {{(data.cancelBtn || 'abbrechen')}}
+      </button>
+    &nbsp;
+    <button (click)="onConfirm()" color="accent" mat-raised-button>
+      {{(data.confirmBtn || 'ok')}}
+    </button>
+  </ng-template>
+</dialog-wrapper>

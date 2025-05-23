@@ -1,0 +1,74 @@
+.main-padding
+  %h1.page-header
+    = @semester.blank? ? I18n.t(:"attachments.area_headers.protocols") : I18n.t(:"attachments.area_headers.protocols_semester", semester: @semester.title)
+    - if @semester.present?
+      = link_to I18n.t(:"attachments.current_semester"), protocols_intern_attachments_path, {class: "btn btn-default btn-xs pull-right", style: "margin-top: 10px;"}
+      .clearfix
+  .row
+    .col-md-6
+      .page-header
+        %h4= I18n.t(:"attachments.typecasts.ocsc_protocols")
+      - if @ocsc_protocols.present?
+        = render "protocol_list", attachments: @ocsc_protocols, header: I18n.t(:"attachments.typecasts.ocsc_protocol"), from_action: "protocols"
+      - else
+        .no-items-container= I18n.t(:"attachments.lists_empty")
+
+      - if @new_ocsc_protocol.present?
+        .page-header
+          %h6= I18n.t(:"attachments.create_headers.ocsc_protocols")
+        = render "form", attachment: @new_ocsc_protocol
+    .col-md-6
+      .page-header
+        %h4= I18n.t(:"attachments.typecasts.osc_protocols")
+      - if @osc_protocols.present?
+        = render "protocol_list", attachments: @osc_protocols, header: I18n.t(:"attachments.typecasts.ocsc_protocol"), from_action: "protocols"
+      - else
+        .no-items-container= I18n.t(:"attachments.lists_empty")
+
+      - if @new_osc_protocol.present?
+        .page-header
+          %h6= I18n.t(:"attachments.create_headers.osc_protocols")
+        = render "form", attachment: @new_osc_protocol
+    .clearfix
+
+    - if can?(:update, Attachment) and @semester.blank? and @semesters.present? and (@ocsc_protocols.present? or @osc_protocols.present?)
+      .page-header
+        %h4
+          = I18n.t(:"attachments.archive_protocols_form_header")
+      .col-md-6.col-md-offset-3
+        = form_tag archive_intern_attachments_path do
+          = hidden_field_tag :typecast, "protocols"
+          = hidden_field_tag :semester, params[:semester]
+          .form-group.row
+            .col-md-8
+              %div
+                %label= Semester.model_name.human
+              = select_tag :semester, options_from_collection_for_select(@semesters, :title, :title), {class: "form-control"}
+            .col-md-4
+              = submit_tag I18n.t(:move), {class: "btn btn-primary pull-right", style: "margin-top: 27px;"}
+              .clearfix
+            .clearfix
+      .clearfix
+
+    - if can?(:update, Attachment) and @semester.present? and (@ocsc_protocols.present? or @osc_protocols.present?)
+      .page-header
+        %h4
+          = I18n.t(:"attachments.active_protocols_form_header")
+      = form_tag active_intern_attachments_path do
+        = hidden_field_tag :typecast, "protocols"
+        = hidden_field_tag :semester, params[:semester]
+        .form-group
+          = submit_tag I18n.t(:move), {class: "btn btn-primary"}
+          .clearfix
+      .clearfix
+
+    - if @semesters.present?
+      .page-header
+        %h4
+          = I18n.t(:"attachments.other_semesters")
+      %div
+        - @semesters.each do |semester|
+          = link_to semester.title, protocols_intern_attachments_path(semester: semester.title), {class: "btn btn-default btn-xs #{'active' if params[:semester].eql?(semester.title)}", style: "margin-left: 10px; margin-bottom: 10px;"}
+
+
+

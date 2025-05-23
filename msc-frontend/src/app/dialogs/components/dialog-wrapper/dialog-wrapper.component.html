@@ -1,0 +1,36 @@
+<div class="dialog">
+    <div *ngIf="header"
+         cdkDrag
+         cdkDragHandle
+         cdkDragRootElement=".cdk-overlay-pane"
+         class="dialog__header"
+         [class.dialog__header--minimized]="minimized"
+         mat-dialog-title>
+
+        <span class="dialog__title">
+            <ng-container *ngTemplateOutlet="header"></ng-container>
+        </span>
+
+        <span class="dialog__minimize" *ngIf="minimizable">
+            <a *ngIf="!minimized" class="icon-window-minimize" mat-button (click)="minimize()"></a>
+            <a *ngIf="minimized" class="icon-window-maximize" mat-button (click)="maximize()"></a>
+        </span>
+
+        <span class="dialog__close">
+            <a *ngIf="closeX" class="icon-abbrechen" mat-button (click)="close()"></a>
+        </span>
+    </div>
+    <div [class.dialog__content--loading]="loading"
+         [class.dialog__content--minimized]="minimized"
+         class="dialog__content"
+         mat-dialog-content>
+        <ng-container *ngTemplateOutlet="body"></ng-container>
+    </div>
+    <div *ngIf="footer"
+         class="dialog__footer"
+         [class.dialog__footer--minimized]="minimized"
+         mat-dialog-actions>
+        <div *ngIf="loading" class="dialog__loading-blocker"></div>
+        <ng-container *ngTemplateOutlet="footer"></ng-container>
+    </div>
+</div>

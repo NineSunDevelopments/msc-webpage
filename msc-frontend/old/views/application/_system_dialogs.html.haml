@@ -1,0 +1,46 @@
+#confirm-dialog.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "confirm-dialog-label", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#confirm-dialog-label.modal-title= I18n.t(:confirm_dialog_title)
+      .modal-body{data: {default: I18n.t(:are_you_sure)}}
+        = I18n.t(:are_you_sure)
+      .modal-footer
+        %button#not-confirm-dialog-button.btn.btn-default{:type => "button"}= I18n.t(:cancel)
+        %button#confirm-dialog-button.btn.btn-primary{:type => "button", data: {default: I18n.t(:perform)}}= I18n.t(:perform)
+  %div{style: "display: none;"}
+    %span#confirm-action-type
+    %span#confirm-action-perform
+    %span#confirm-action-not-perform
+
+
+#error-dialog.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "error-dialog-label", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header.ui-corner-top
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#error-dialog-label.modal-title= I18n.t(:error_dialog_title)
+      .modal-body
+      .modal-footer
+        %button.btn.btn-default{:type => "button", "data-dismiss" => "modal"}= I18n.t(:close)
+
+#success-dialog.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "success-dialog-label", :role => "dialog", :tabindex => "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-header.ui-corner-top
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", :type => "button"}
+          %span{"aria-hidden" => "true"} ×
+        %h4#success-dialog-label.modal-title= I18n.t(:success_dialog_title)
+      .modal-body
+      .modal-footer
+        %button.btn.btn-default{:type => "button", "data-dismiss" => "modal"}= I18n.t(:close)
+
+.invisible
+  %span#delete-button-for-js= I18n.t(:destroy)
+  %span#server-status-error-404-for-js= I18n.t(:server_error_404)
+  %span#server-status-error-401-for-js= I18n.t(:server_error_401)
+  %span#server-error-for-js= I18n.t(:server_error)
+  %span#no-permissions-for-js= I18n.t(:no_permissions)

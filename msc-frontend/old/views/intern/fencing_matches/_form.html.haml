@@ -1,0 +1,47 @@
+.fencing-matches-form-container
+  .modal-header
+    %h4.modal-title
+      = I18n.t(:"fencing_days.fencing_matches.modal.header_on_#{fencing_match.new_record? ? "create" : "update"}")
+  = form_for([:intern, fencing_day, fencing_match], html: {data: {fdid: fencing_day.id, fmid: fencing_match.id}}) do |f|
+    .modal-body
+      - if fencing_match.errors.any?
+        %ul.form-errors.alert-danger
+          = fencing_match.errors.full_messages.map { |msg| content_tag(:li, msg) }.join.html_safe
+      .form-group.row
+        .col-md-3
+          %div= f.label :art, "#{FencingMatch.human_attribute_name(:art)} #{required_asterix}".html_safe
+          = f.select :art, FencingMatch.art.options, {}, {class: "form-control"}
+        .col-md-3
+          %div= f.label :user_time, "#{FencingMatch.human_attribute_name(:user_time)}".html_safe
+          = f.text_field :user_time, {value: (fencing_match.user_time.present? ? fencing_match.user_time : (fencing_match.time_start.present? ? I18n.l(fencing_match.time_start, format: :am) : nil)), class: "form-control"}
+        .clearfix
+      .form-group.row
+        .col-md-5
+          %div= f.label :corp_first, "#{FencingMatch.human_attribute_name(:corp_first)} #{required_asterix}".html_safe
+          = f.text_field :corp_first, {class: "form-control"}
+        .col-md-2
+          %div= f.label :corp_first_match, "#{FencingMatch.human_attribute_name(:corp_first_match)} #{required_asterix}".html_safe
+          = f.text_field :corp_first_match, {class: "form-control"}
+        .col-md-5
+          %div= f.label :corp_first_doctor, "#{FencingMatch.human_attribute_name(:corp_first_doctor)}".html_safe
+          = f.text_field :corp_first_doctor, {class: "form-control"}
+        .clearfix
+      .form-group.row
+        .col-md-5
+          %div= f.label :corp_second, "#{FencingMatch.human_attribute_name(:corp_second)} #{required_asterix}".html_safe
+          = f.text_field :corp_second, {class: "form-control"}
+        .col-md-2
+          %div= f.label :corp_second_match, "#{FencingMatch.human_attribute_name(:corp_second_match)} #{required_asterix}".html_safe
+          = f.text_field :corp_second_match, {class: "form-control"}
+        .col-md-5
+          %div= f.label :corp_second_doctor, "#{FencingMatch.human_attribute_name(:corp_second_doctor)}".html_safe
+          = f.text_field :corp_second_doctor, {class: "form-control"}
+        .clearfix
+      .form-group.required-explaination
+        = required_asterix
+        = I18n.t(:required_explain)
+    .modal-footer
+      %button{ type: "button", class: "btn btn-default", data: {dismiss: "modal"}}
+        = I18n.t(:cancel)
+      = f.submit I18n.t(:save), { class: "btn btn-primary" }
+

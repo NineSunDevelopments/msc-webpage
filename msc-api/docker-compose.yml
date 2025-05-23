@@ -1,0 +1,18 @@
+services:
+    api:
+        image: registry.msc-corps-de/msc/api:local
+        ports:
+            - "1951:1951"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        environment:
+            - TZ=${TZ}
+            - PORT=1951
+            - MONGO_SERVER=host.docker.internal
+            - MONGO_DB=${MONGO_DB}
+            - MONGO_AUTH=${MONGO_AUTH}
+            - MONGO_PASSWORD=${MONGO_PASSWORD}
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+            - REDIS_SERVER=host.docker.internal
+            - REDIS_PASS=${REDIS_PASS}
+        

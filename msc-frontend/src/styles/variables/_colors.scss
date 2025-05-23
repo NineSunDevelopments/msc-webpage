@@ -1,0 +1,80 @@
+﻿// _colors.scss
+
+//
+// Colors
+//
+$highlight: #8cc23e;
+$low_level_highlight: #169133;
+
+$white: #f6f7f8;
+$light-grey: #e5e6e7;
+$grey: #475261;
+$dark-grey: #22272e;
+$darker-grey: #32333a;
+$black: #1e1f20;
+
+$accent: #3484da;
+
+$light-background-color: $light-grey;
+$light-text-color: $dark-grey;
+
+$dark-background-color: $dark-grey;
+$dark-text-color: $light-grey;
+
+$warning: #ffdd00;
+$error: #e30613;
+
+$bg: linear-gradient(180deg, #edeeef 0%, white 100%);
+$navi-bg: linear-gradient(180deg, $dark-grey 0%, $grey 100%);
+
+/*
+$primary-palette: (
+        50: #f7f8fd,
+        100: #f0f1f6,
+        200: #e6e7ec,
+        300: #d5d7db,
+        400: #b1b3b7,
+        500: #919297,
+        600: #696a6f,
+        700: #56575b,
+        800: #38393c,
+        900: #18191c,
+        contrast: (
+                50: black,
+                100: black,
+                200: black,
+                300: black,
+                400: black,
+                500: black,
+                600: white,
+                700: white,
+                800: white,
+                900: white,
+        )
+);
+
+$accent-palette: (
+        50: #f1f8e8,
+        100: #dcedc5,
+        200: #aed47a,
+        300: #9ccb5c,
+        400: #9ccb5c,
+        500: #8bc23e,
+        600: #7cb236,
+        700: #679e2c,
+        800: #538a23,
+        900: #2f6911,
+        contrast: (
+                50: black,
+                100: black,
+                200: black,
+                300: black,
+                400: black,
+                500: black,
+                600: black,
+                700: black,
+                800: white,
+                900: white,
+        )
+);
+*/

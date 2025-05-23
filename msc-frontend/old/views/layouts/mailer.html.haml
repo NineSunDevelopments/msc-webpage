@@ -1,0 +1,35 @@
+!!! 5
+%html
+  %head
+    %meta{"content" => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}
+    :css
+      input[type='button']{
+        background-color: #F5F5F5;
+        border: 1px solid #808080;
+        border-radius: 4px;
+        font-style: italic;
+        color: #808080;
+        padding-left: 3px;
+        padding-right: 3px;
+        margin-right: 3px;
+        margin-left: 3px;
+      }
+      input[type='button'].invalid{
+        color: #cd0a0a;
+        border: 1px solid #cd0a0a;
+      }
+  %body{bgcolor: "#EAEAEA", style: "margin: 0; padding: 0; background: #EAEAEA;"}
+    %br
+    .container{style: "width: 80%; margin: 10px auto; background-color: #FFFFFF; font-size: 12px;"}
+      .header{style: "text-align: center; color: #FFFFFF; font: normal 20px Helvetica, Arial, sans-serif; margin: 0; padding: 0; line-height: 32px; background-color: #333333;"}
+        Münchner Senioren Convent
+      .message{style: "padding: 20px;"}
+        = yield
+      .footer{style: "border-top: 1px solid #E5E5E5; padding: 20px;"}
+        %p
+          Mit freundlichen Grüßen,
+          %br
+          Münchner Senioren Convent
+        %p{style: "font-size: 10px; font-style: italic;"}
+          Die Mail wurde automatisch verschickt. Bitte nicht antworten!
+    %br

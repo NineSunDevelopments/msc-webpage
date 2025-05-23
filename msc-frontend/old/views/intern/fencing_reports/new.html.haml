@@ -1,0 +1,10 @@
+.main-padding
+  %h1.page-header
+    - if can?(:read, FencingReport)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-arrow-left"}), intern_reports_path, {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:back_to_the_list)}
+    = I18n.t(:"fencing_reports.site_header", semester: @semester.title)
+  .reports-form.row
+    .col-md-8.col-md-offset-2
+      .wappen-container
+        = image_tag "wappen/#{@corp.image}"
+      = render "form"

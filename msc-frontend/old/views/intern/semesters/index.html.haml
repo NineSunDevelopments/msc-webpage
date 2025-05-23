@@ -1,0 +1,40 @@
+- content_for(:sidebar) do
+  = render "sidebar"
+.main-padding
+  %h1.page-header
+    - if can?(:create, Semester)
+      = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-plus"}) + " #{Semester.model_name.human}", new_intern_semester_path, {class: "btn btn-primary pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"semesters.create_new_button")}
+    = Semester.model_name.human(count: 2)
+  .row
+    - if @semesters.present?
+      - @semesters.each do |semester|
+        .list-box-item.col-xs-6.col-md-3{ data: {id: semester.id} }
+          .list-box-item-padding{ data: {role: "#{'admin' if semester.next_current}"} }
+            .actions.mobile-visibility
+              - if can?(:update, semester)
+                = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), [:edit, :intern, semester], {class: "btn btn-xs btn-primary"}
+                = "&nbsp;".html_safe
+              - if can?(:destroy, semester)
+                = link_to(content_tag(:span, nil, {class: "glyphicon glyphicon-trash"}), "javascript: void(0);", {class: "btn btn-xs btn-danger delete-resource-links", data: {id: semester.id, cn: "intern/semesters", ct: I18n.t(:"semesters.delete_semester_confirmation")}})
+              .clearfix
+            .values
+              .title
+                = link_to semester.title, [:intern, semester]
+              - if semester.description.present?
+                .additional
+                  = semester.description
+              .additional
+                %strong= Semester.human_attribute_name(:ccm_count)
+                = semester.cc_reports.where.not({cc_reports: {reported_at: nil}}).count
+                %br
+                %strong= Semester.human_attribute_name(:gcb_count)
+                = semester.inventory_reports.where.not({inventory_reports: {reported_at: nil}}).count
+                %br
+                %strong= Semester.human_attribute_name(:ffb_count)
+                = semester.fencing_reports.where.not({fencing_reports: {reported_at: nil}}).count
+              - if semester.next_current
+                %strong= Semester.human_attribute_name(:next_current_text)
+      %nav.with-pagination
+        = will_paginate @semesters, renderer: BootstrapPagination::Rails
+    - else
+      .no-items-container= (params.keys & %w(query)).present? ? I18n.t(:no_entries_found) : I18n.t(:no_entries)

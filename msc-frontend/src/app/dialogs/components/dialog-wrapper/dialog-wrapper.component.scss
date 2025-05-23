@@ -1,0 +1,86 @@
+@use 'variables' as var;
+@use 'sass:color';
+
+.dialog {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh * 0.9);
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: end;
+    padding: 10px;
+    color: var.$light-grey;
+    background-color: var.$grey;
+    cursor: move;
+    border: 0;
+    border-bottom: 1px solid color.adjust(var.$grey, $lightness: -10%);
+
+    a {
+      cursor: pointer;
+      color: var.$light-grey;
+    }
+  }
+
+  &__title {
+    flex-grow: 1;
+
+    text-align: center;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  &__minimize,
+  &__close {
+    flex-grow: 0;
+  }
+
+  &__content {
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+
+    &--loading {
+      overflow: hidden;
+    }
+
+    &--minimized {
+      display: none;
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+  }
+
+  &__loading-blocker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(var.$white, 0.5);
+    z-index: 100;
+  }
+
+  &__footer {
+    position: relative;
+    justify-content: end;
+    color: color.adjust(var.$highlight, $lightness: 10%);
+    background-color: color.adjust(var.$grey, $lightness: 60%);
+    border: 0;
+    border-top: 1px solid color.adjust(var.$highlight, $lightness: 10%);
+
+    &--minimized {
+      display: none;
+    }
+  }
+}

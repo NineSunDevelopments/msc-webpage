@@ -1,0 +1,6 @@
+.sidebar-item
+  = form_tag intern_semesters_path, {class: "nav nav-sidebar navbar-form", method: :get, id: "search-query-lists-form", style: "padding-left: 0; padding-right: 0;"} do
+    = text_field_tag :query, params[:query], {class: "form-control", placeholder: I18n.t(:"semesters.filter.default_search"), style: "width: 100%;"}
+    = submit_tag I18n.t(:search_button), {class: "invisible"}
+.sidebar-item.reset-filter-link
+  = link_to I18n.t(:reset_filter), intern_semesters_path
