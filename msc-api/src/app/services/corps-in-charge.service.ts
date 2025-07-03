@@ -23,6 +23,7 @@ export class CorpsInChargeService extends DataService<MSCSettings.CorpsInCharge,
         const current = await this.getCurrent();
 
         if (!current) {
+            await this.corpsService.init();
             const currentSemester = await this.semesterService.getCurrent();
             const corps = await this.corpsService.findOne("name = ?", ["Suevo-Guestphalia"]);
 

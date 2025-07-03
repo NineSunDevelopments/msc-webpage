@@ -24,7 +24,6 @@ import {LoadingComponent} from '@app/components/loading/loading.component';
     MatIconModule,
     MatIconModule,
     MatAnchor,
-    MatButton,
     LoadingComponent,
   ],
   templateUrl: './intern.component.html',

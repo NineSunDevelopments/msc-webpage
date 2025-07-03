@@ -41,11 +41,16 @@ export class MongoConnector<T extends MongoEntity> implements Instance, Connecto
         const dataBase = process.env.MONGO_DATABASE ?? 'msc';
         const enableAuthentication = (process.env.MONGO_AUTH ?? 'true') === 'true';
 
-        const connection = enableAuthentication
-            ? await new MongoClient(`mongodb://${user}:${password}@${server}:${port}/${dataBase}`, {authSource: "admin"}).connect()
-            : await new MongoClient(`mongodb://${server}:${port}/${dataBase}`, {authSource: "admin"}).connect();
-        Log.info(`\t\t...connected to mongoDB on ${server}:${port}/${dataBase}`);
-        this.db = connection.db(dataBase);
+        try {
+            const connection = enableAuthentication
+                ? await new MongoClient(`mongodb://${user}:${password}@${server}:${port}/${dataBase}`, {authSource: "admin"}).connect()
+                : await new MongoClient(`mongodb://${server}:${port}/${dataBase}`, {authSource: "admin"}).connect();
+            Log.info(`\t\t...connected to mongoDB on ${server}:${port}/${dataBase}`);
+            this.db = connection.db(dataBase);
+        } catch (error) {
+            console.log("Tryed to connect with: ", enableAuthentication ? `mongodb://${user}:${password}@${server}:${port}/${dataBase}` : `mongodb://${server}:${port}/${dataBase}`);
+            console.error(error);
+        }
     }
 
     /**

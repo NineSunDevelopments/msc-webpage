@@ -17,7 +17,7 @@ import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
   selector: 'msc-corps',
-  imports: [MatTableModule, NgForOf, MatAnchor, NgIf, MatIconModule, RouterLink, LoadingComponent, MatFormField, MatInputModule, MatFormField, FormsModule, ColorsComponent, MatCheckbox],
+  imports: [MatTableModule, MatAnchor, NgIf, MatIconModule, RouterLink, LoadingComponent, MatFormField, MatInputModule, MatFormField, FormsModule, ColorsComponent, MatCheckbox],
   templateUrl: './corps.component.html',
   styleUrl: './corps.component.scss'
 })
