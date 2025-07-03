@@ -1,5 +1,6 @@
 @use 'variables' as var;
 @use 'sass:color';
+
 ::ng-deep {
   p, div {
     color: var.$light-grey;
@@ -23,6 +24,27 @@
 
 }
 
+.login-wrapper, .loading-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .login {
+    background-color: color.adjust(var.$darker-grey, $lightness: 2%);
+    padding: 0 40px 20px;
+    width: 500px;
+    min-height: 300px;
+    max-width: 100%;
+    max-height: 100%;
+
+    mat-icon {
+      color: var.$light-grey;
+    }
+  }
+}
+
 .sidebar {
   height: 100%;
   padding: 125px 0 0 0;
@@ -40,7 +62,35 @@
 }
 
 .content {
-  flex: 1;
-  padding: 20px 60px;
+  flex-grow: 1;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  overflow-y: auto;
+  padding: 40px 60px;
+
   background-color: color.adjust(var.$grey, $lightness: -20%);
+
+  ::ng-deep {
+    & > *:not(.login-wrapper):not(.loading-wrapper) {
+      display: inline;
+    }
+
+    .wrapper {
+      height: 100%;
+    }
+
+    .wrapper > .loading {
+      display: flex;
+      position: relative;
+      height: 100%;
+      width: 100%;
+      align-items: center;
+      justify-content: center;
+
+      div {
+        height: 250px;
+      }
+    }
+  }
 }

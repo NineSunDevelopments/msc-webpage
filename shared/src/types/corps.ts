@@ -20,6 +20,7 @@ import {DateTime} from "luxon";
  */
 export interface Corps extends MongoEntity {
     name: string;
+    colors: string[];
     position: number;
     url: string;
     coatOfArms: string;

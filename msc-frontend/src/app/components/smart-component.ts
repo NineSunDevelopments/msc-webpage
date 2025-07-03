@@ -82,7 +82,7 @@ export abstract class SmartComponent implements OnInit, OnDestroy {
 
   }
 
-  @Debounce(500)
+  @Debounce(250)
   private _afterDataChange(state: IAppState) {
     this.afterDataChange(state);
   }

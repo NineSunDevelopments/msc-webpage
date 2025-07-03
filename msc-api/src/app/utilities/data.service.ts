@@ -1,6 +1,7 @@
 import {Instance} from "./injector";
 import {Connector} from "./connector";
 import {MongoEntity} from "@shared/types/mongo-entity";
+import {ObjectId} from "mongodb";
 
 
 /**
@@ -80,6 +81,7 @@ export abstract class DataService<T extends MongoEntity, ConnectorType extends C
      * @return {Promise<T>} A promise that resolves to the updated record, either sanitized or unsanitized based on the value of skipSanitization.
      */
     public async update(data: T, skipSanitization: boolean = false): Promise<T> {
+        data._id = new ObjectId(data._id) as any;
         return this.connector.update(this.collectionName, data).then(data => skipSanitization ? data : this.sanitize(data));
     }
 

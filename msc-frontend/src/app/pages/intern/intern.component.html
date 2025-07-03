@@ -1,8 +1,46 @@
 <div class="wrapper">
-  <div class="sidebar">
+  <div *ngIf="appState.user && !loading" class="sidebar">
     <msc-sidebar></msc-sidebar>
   </div>
   <div class="content">
-    <router-outlet></router-outlet>
+    @if (loading) {
+      <div class="loading-wrapper">
+        <div style="height: 250px;">
+          <msc-loading></msc-loading>
+        </div>
+      </div>
+    } @else {
+      @if (appState.user) {
+        <router-outlet></router-outlet>
+      } @else {
+        <div class="login-wrapper">
+          <div class="login mat-elevation-z5">
+            <h1>Login</h1>
+            <mat-form-field>
+              <mat-label>E-Mail</mat-label>
+              <input matInput [(ngModel)]="loginForm.email" type="email">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Passwort</mat-label>
+              <input matInput [(ngModel)]="loginForm.password"
+                     type="{{loginForm.passwordHidden ? 'password' : 'text'}}">
+              <mat-icon (click)="loginForm.passwordHidden = !loginForm.passwordHidden" matSuffix>
+                {{ loginForm.passwordHidden ? 'visibility_off' : 'visibility' }}
+              </mat-icon>
+            </mat-form-field>
+
+            <div class="grid-2">
+              <div></div>
+              <div class="align-right">
+                <a mat-stroked-button
+                        (click)="login()"
+                        [disabled]="emptyOrNull(loginForm.email) || emptyOrNull(loginForm.password)">Login
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
   </div>
 </div>

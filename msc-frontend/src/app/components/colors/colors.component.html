@@ -1,0 +1,7 @@
+<div class="wrapper">
+  <div class="color" *ngIf="corps" [class.vertical]="vertical">
+    @for (color of corps.colors; track color) {
+      <div [style.background-color]="color">&nbsp;</div>
+    }
+  </div>
+</div>

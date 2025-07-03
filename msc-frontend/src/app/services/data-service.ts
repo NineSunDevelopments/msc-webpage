@@ -90,7 +90,6 @@ export class DataService<T> {
   }
 
   public load(forceData?: boolean): Promise<T[]> {
-    console.log('load', this.dataLink);
     return new Promise<T[]>((resolve, reject) => {
       this.api.get<T[]>(this.dataLink, {})
         .then((result: T[]) => resolve(this.mutate(result?.map(this.sanitize))))

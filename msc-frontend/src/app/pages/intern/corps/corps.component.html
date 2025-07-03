@@ -1,1 +1,139 @@
-<h1>Corps</h1>
+<div class="grid-3">
+
+  <div class="grid-column-span-2 align-left vertical-align-center">
+    <h1 class="text-ellipsis">
+      <span [routerLink]="'/intern/corps'">Corps</span>
+      <span *ngIf="selectedCorps" title="{{ selectedCorps.name }}"> > {{ selectedCorps.name }}</span>
+    </h1>
+  </div>
+
+  <div class="align-right  vertical-align-center">
+    <a mat-stroked-button
+       *ngIf="selectedCorps && editMode"
+       (click)="saveCorps(selectedCorps)"
+       class="pull-right">
+      <mat-icon>save</mat-icon>
+      Speichern
+    </a>
+    &nbsp;
+    <a mat-stroked-button
+       *ngIf="selectedCorps && editMode"
+       (click)="cancel()"
+       color="warn"
+       class="pull-right">
+      <mat-icon>cancel</mat-icon>
+      Abbrechen
+    </a>
+    <a mat-stroked-button
+       *ngIf="selectedCorps && canEdit(selectedCorps) && !editMode"
+       (click)="editCorps(selectedCorps)"
+       class="pull-right">
+      <mat-icon>edit</mat-icon>
+      Bearbeiten
+    </a>
+  </div>
+</div>
+
+<div class="wrapper">
+  @if (loading) {
+    <div class="loading">
+      <div>
+        <msc-loading></msc-loading>
+      </div>
+    </div>
+
+  } @else {
+    <table *ngIf="!selectedCorps" mat-table [dataSource]="appState.corpsBase" class="shadow-6">
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let e">{{ e.position + 1 }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="colors">
+        <th mat-header-cell *matHeaderCellDef>Farben</th>
+        <td mat-cell *matCellDef="let e">
+          <msc-colors [corps]="e" [vertical]="true"></msc-colors>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let e">{{ e.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="url">
+        <th mat-header-cell *matHeaderCellDef>Homepage</th>
+        <td mat-cell *matCellDef="let e">
+          <a target="_blank" href="{{e.url}}">{{ e.url }}</a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="external">
+        <th mat-header-cell *matHeaderCellDef>Angegliedert?</th>
+        <td mat-cell *matCellDef="let e">
+          <mat-icon *ngIf="e.external">check</mat-icon>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let e" class="align-right">
+          <a *ngIf="canEdit(e)" (click)="$event.stopPropagation(); editCorps(e)" mat-stroked-button>
+            <mat-icon>edit</mat-icon>
+          </a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row
+          class="clickable"
+          *matRowDef="let row; columns: displayedColumns;"
+          (click)="showCorps(row)"></tr>
+    </table>
+
+    <div *ngIf="selectedCorps" class="grid-2">
+
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="selectedCorps.name" [disabled]="!editMode">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Homepage</mat-label>
+        <input matInput [(ngModel)]="selectedCorps.url" [disabled]="!editMode">
+      </mat-form-field>
+
+      <mat-checkbox [(ngModel)]="selectedCorps.external" [disabled]="!editMode">Angegliedert?</mat-checkbox>
+      <div></div>
+
+      <div>
+        <h3>Farben</h3>
+        <div style="height: 175px;">
+          <msc-colors [corps]="selectedCorps"></msc-colors>
+        </div>
+      </div>
+
+      <div *ngIf="editMode">
+        <h3></h3>
+        @for (color of selectedCorps.colors; track i; let i = $index) {
+          <div style="display: flex">
+            <mat-form-field>
+              <mat-label>Farbe {{ i + 1 }}</mat-label>
+              <input matInput [(ngModel)]="selectedCorps.colors[i]">
+            </mat-form-field>
+            &nbsp;
+            <a mat-stroked-button color="warn" (click)="selectedCorps.colors.splice(i, 1)">
+              <mat-icon>delete</mat-icon>
+            </a>
+          </div>
+        }
+
+        <a mat-stroked-button (click)="selectedCorps.colors.push('#ffffff')">
+          <mat-icon>add</mat-icon>
+          Hinzufügen
+        </a>
+      </div>
+      <div *ngIf="!editMode"></div>
+    </div>
+  }
+</div>

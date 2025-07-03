@@ -1,6 +1,28 @@
 import {MongoEntity} from "./mongo-entity";
 import {MembershipState} from "../enums/membership-state";
+import {DateTime} from "luxon";
 
+export enum MemberChangeType {
+    "ACEPIERT",
+    "RECEPIERT",
+    "INAKTIVIERT",
+    "PHILISTRIERT",
+    "LEAVE",
+    "IP",
+    "CI",
+    "DIED"
+}
+
+export interface MemberChange extends MongoEntity {
+    member: string; // MemberID
+    type: MemberChangeType;
+    date: DateTime;
+    /**
+     * Needs to be the name as only MSC-Corps have an ID
+     */
+    corpsName: string;
+    comment: string;
+}
 
 /**
  * Represents a Corps Member entity.

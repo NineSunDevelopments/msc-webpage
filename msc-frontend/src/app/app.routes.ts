@@ -27,6 +27,14 @@ export const routes: Routes = [
         component: CorpsComponent,
       },
       {
+        path: 'corps/:id',
+        component: CorpsComponent,
+      },
+      {
+        path: 'corps/:id/edit',
+        component: CorpsComponent,
+      },
+      {
         path: 'reports',
         component: ReportsComponent,
       },

@@ -24,12 +24,12 @@ export class AuthorizationService implements Instance {
     }
 
 
-    public async authorizeUserAndPassword(username: string, password: string): Promise<{
+    public async authorizeMailAndPassword(email: string, password: string): Promise<{
         authId: string,
         authToken: string
     }> {
-        if (username && password) {
-            const user = await this.userService.findOne("name = ?", [username]).then((user) => {
+        if (email && password) {
+            let user = await this.userService.findOne("email = ?", [email], true).then((user) => {
                 const pwHash = HashPassword(password, user.createdAt);
                 return pwHash === user.password ? user : null;
             }).catch((err) => null);

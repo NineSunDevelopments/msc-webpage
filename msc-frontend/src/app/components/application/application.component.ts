@@ -30,10 +30,7 @@ export class ApplicationComponent extends SmartComponent {
   }
 
   public onInit() {
-    console.log("INIT");
-    this.corpsService.load()
-      .then((result) => console.log({result}));
-
+    this.corpsService.load();
     this.corpsInChargeService.getCurrent();
   }
 }

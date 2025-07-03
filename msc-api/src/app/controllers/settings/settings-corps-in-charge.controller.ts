@@ -19,7 +19,6 @@ export class SettingsCorpsInChargeController extends DataController<MSCSettings.
     @Get({ path: "current" })
     public async getCurrent(request, response): Promise<void> {
         const data = await this.service.getCurrent();
-        console.log(data);
         Respond({response, data});
     }
 

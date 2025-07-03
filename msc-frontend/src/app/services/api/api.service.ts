@@ -135,7 +135,6 @@ export class ApiService implements OnDestroy {
 
 
   public get<T>(url: string, options?: HttpOptions, force: boolean = true): Promise<T> {
-    console.log("get", this.backendURI + ApiService.SanitizeURL(url));
     return new Promise((resolve, reject) => {
       const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
 

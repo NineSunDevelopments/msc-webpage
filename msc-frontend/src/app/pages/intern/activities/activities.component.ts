@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import {LoadingComponent} from "@app/components/loading/loading.component";
 
 @Component({
   selector: 'msc-activities',
-  imports: [],
+    imports: [
+        LoadingComponent
+    ],
   templateUrl: './activities.component.html',
   styleUrl: './activities.component.scss'
 })

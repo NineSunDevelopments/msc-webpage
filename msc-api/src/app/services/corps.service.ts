@@ -50,6 +50,7 @@ export class CorpsService extends DataService<Corps, MongoConnector<Corps>> {
 
                     return this.create({
                         coatOfArms: corps.image,
+                        colors: [],
                         position: index,
                         url: "",
                         createdAt: DateTime.now(),

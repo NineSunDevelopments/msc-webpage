@@ -24,7 +24,6 @@ export class IndexComponent extends SmartComponent {
   }
 
   public afterDataChange(state: IAppState) {
-    console.log(state);
     this.corpsInCharge = state.corpsInCharge;
     this.corpsList = state.corpsBase;
   }

@@ -1,0 +1,19 @@
+@use 'variables' as var;
+@use 'sass:color';
+
+.wrapper {
+
+  ::ng-deep {
+    table {
+      background-color: var.$dark-grey;
+
+      th {
+        font-weight: bold;
+      }
+
+      tr.clickable:hover {
+        background-color: rgba(var.$grey, 0.1);
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+.wrapper {
+  display: inline;
+  height: 100%;
+  width: 100%;
+
+  .color {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    &.vertical {
+      flex-direction: row;
+    }
+
+    div {
+      min-height: 1px;
+      flex: 10;
+      width: 100%;
+
+      &:first-child, &:last-child {
+        flex: 1;
+      }
+    }
+  }
+
+}
