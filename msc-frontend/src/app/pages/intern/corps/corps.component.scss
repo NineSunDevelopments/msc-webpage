@@ -9,6 +9,16 @@
 
       th {
         font-weight: bold;
+        text-align: center;
+      }
+
+      td:first-child,
+      td:nth-child(5) {
+        text-align: center;
+      }
+
+      td:nth-child(3) {
+        font-weight: bold;
       }
 
       tr.clickable:hover {
