@@ -32,7 +32,7 @@ export class ActivitiesSemesterService extends DataService<Activities.Semester, 
         return Promise.resolve();
     }
 
-    public getCurrent(): Promise<Activities.Semester> {
+    public async getCurrent(): Promise<Activities.Semester> {
         return this
             .findAll("deleted = ?", [false])
             .then(list => list.find(x => x.start <= DateTime.now() && DateTime.now() <= x.end));

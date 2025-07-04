@@ -1,9 +1,10 @@
 import {Component, Injector} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {RouterOutlet} from '@angular/router';
 import {SmartComponent} from '@app/components/smart-component';
 import {CorpsService} from '@app/services/corps/corps.service';
 import {ApiService} from '@app/services/api/api.service';
-import {CorpsInChargeService} from '@app/services/corps-in-charge/corps-in-charge.service';
+import {SemesterSettingsService} from '@app/services/activities/semester-settings/semester-settings.service';
+import {IAppState} from '@app/services/app/app.service';
 
 @Component({
   selector: 'msc-application',
@@ -14,13 +15,13 @@ import {CorpsInChargeService} from '@app/services/corps-in-charge/corps-in-charg
 export class ApplicationComponent extends SmartComponent {
   title = 'msc-frontend';
 
-  public loading = false;
+  public initialized = false;
+  public loading = true;
 
   constructor(
+    apiService: ApiService,
     private corpsService: CorpsService,
-    private corpsInChargeService: CorpsInChargeService,
-    private apiService: ApiService,
-
+    private semesterSettingsService: SemesterSettingsService,
     injector: Injector
   ) {
     super(injector);
@@ -29,7 +30,22 @@ export class ApplicationComponent extends SmartComponent {
   }
 
   public onInit() {
-    this.corpsService.load();
-    this.corpsInChargeService.getCurrent();
+  }
+
+  public async afterDataChange(state: IAppState) {
+    if (!!state.user && !this.initialized) {
+      await Promise.all([
+        this.corpsService.load(),
+        this.semesterSettingsService.loadCurrent(),
+        this.semesterSettingsService.load()
+      ]);
+
+      this.initialized = true;
+      this.loading = false;
+    }
+
+    if (!state.user) {
+      this.initialized = false;
+    }
   }
 }

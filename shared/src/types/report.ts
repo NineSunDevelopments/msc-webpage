@@ -1,8 +1,19 @@
 import {MongoEntity} from "./mongo-entity";
 import {DateTime} from "luxon";
-import {CorpsChangeType} from "../enums/corps-change-type";
 
 export namespace Report {
+    export enum MemberChangeType {
+        ACEPIERT,
+        RECEPIERT,
+        INAKTIVIERT,
+        PHILISTRIERT,
+        LEAVE,
+        IP,
+        CI,
+        DIED,
+        RENAME
+    }
+
     /**
      * Represents changes within a Corps entity.
      *
@@ -13,23 +24,21 @@ export namespace Report {
      * @interface CorpsChanges
      * @extends MongoEntity
      *
-     * @property {CorpsChangeType} type - The type of change.
+     * @property {MemberChangeType} type - The type of change.
      * @property {string} name - The name of the Corps.
      * @property {DateTime} date - The date when the change was made.
-     * @property {string} semesterId Unique identifier for the associated with the report.
-     * @property {string} reason - The reason for the change.
+     * @property {string} semesterId Unique identifier for the semester associated with the report.
+     * @property {string} corpsId Unique identifier for the corps associated with the report.
      * @property {string} additionalInfo - Additional information about the change.
-     * @property {boolean} honorable - Whether the change is honorable.
      *
      */
     export interface Change extends MongoEntity {
-        type: CorpsChangeType;
+        type: MemberChangeType;
         name: string;
         date: DateTime;
+        corpsId: string;
         semesterId: string;
-        reason?: string;
         additionalInfo?: string;
-        honorable?: boolean;
     }
 
 
@@ -53,12 +62,6 @@ export namespace Report {
      * @property {string} subSenior MemberID of the sub-senior member involved in the report.
      * @property {string} fuchsMajor MemberID of the Fuchs major responsible for the report.
      * @property {DateTime} submitDate The actual submission date of the report.
-     * @property {Object[]} honorableJudge List containing details of the honorable judge(s).
-     * @property {string} honorableJudge.firstName First name of the judge
-     * @property {string} honorableJudge.lastName Last name of the judge
-     * @property {string} honorableJudge.address Address of the judge
-     * @property {string} honorableJudge.phone Phone number of the judge
-     * @property {string} honorableJudge.email Email address of the judge
      *
      *
      */
@@ -72,13 +75,6 @@ export namespace Report {
         subSenior: string;
         fuchsMajor: string;
         submitDate: DateTime;
-        honorableJudge: {
-            firstName: string;
-            lastName: string;
-            address: string;
-            phone: string;
-            email: string;
-        }[];
     }
 
     /**
@@ -107,9 +103,23 @@ export namespace Report {
         dueDate: DateTime;
         submitDate: DateTime;
         semesterId: string;
-        fencingDayId: string;
-        partyALevel: number;
-        partyBLevel: number;
+        matches: Match[];
         notes: string;
+    }
+
+    export interface Match {
+        fencingDayId?: string;
+        partyA: {
+            level: string;
+            corps?: string;
+            paukant?: string;
+            sekundant?: string;
+        },
+        partyB: {
+            level: string;
+            corps?: string;
+            paukant?: string;
+            sekundant?: string;
+        },
     }
 }

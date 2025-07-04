@@ -4,7 +4,7 @@ import {SmartComponent} from '@app/components/smart-component';
 import {IAppState} from '@app/services/app/app.service';
 import {Corps} from '@shared/types/corps';
 import {NgIf} from '@angular/common';
-import {MSCSettings} from '@shared/types/MSCSettings';
+import {Activities} from '@shared/types/activities';
 
 @Component({
   selector: 'msc-index',
@@ -17,14 +17,14 @@ import {MSCSettings} from '@shared/types/MSCSettings';
 })
 export class IndexComponent extends SmartComponent {
   public corpsList: Corps[] = [];
-  public corpsInCharge: MSCSettings.CorpsInCharge = null;
+  public currentSemester: Activities.Semester = null;
 
   constructor(injector: Injector) {
     super(injector);
   }
 
   public afterDataChange(state: IAppState) {
-    this.corpsInCharge = state.corpsInCharge;
+    this.currentSemester = state.currentSemester;
     this.corpsList = state.corpsBase;
   }
 

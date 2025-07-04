@@ -9,6 +9,7 @@ import {deepCopy} from '@shared/utils/deep-equals';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {DateTime} from 'luxon';
+import {isDateString, parseDateString} from '@shared/utils/is-date-string';
 
 
 @Injectable({providedIn: 'root'})
@@ -121,7 +122,7 @@ export class WebInterceptorService implements HttpInterceptor {
   private parseDates(response: any, direction: 'encode' | 'decode', depth: number = 10): any {
     if (direction === 'encode') {
       if (DateTime.isDateTime(response)) {
-        return new DateTime(response).utc().toISOString();
+        return (response as DateTime).toUTC().toISO();
       }
 
       if (typeof (response) === 'object')
@@ -131,10 +132,8 @@ export class WebInterceptorService implements HttpInterceptor {
     } else {
 
       if (typeof response === 'string') {
-        const dateRegExp = /(\d{4}-\d{2}-\d{2})T?(\d{2}:\d{2}:\d{2}.\d{3})?\+?(\d{2}:\d{2})?/;
-
-        if (dateRegExp.test(response)) {
-          const date: DateTime = new DateTime(response);
+        if (isDateString(response)) {
+          const date = parseDateString(response);
           if (date.isValid) {
             return date.toLocal();
           }

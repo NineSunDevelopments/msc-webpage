@@ -270,8 +270,8 @@ export abstract class BaseController extends ControllerInstance {
      * @return {number|null} The parsed integer value of the "id" parameter if present, or null if not present and `shouldThrow` is false.
      * @throws {ApiException} Throws an exception if the "id" parameter is missing and `shouldThrow` is true.
      */
-    static getId(request: Request, shouldThrow: boolean = true): number {
-        let id = BaseController.getParam(request, 'id', null);
+    static getId(request: Request, shouldThrow: boolean = true): string {
+        let id: string = BaseController.getParam(request, 'id', null);
 
         if (id === null) {
             if (shouldThrow)
@@ -280,7 +280,7 @@ export abstract class BaseController extends ControllerInstance {
             return null;
         }
 
-        return parseInt(id, 10);
+        return id;
     }
 
     /**

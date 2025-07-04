@@ -26,6 +26,12 @@ export namespace Activities {
         description: string;
     }
 
+    export interface PersonalInfo {
+        name: string;
+        email: string;
+        phone: string;
+    }
+
     /**
      * Represents a semester, including its start and end dates, associated corps, and additional notes.
      *
@@ -42,5 +48,21 @@ export namespace Activities {
         end: DateTime;
         corpsId: string;
         notes: string;
+        senior?: PersonalInfo;
+        conSenior?: PersonalInfo;
+        subSenior?: PersonalInfo;
+        banker?: PersonalInfo;
+        banking?: {
+            iban: string;
+            bic: string;
+            name: string;
+        };
+        honorableJudges?: {
+            firstName: string;
+            lastName: string;
+            address: string;
+            phone: string;
+            email: string;
+        }[];
     }
 }

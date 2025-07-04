@@ -1,9 +1,261 @@
 <h1>Berichte</h1>
 
 <div class="wrapper">
-  <div class="loading">
-    <div>
-      <msc-loading></msc-loading>
+  @if (loading) {
+    <div class="loading">
+      <div>
+        <msc-loading></msc-loading>
+      </div>
     </div>
-  </div>
+  } @else {
+
+    <mat-tab-group>
+
+      <mat-tab label="Offen">
+        <mat-accordion [multi]="true">
+          <mat-expansion-panel [expanded]="openSemesterReports.length !== 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title><h4>Corpsbestand</h4></mat-panel-title>
+              <mat-panel-description>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="grid-4" *ngFor="let report of openSemesterReports">
+              <h6 class="align-center">Semester:</h6>
+              <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
+              <h6 class="align-center">Fallig am:</h6>
+              <h5  class="align-center">{{report.dueDate.toLocaleString()}}</h5>
+
+              <h5 class="grid-column-span-4">Senioren:</h5>
+              <mat-form-field>
+                <mat-label>Senior</mat-label>
+                <input matInput [(ngModel)]="report.senior">
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Consenior</mat-label>
+                <input matInput [(ngModel)]="report.conSenior">
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Subsenior</mat-label>
+                <input matInput [(ngModel)]="report.subSenior">
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Fuchsmajor</mat-label>
+                <input matInput [(ngModel)]="report.fuchsMajor">
+              </mat-form-field>
+
+              <div class="grid-column-span-4"></div>
+
+              <h5 class="grid-column-span-4">Änderungen:</h5>
+              @for (changeId of report.changes; track changeId; ) {
+                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: getChange(changeId)}"></ng-container>
+              }
+              @for (change of unsubmittedChanges; track i; let i = $index; ) {
+                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: change}"></ng-container>
+              }
+              <div class="grid-column-span-4 align-center">
+                <div>
+                  <a mat-stroked-button (click)="addUnsubmittedChange()">
+                    <mat-icon>add</mat-icon>
+                    Neu
+                  </a>
+                </div>
+              </div>
+
+              <div class="grid-column-span-4"></div>
+
+              <div class="grid-column-span-4 align-right">
+                <div>
+                  <a mat-stroked-button color="primary" (click)="saveSemesterReport(report)">Speichern</a>
+                  &nbsp;
+                  <a mat-stroked-button color="accent" (click)="submitSemesterReport(report)">Einreichen</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="align-center" *ngIf="openSemesterReports.length === 0">
+              <p>Sehr gut, keine Berichte offen.</p>
+            </div>
+
+          </mat-expansion-panel>
+          <mat-expansion-panel  [expanded]="openFencingReports.length !== 0">
+            <mat-expansion-panel-header>
+              <mat-panel-title><h4>Fechtfragebogen</h4></mat-panel-title>
+              <mat-panel-description></mat-panel-description>
+            </mat-expansion-panel-header>
+
+
+            <div class="grid-4" *ngFor="let report of openFencingReports">
+
+              <h6 class="align-center">Semester:</h6>
+              <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
+              <h6 class="align-center">Fallig am:</h6>
+              <h5 class="align-center">{{report.dueDate.toLocaleString()}}</h5>
+
+              <mat-form-field class="grid-column-span-4">
+                <mat-label>Bemerkungen</mat-label>
+                <textarea matInput [(ngModel)]="report.notes"></textarea>
+              </mat-form-field>
+
+              @for (match of report.matches; track i; let i = $index; ) {
+                <div class="grid-column-span-4">
+                  <h5>Partie {{ i + 1 }}</h5>
+                </div>
+
+                <div class="grid-column-span-2 grid-3">
+                  <div class="grid-column-span-2"></div>
+                  <mat-form-field>
+                    <mat-label>Grad</mat-label>
+                    <input matInput [(ngModel)]="match.partyA.level">
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <mat-label>Corps (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyA.corps">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Paukant (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyA.paukant">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Sekundant (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyA.sekundant">
+                  </mat-form-field>
+                </div>
+
+                <div class="grid-column-span-2 grid-3">
+                  <mat-form-field>
+                    <mat-label>Grad</mat-label>
+                    <input matInput [(ngModel)]="match.partyB.level">
+                  </mat-form-field>
+                  <div class="grid-column-span-2"></div>
+
+                  <mat-form-field>
+                    <mat-label>Corps (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyB.corps">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Paukant (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyB.paukant">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Sekundant (optional)</mat-label>
+                    <input matInput [(ngModel)]="match.partyB.sekundant">
+                  </mat-form-field>
+                </div>
+              }
+              <div class="grid-column-span-4 align-center">
+                <div>
+                  <a mat-stroked-button (click)="addMatch(report)">
+                    <mat-icon>add</mat-icon>
+                    Neu
+                  </a>
+                </div>
+              </div>
+
+              <div class="grid-column-span-4"></div>
+
+              <div class="grid-column-span-4 align-right">
+                <div>
+                  <a mat-stroked-button color="primary" (click)="saveFencingReport(report)">Speichern</a>
+                  &nbsp;
+                  <a mat-stroked-button color="accent" (click)="submitFencingReport(report)">Einreichen</a>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="align-center" *ngIf="openFencingReports.length === 0">
+              <p>Sehr gut, keine Berichte offen.</p>
+            </div>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </mat-tab>
+
+      <mat-tab label="Eingereicht">
+
+        <table mat-table [dataSource]="reports" class="mat-elevation-z8">
+
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef> Art</th>
+            <td mat-cell class="align-center" *matCellDef="let element"> {{ element.type }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="semester">
+            <th mat-header-cell *matHeaderCellDef> Semester</th>
+            <td mat-cell class="align-center" *matCellDef="let element"> {{ element.semester?.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="submitDate">
+            <th mat-header-cell *matHeaderCellDef> Abgabedatum</th>
+            <td mat-cell class="align-center" *matCellDef="let element"> {{ element.submitDate.toLocaleString() }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="reportColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: reportColumns;"></tr>
+        </table>
+      </mat-tab>
+
+    </mat-tab-group>
+
+  }
 </div>
+
+
+<ng-template #changeTemplate let-change="change">
+  @if(change){
+    <div class="grid-column-span-4 grid-4 grid-gap-5">
+
+    <mat-form-field>
+      <mat-label>Corps</mat-label>
+      <mat-select [(ngModel)]="change.corpsId">
+        <mat-option *ngFor="let corps of appState.corpsBase" [value]="corps._id">{{ corps.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="change.name">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Art</mat-label>
+      <mat-select [(ngModel)]="change.type">
+        <mat-option [value]="MemberChangeType.ACEPIERT"> Acepiert</mat-option>
+        <mat-option [value]="MemberChangeType.RECEPIERT"> Recepiert</mat-option>
+        <mat-option [value]="MemberChangeType.INAKTIVIERT"> Inaktiviert</mat-option>
+        <mat-option [value]="MemberChangeType.PHILISTRIERT"> Philistriert</mat-option>
+        <mat-option [value]="MemberChangeType.IP"> Dim. I.P.</mat-option>
+        <mat-option [value]="MemberChangeType.CI"> Dim. C.I.</mat-option>
+        <mat-option [value]="MemberChangeType.LEAVE"> Ausgetreten</mat-option>
+        <mat-option [value]="MemberChangeType.RENAME"> Umbenannt</mat-option>
+        <mat-option [value]="MemberChangeType.DIED"> Verstorben</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <mat-label>Datum</mat-label>
+      <input matInput [(ngModel)]="change.date" [matDatepicker]="picker">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field class="grid-column-span-4">
+      <mat-label> Weitere informationen </mat-label>
+      <textarea matInput [(ngModel)]="change.additionalInfo"></textarea>
+    </mat-form-field>
+    <div class="grid-column-span-4 align-center">
+      <div class="align-right">
+        <!--<a mat-stroked-button color="warn" (click)="unsubmittedChanges.splice(i, 1)">
+          <mat-icon>delete</mat-icon>
+        </a>-->
+      </div>
+    </div>
+    <div class="grid-column-span-4">&nbsp;</div>
+
+  </div>
+  }
+</ng-template>

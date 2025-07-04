@@ -212,7 +212,7 @@
 </section>
 
 <!-- Contact -->
-<section *ngIf="corpsInCharge" class="dark">
+<section *ngIf="currentSemester" class="dark">
   <div class='content container kontakt'>
     <h1>
       Kontakt
@@ -221,62 +221,62 @@
       <div>
         <h4>Die Chargierten des MSC</h4>
 
-        <p *ngIf="corpsInCharge.senior">
-          SC-Senior: {{ corpsInCharge.senior.name }}
-          @if (corpsInCharge.senior.phone) {
+        <p *ngIf="currentSemester.senior">
+          SC-Senior: {{ currentSemester.senior.name }}
+          @if (currentSemester.senior.phone) {
             <br>
-            Tel: {{ corpsInCharge.senior.phone }}
+            Tel: {{ currentSemester.senior.phone }}
           }
-          @if (corpsInCharge.senior.email) {
+          @if (currentSemester.senior.email) {
             <br>
-            E-Mail: {{ corpsInCharge.senior.email }}
-          }
-        </p>
-
-        <p *ngIf="corpsInCharge.conSenior">
-          SC-Consenior: {{ corpsInCharge.conSenior.name }}
-          @if (corpsInCharge.conSenior.phone) {
-            <br>
-            Tel: {{ corpsInCharge.conSenior.phone }}
-          }
-          @if (corpsInCharge.conSenior.email) {
-            <br>
-            E-Mail: {{ corpsInCharge.conSenior.email }}
+            E-Mail: {{ currentSemester.senior.email }}
           }
         </p>
 
-        <p *ngIf="corpsInCharge.subSenior">
-          SC-Sekretär: {{ corpsInCharge.subSenior.name }}
-          @if (corpsInCharge.subSenior.phone) {
+        <p *ngIf="currentSemester.conSenior">
+          SC-Consenior: {{ currentSemester.conSenior.name }}
+          @if (currentSemester.conSenior.phone) {
             <br>
-            Tel: {{ corpsInCharge.subSenior.phone }}
+            Tel: {{ currentSemester.conSenior.phone }}
           }
-          @if (corpsInCharge.subSenior.email) {
+          @if (currentSemester.conSenior.email) {
             <br>
-            E-Mail: {{ corpsInCharge.subSenior.email }}
+            E-Mail: {{ currentSemester.conSenior.email }}
           }
         </p>
 
-        <p *ngIf="corpsInCharge.banker">
-          SC-Kassenwart: {{ corpsInCharge.banker.name }}
-          @if (corpsInCharge.banker.phone) {
+        <p *ngIf="currentSemester.subSenior">
+          SC-Sekretär: {{ currentSemester.subSenior.name }}
+          @if (currentSemester.subSenior.phone) {
             <br>
-            Tel: {{ corpsInCharge.banker.phone }}
+            Tel: {{ currentSemester.subSenior.phone }}
           }
-          @if (corpsInCharge.banker.email) {
+          @if (currentSemester.subSenior.email) {
             <br>
-            E-Mail: {{ corpsInCharge.banker.email }}
+            E-Mail: {{ currentSemester.subSenior.email }}
+          }
+        </p>
+
+        <p *ngIf="currentSemester.banker">
+          SC-Kassenwart: {{ currentSemester.banker.name }}
+          @if (currentSemester.banker.phone) {
+            <br>
+            Tel: {{ currentSemester.banker.phone }}
+          }
+          @if (currentSemester.banker.email) {
+            <br>
+            E-Mail: {{ currentSemester.banker.email }}
           }
         </p>
       </div>
       <div>
         <h4>Bankverbindung:</h4>
         <p class="long-text">
-          IBAN: {{ corpsInCharge.banking.iban }}
+          IBAN: {{ currentSemester.banking.iban }}
           <br>
-          BIC: {{ corpsInCharge.banking.bic }}
+          BIC: {{ currentSemester.banking.bic }}
           <br>
-          Bank: {{ corpsInCharge.banking.name }}
+          Bank: {{ currentSemester.banking.name }}
         </p>
       </div>
     </div>
@@ -334,7 +334,7 @@
       <br>
       derzeit präsidierend:
       <br>
-      Corps {{ getCorps(corpsInCharge?.corpsId)?.name }}
+      Corps {{ getCorps(currentSemester?.corpsId)?.name }}
     </p>
     <p class="align-center">
       Programmierung:

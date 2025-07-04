@@ -46,7 +46,7 @@
     <table *ngIf="!selectedCorps" mat-table [dataSource]="appState.corpsBase" class="shadow-6">
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let e">{{ e.position + 1 }}</td>
+        <td mat-cell class="align-center" *matCellDef="let e">{{ e.position + 1 }}</td>
       </ng-container>
 
       <ng-container matColumnDef="colors">
@@ -70,7 +70,7 @@
 
       <ng-container matColumnDef="external">
         <th mat-header-cell *matHeaderCellDef>Angegliedert?</th>
-        <td mat-cell *matCellDef="let e">
+        <td mat-cell class="align-center" *matCellDef="let e">
           <mat-icon *ngIf="e.external">check</mat-icon>
         </td>
       </ng-container>

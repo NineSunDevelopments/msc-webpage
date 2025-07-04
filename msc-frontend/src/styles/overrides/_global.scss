@@ -16,10 +16,12 @@
   font-family: var.$font-family;
   font-weight: var.$font-weight-normal;
 }
+
 document {
   overflow-x: hidden;
   background-color: var.$light-background-color;
 }
+
 html, body {
   overflow-x: hidden;
   width: 100vw;
@@ -29,13 +31,16 @@ html, body {
   font-weight: var.$font-weight-normal;
 
   background-color: var.$light-background-color;
-  color: var.$light-text-color
-
-  /*
+  color: var.$light-text-color /*
   @media print {
     height: auto !important;
   }
   */
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 // Styling for navigations
@@ -173,7 +178,6 @@ ul, ol {
   }
 }
 
-
 section {
   padding: 70px 30px;
   background-color: var.$light-background-color;
@@ -187,12 +191,6 @@ section {
   .content {
     max-width: 1200px;
     margin: 0 auto 75px;
-  }
-}
-
-button {
-  &:not(.mat-accent):not(.mat-primary):not(.mat-primary):not(.mat-warning):not(.mat-error) {
-    background-color: white;
   }
 }
 
@@ -593,4 +591,22 @@ mat-form-field {
     width: 100%;
     background-color: transparentize(var.$dark-background-color, 0.1);
   }
+}
+
+table.mat-mdc-table {
+  background-color: var.$dark-grey;
+
+  th {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  tr.clickable:hover {
+    background-color: rgba(var.$grey, 0.1);
+  }
+}
+
+mat-accordion.mat-accordion .mat-expansion-panel-header,
+div.mat-expansion-panel-content-wrapper {
+  background-color: var.$dark-grey !important;
 }

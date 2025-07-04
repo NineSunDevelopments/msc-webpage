@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 export interface DataServiceOptions {
   link: string;
+  name?: string;
   injector: Injector;
   skipLocalStorage?: boolean;
 }
@@ -63,7 +64,7 @@ export class DataService<T> {
   public constructor(options: DataServiceOptions, private classType?: {new (T) : T}) {
     this.dataLink = options.link;
     this.useLocalStorage = options.skipLocalStorage === undefined || options.skipLocalStorage === false;
-    this.name = camelize(this.dataLink.replace(/\//g, ''));
+    this.name = options.name ?? camelize(this.dataLink.replace(/\//g, ''));
 
     this.appService = options.injector.get(AppService);
     this.api = options.injector.get(ApiService);
@@ -119,7 +120,7 @@ export class DataService<T> {
   public insert(data: T, skipLoading: boolean = false): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       this.api.post<T>(this.dataLink, data).then(
-        (result: T) => skipLoading ? resolve(result) : this.patch(result) && resolve(result),
+        (result: T) => skipLoading || !this.useLocalStorage ? resolve(result) : this.patch(result) && resolve(result),
       ).catch(error => reject(error));
     });
   }
@@ -183,7 +184,7 @@ export class DataService<T> {
   public update(data: T, skipLoading: boolean = false): Promise<T[]> {
     return new Promise<T[]>((resolve, reject) => {
       this.api.put<T>(this.dataLink, data).then(
-        (result: T) => skipLoading ? resolve([]) : this.load().then(x => resolve(x)),
+        (result: T) => skipLoading || !this.useLocalStorage ? resolve([]) : this.load().then(x => resolve(x)),
       ).catch(error => reject(error));
     });
   }

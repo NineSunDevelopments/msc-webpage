@@ -15,7 +15,6 @@ import Express = require('express');
 import bodyParser = require('body-parser');
 import cors = require('cors');
 import {CorpsService} from "./services/corps.service";
-import {CorpsInChargeService} from "./services/corps-in-charge.service";
 import {ActivitiesSemesterService} from "./services/activities-semester.service";
 import {ActivitiesActivityService} from "./services/activities-activity.service";
 
@@ -56,7 +55,6 @@ export class Application implements Instance {
         private userService: UserService,
         private authorizationService: AuthorizationService,
         private corpsService: CorpsService,
-        private corpsInChargeService: CorpsInChargeService,
         private activitiesSemesterService: ActivitiesSemesterService,
         private activitiesActivityService: ActivitiesActivityService,
     ) {
@@ -85,7 +83,6 @@ export class Application implements Instance {
         await this.authorizationService.init();
         await this.corpsService.init();
         await this.activitiesSemesterService.init();
-        await this.corpsInChargeService.init();
         //await this.activitiesActivityService.init();
 
         Log.info('\t...serving documentation');

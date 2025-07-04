@@ -8,7 +8,8 @@ import {Concrete} from '@shared/types/concrete';
 import {deepCopy, deepEqual} from '@shared/utils/deep-equals';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {Corps} from '@shared/types/corps';
-import {MSCSettings} from '@shared/types/MSCSettings';
+import {Activities} from '@shared/types/activities';
+import {parseObjectForDate} from '@shared/utils/is-date-string';
 
 
 const Constructors: { [key: string]: (value: any) => any } = {}
@@ -19,7 +20,9 @@ export interface IAppState {
   autoUpdateEnabled?: boolean;
   autoUpdateTime?: number;
   corpsBase?: Corps[];
-  corpsInCharge?: MSCSettings.CorpsInCharge;
+  activities?: Activities.Activity[];
+  currentSemester?: Activities.Semester;
+  semesterBase?: Activities.Semester[];
   user?: User;
   userBase?: User[];
   windowSize?: WindowSize;
@@ -27,10 +30,12 @@ export interface IAppState {
 
 export class AppState implements Concrete<IAppState> {
   public api: Api;
-  public autoUpdateEnabled: boolean = true;
-  public autoUpdateTime: number = 5 * 1000;
+  public autoUpdateEnabled: boolean;
+  public autoUpdateTime: number;
   public corpsBase: Corps[];
-  public corpsInCharge: MSCSettings.CorpsInCharge;
+  public activities: Activities.Activity[];
+  public currentSemester: Activities.Semester;
+  public semesterBase: Activities.Semester[];
   public user: User;
   public userBase: User[];
   public windowSize: WindowSize;
@@ -40,15 +45,21 @@ export class AppState implements Concrete<IAppState> {
     let initial: AppState = new AppState();
 
     initial.api = InitialApi;
+    initial.autoUpdateEnabled = true;
+    initial.autoUpdateTime = 5 * 1000;
     initial.user = null;
     initial.userBase = [];
+    initial.corpsBase = [];
+    initial.activities = [];
+    initial.currentSemester = null;
+    initial.semesterBase = [];
     initial.windowSize = WindowSizeService.SetSize(window.innerWidth, window.innerHeight);
 
     return initial;
   }
 
   public static FromJson(source: string): AppState {
-    return AppState.FromMutation(JSON.parse(source));
+    return AppState.FromMutation( parseObjectForDate( JSON.parse(source) ) as IAppState );
   }
 
   public static FromMutation(source: IAppState): AppState {
@@ -209,7 +220,6 @@ export class AppService {
       window.clearTimeout(this.mutationTimeoutHandle);
       this.mutationTimeoutHandle = window.setTimeout(() => {
 
-        const start = Date.now();
         const keys = Object.keys(this.queuedMutation) as (keyof IAppState)[];
         const current = AppState.FromMutation(this.state);
         const mutated = current.clone();

@@ -1,7 +1,15 @@
-import {Controller, ControllerInstance, DataController,} from "../../utilities/controller";
+import {
+    BaseController,
+    Controller,
+    ControllerInstance,
+    DataController,
+    Get,
+    Respond,
+} from "../../utilities/controller";
 import {MIDDLEWARE} from "../../application";
 import {ReportFencingService} from "../../services/report-fencing.service";
 import {Report} from "@shared/types/report";
+import {Request, Response} from "express";
 
 
 @Controller({
@@ -13,6 +21,26 @@ export class ReportFencingController extends DataController<Report.Fencing, Repo
         service: ReportFencingService,
     ) {
         super(service);
+    }
+
+    @Get({ path: "/for-corps/:id" })
+    public async forCorps(request: Request, response: Response) {
+        const id = BaseController.getId(request);
+
+        Respond({
+            response,
+            data: await this.service.findAll("corpsId = ?", [id])
+        });
+    }
+
+    @Get({ path: "/for-semester/:id" })
+    public async forSemester(request: Request, response: Response) {
+        const id = BaseController.getId(request);
+
+        Respond({
+            response,
+            data: await this.service.findAll("semesterId = ?", [id])
+        });
     }
 
 }

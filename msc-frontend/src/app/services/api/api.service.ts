@@ -1,9 +1,15 @@
-import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+  HttpResponse
+} from '@angular/common/http';
 import {Injectable, isDevMode, OnDestroy} from '@angular/core';
-import { MatDialog as MatDialog } from '@angular/material/dialog';
-import { AppService } from '../app/app.service';
-import { APIErrorResponse, Request } from '@app/types/api';
-import { fromEvent, Observable, Subscription } from 'rxjs';
+import {AppService} from '../app/app.service';
+import {APIErrorResponse, Request} from '@app/types/api';
+import {catchError, fromEvent, Observable, ObservableInput, of, Subscription, throwError} from 'rxjs';
 
 
 export interface HttpOptions {
@@ -15,10 +21,12 @@ export interface HttpOptions {
   responseType?: 'json';
   withCredentials?: boolean;
 }
+
 export interface BodyHttpOptions extends HttpOptions {
   observe: 'body';
   responseType: 'json';
 }
+
 export interface ResponseHttpOptions extends HttpOptions {
   observe: 'response';
   responseType: 'json';
@@ -97,17 +105,20 @@ export class ApiService implements OnDestroy {
       this.addToQueue<T>({
           name: this.backendURI + ApiService.SanitizeURL(url),
           // @ts-ignore
-          observable: this.http.post<T>(uri.href, body, options),
+          observable: this.http.post<T>(uri.href, body, options)
+            .pipe(catchError(this.handleError)),
         },
         resolve, reject);
     });
   }
+
   public postObs<T>(url: string, body: T, options?: HttpOptions): Observable<T> {
     const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
 
     options = this.makeHttpOptions(options);
     // @ts-ignore
-    return this.http.post<T>(uri.href, body, options);
+    return this.http.post<T>(uri.href, body, options)
+      .pipe(catchError(this.handleError));
   }
 
 
@@ -120,17 +131,20 @@ export class ApiService implements OnDestroy {
       this.addToQueue<T>({
           name: this.backendURI + ApiService.SanitizeURL(url),
           // @ts-ignore
-          observable: this.http.put<T>(uri.href, body, options.observe === 'body' ? (options as BodyHttpOptions) : (options as ResponseHttpOptions)),
+          observable: this.http.put<T>(uri.href, body, options.observe === 'body' ? (options as BodyHttpOptions) : (options as ResponseHttpOptions))
+            .pipe(catchError(this.handleError)),
         },
         resolve, reject);
     });
   }
+
   public putObs<T>(url: string, body: T, options?: HttpOptions): Observable<T> {
     const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
 
     options = this.makeHttpOptions(options);
     // @ts-ignore
-    return this.http.put<T>(uri.href, body, options);
+    return this.http.put<T>(uri.href, body, options)
+      .pipe(catchError(this.handleError));
   }
 
 
@@ -143,16 +157,19 @@ export class ApiService implements OnDestroy {
       this.addToQueue<T>({
           name: this.backendURI + ApiService.SanitizeURL(url),
           // @ts-ignore
-          observable: this.http.get<T>(uri.href, options),
+          observable: this.http.get<T>(uri.href, options)
+            .pipe(catchError(this.handleError)),
         },
         resolve, reject);
     });
   }
+
   public getObs<T>(url: string, options?: HttpOptions): Observable<T> {
-      const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
-      options = this.makeHttpOptions(options);
+    const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
+    options = this.makeHttpOptions(options);
     // @ts-ignore
-      return this.http.get<T>(uri.href, options);
+    return this.http.get<T>(uri.href, options)
+      .pipe(catchError(this.handleError));
   }
 
 
@@ -165,17 +182,20 @@ export class ApiService implements OnDestroy {
       this.addToQueue<boolean>({
           name: this.backendURI + ApiService.SanitizeURL(url),
           // @ts-ignore
-          observable: this.http.delete<boolean>(uri.href, options),
+          observable: this.http.delete<boolean>(uri.href, options)
+            .pipe(catchError(this.handleError)),
         },
         resolve, reject);
     });
   }
+
   public deleteObs<T>(url: string, options?: HttpOptions): Observable<boolean> {
     const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
 
     options = this.makeHttpOptions(options);
     // @ts-ignore
-    return this.http.delete<boolean>(uri.href, options);
+    return this.http.delete<boolean>(uri.href, options)
+      .pipe(catchError(this.handleError));
   }
 
   public popup(url: string, options?: string) {
@@ -183,10 +203,24 @@ export class ApiService implements OnDestroy {
     window.open(uri.href, options);
   }
 
+  public handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(`Backend returned code ${error.status}. Message:`, error.error);
+    }
+
+    // Return error to continue with code execution and let components/services handle the error
+    return of(error);
+  }
+
 
   private addToQueue<T>(request: Request<T>, resolve: (value: T) => void, reject: (error: HttpErrorResponse) => void) {
-    request.resolvers = request.resolvers && request.resolvers.length !== 0 ? request.resolvers : [ resolve ];
-    request.rejecters = request.rejecters && request.rejecters.length !== 0 ? request.rejecters : [ reject ];
+    request.resolvers = request.resolvers && request.resolvers.length !== 0 ? request.resolvers : [resolve];
+    request.rejecters = request.rejecters && request.rejecters.length !== 0 ? request.rejecters : [reject];
 
     let replaced = false;
 
@@ -250,13 +284,13 @@ export class ApiService implements OnDestroy {
       fromEvent(window, 'online').subscribe(() => {
         const state = this.appService.state.api;
         state.connection.client = true;
-        this.appService.mutate({ api: state });
+        this.appService.mutate({api: state});
       });
 
       fromEvent(window, 'offline').subscribe(() => {
         const state = this.appService.state.api;
         state.connection.client = false;
-        this.appService.mutate({ api: state });
+        this.appService.mutate({api: state});
       });
     }
   }
