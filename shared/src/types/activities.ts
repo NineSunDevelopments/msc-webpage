@@ -17,11 +17,12 @@ export namespace Activities {
      *
      */
     export interface Activity extends MongoEntity {
+        corpsId: string;
         name: string;
         date: DateTime;
         location: string;
-        semesterId: string;
         official: boolean;
+        public: boolean;
         attendanceRequired: boolean;
         description: string;
     }

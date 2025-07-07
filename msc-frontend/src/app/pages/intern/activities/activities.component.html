@@ -1,9 +1,129 @@
 <h1>Veranstaltungen</h1>
 
 <div class="wrapper">
-  <div class="loading">
+  <div *ngIf="loading" class="loading">
     <div>
       <msc-loading></msc-loading>
     </div>
   </div>
+
+  <table mat-table [dataSource]="activities">
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef style="width: 150px"> Datum </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-form-field>
+            <input matInput [(ngModel)]="element.date" [matDatepicker]="picker">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        } @else {
+          {{ element.date.toLocaleString() }}
+        }
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="official">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Offiziell </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-checkbox [(ngModel)]="element.official"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="element.official">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="public">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Öffentlich </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-checkbox [(ngModel)]="element.public"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="element.public">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="attendanceRequired">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Pflicht </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+            <mat-checkbox [(ngModel)]="element.attendanceRequired"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="element.attendanceRequired">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-form-field>
+            <input matInput [(ngModel)]="element.name">
+          </mat-form-field>
+        } @else {
+          {{ element.name }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Beschreibung </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-form-field>
+            <input matInput [(ngModel)]="element.description">
+          </mat-form-field>
+        } @else {
+          {{ element.description }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="corps">
+      <th mat-header-cell *matHeaderCellDef> Corps </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <msc-corps-selector [label]="null" [(corpsId)]="element.corpsId"></msc-corps-selector>
+        } @else {
+          {{ getCorps(element.corpsId)?.name }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="location">
+      <th mat-header-cell *matHeaderCellDef> Ort </th>
+      <td mat-cell class="align-center" *matCellDef="let element">
+        @if(element.editMode) {
+          <mat-form-field>
+            <input matInput [(ngModel)]="element.location">
+          </mat-form-field>
+        } @else {
+          {{ element.location }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> </th>
+      <td mat-cell class="align-right" *matCellDef="let element; let i = index">
+        @if(canEdit(element)) {
+          @if(element.editMode) {
+            <a mat-stroked-button class="icon-button" color="primary" (click)="save(element)" title="Speichern"><mat-icon>save</mat-icon></a>
+            &nbsp;
+            <a mat-stroked-button class="icon-button" color="warn" (click)="delete(element, i)" title="Löschen"><mat-icon>delete</mat-icon></a>
+          } @else {
+            <a mat-stroked-button class="icon-button" (click)="element.editMode = true"> ... </a>
+          }
+        }
+      </td>
+      <td mat-footer-cell *matFooterCellDef [colSpan]="columns.length" class="align-center">
+        <a *ngIf="canEdit()" mat-stroked-button (click)="addActivity()"><mat-icon>add</mat-icon> hinzufügen</a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columns"></tr>
+    <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="['actions']"></tr>
+  </table>
+
 </div>

@@ -40,14 +40,8 @@
     <p>Start</p><p>{{semester.start.toLocaleString()}}</p>
     <p>Ende</p><p>{{semester.end.toLocaleString()}}</p>
   </div>
-  <mat-form-field>
-    <mat-label>Präsidierendes Corps</mat-label>
-    <mat-select [(ngModel)]="semester.corpsId">
-      <mat-option [disabled]="readonly"
-                  *ngFor="let corps of appState.corpsBase"
-                  [value]="corps._id">{{corps.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
+
+  <msc-corps-selector [label]="'Präsidierendes Corps'" [(corpsId)]="semester.corpsId"></msc-corps-selector>
 
   @if(semester.corpsId) {
     <div class="grid-4">

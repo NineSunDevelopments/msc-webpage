@@ -29,10 +29,9 @@ export class ApplicationComponent extends SmartComponent {
     apiService.initialize();
   }
 
-  public onInit() {
-  }
-
   public async afterDataChange(state: IAppState) {
+    this.loading = true;
+
     if (!!state.user && !this.initialized) {
       await Promise.all([
         this.corpsService.load(),
@@ -47,5 +46,7 @@ export class ApplicationComponent extends SmartComponent {
     if (!state.user) {
       this.initialized = false;
     }
+
+    this.loading = false;
   }
 }

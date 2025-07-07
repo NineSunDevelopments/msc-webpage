@@ -21,6 +21,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import MemberChangeType = Report.MemberChangeType;
 import {Corps} from '@shared/types/corps';
+import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 
 interface ReportListEntry {
   type: string;
@@ -45,7 +46,8 @@ interface ReportListEntry {
     MatSelectModule,
     MatDatepickerModule,
     NgTemplateOutlet,
-    NgIf
+    NgIf,
+    CorpsSelectorComponent
   ],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss'

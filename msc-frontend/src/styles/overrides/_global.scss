@@ -599,6 +599,15 @@ table.mat-mdc-table {
   th {
     font-weight: bold;
     text-align: center;
+    text-overflow-ellipsis: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  td {
+    text-overflow-ellipsis: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   tr.clickable:hover {
@@ -609,4 +618,11 @@ table.mat-mdc-table {
 mat-accordion.mat-accordion .mat-expansion-panel-header,
 div.mat-expansion-panel-content-wrapper {
   background-color: var.$dark-grey !important;
+}
+
+.icon-button {
+  mat-icon.mat-icon {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
 }

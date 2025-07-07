@@ -176,7 +176,6 @@
       <mat-tab label="Eingereicht">
 
         <table mat-table [dataSource]="reports" class="mat-elevation-z8">
-
           <ng-container matColumnDef="type">
             <th mat-header-cell *matHeaderCellDef> Art</th>
             <td mat-cell class="align-center" *matCellDef="let element"> {{ element.type }}</td>
@@ -207,13 +206,7 @@
   @if(change){
     <div class="grid-column-span-4 grid-4 grid-gap-5">
 
-    <mat-form-field>
-      <mat-label>Corps</mat-label>
-      <mat-select [(ngModel)]="change.corpsId">
-        <mat-option *ngFor="let corps of appState.corpsBase" [value]="corps._id">{{ corps.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <msc-corps-selector [(corpsId)]="change.corpsId"></msc-corps-selector>
 
     <mat-form-field>
       <mat-label>Name</mat-label>

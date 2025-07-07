@@ -27,25 +27,22 @@ export abstract class SmartComponent implements OnInit, OnDestroy {
     this.route = this.i.get(ActivatedRoute);
     this.dialog = this.i.get(MatDialog);
     this.appService = this.i.get(AppService);
-  }
-
-  public ngOnInit(): void {
-
-    this.onInit();
-    this.onInitAsync().then();
 
     this.subs.add(this.appService.observable.subscribe((state) => {
       this.i.get(NgZone).run(() => {
         if (!deepEqual(state, this.appState)) {
           this.onDataChange(state, this.appState);
 
-          window.setTimeout(() => {
-            this.appState = state;
-            this._afterDataChange(state);
-          });
+          this.appState = state;
+          this._afterDataChange(state);
         }
       });
     }));
+  }
+
+  public ngOnInit(): void {
+    this.onInit();
+    this.onInitAsync().then();
   }
 
   public waitForUser(cb: (user: User) => void) {

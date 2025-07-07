@@ -1,0 +1,7 @@
+<mat-form-field *ngIf="appState.corpsBase && corps" >
+  <mat-label *ngIf="!!label && label !== ''">{{label}}</mat-label>
+  <mat-select [ngModel]="corps"
+              (ngModelChange)="selectCorps($event)">
+    <mat-option *ngFor="let c of appState.corpsBase" [value]="c">{{ c.name }}</mat-option>
+  </mat-select>
+</mat-form-field>

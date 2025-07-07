@@ -5,6 +5,7 @@ import { SHA256 } from 'crypto-js';
 import { camelize } from '@shared/utils/camelize';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import {MongoEntity} from '@shared/types/mongo-entity';
 
 export interface DataServiceOptions {
   link: string;
@@ -34,7 +35,7 @@ export interface Cache<T> {
  *    }
  * }
  */
-export class DataService<T> {
+export class DataService<T extends MongoEntity> {
 
   public appService: AppService;
   public api: ApiService;
@@ -141,12 +142,12 @@ export class DataService<T> {
       const oldState = this.appService.state[this.name + 'Base'] ?? [];
 
       // @ts-ignore
-      const newState = this.appService.state[this.name + 'Base']?.filter(s => s['id'] !== data['id']) ?? [];
+      const newState = this.appService.state[this.name + 'Base']?.filter(s => s._id !== data._id) ?? [];
 
       resolve(this.mutate(newState));
 
       // @ts-ignore
-      this.api.delete(this.dataLink + `/${ data['id'] }`).then(
+      this.api.delete(this.dataLink + `/${ data._id }`).then(
         _ => resolve(newState))
         .catch(error => {
             this.mutate(oldState);
@@ -162,10 +163,10 @@ export class DataService<T> {
 
       const oldState = this.appService.get<T[]>(identifier) ?? [];
       const newState = (oldState.length > 0 ?  oldState : [])
-        .filter((s: any) => batch.find((x: any) => x.id === s.id) === undefined) ?? [];
+        .filter((s: any) => batch.find((x: any) => x._id === s._id) === undefined) ?? [];
 
       // @ts-ignore
-      this.api.post(this.dataLink + `/delete-batch`, batch.map(x => x.id)).then(
+      this.api.post(this.dataLink + `/delete-batch`, batch.map(x => x._id)).then(
         _ => this.load().then(x => resolve(this.mutate(x))))
         .catch(error => {
             reject(error);
@@ -218,7 +219,7 @@ export class DataService<T> {
     // @ts-ignore
     const state = this.appService?.state[this.name + 'Base']?.map((s: T) => {
       // @ts-ignore
-      if (s['id'] === entry['id']) {
+      if (s._id === entry._id) {
         match = true;
         return entry;
       } else {
@@ -254,7 +255,7 @@ export class DataService<T> {
 
       state = state.map((s: T) => {
         // @ts-ignore
-        if (s['id'] === entry['id']) {
+        if (s._id === entry._id) {
           match = true;
           return entry;
         } else {
@@ -316,7 +317,7 @@ export class DataService<T> {
    * @see DataService
    *
    * @example
-   * service.find(x => x.id > 10); // returns all elements with id > 10
+   * service.find(x => x._id > 10); // returns all elements with id > 10
    */
   public find(query: (x: T) => boolean, set: T[] = []): T[] {
     const state = this.appService?.state[this.name + 'Base'] ?? [];
@@ -346,7 +347,7 @@ export class DataService<T> {
    * @see DataService.find
    *
    * @example
-   * service.findOne(x => x.id === 1); // returns the element with id = 1
+   * service.findOne(x => x._id === 1); // returns the element with id = 1
    */
   public findOne(query: (x: T) => boolean, set: T[] = null): T {
     const result = this.find(query, set);

@@ -16,6 +16,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {SemesterSettingsService} from '@app/services/activities/semester-settings/semester-settings.service';
 import {MatInput} from '@angular/material/input';
 import Semester = Activities.Semester;
+import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 
 @Component({
   selector: 'msc-administration',
@@ -33,6 +34,7 @@ import Semester = Activities.Semester;
     NgTemplateOutlet,
     NgForOf,
     MatInput,
+    CorpsSelectorComponent,
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'

@@ -46,7 +46,7 @@ export class InternComponent extends SmartComponent {
     super(injector);
   }
 
-  public afterDataChange(state: IAppState) {
+  public onInit() {
     this.loading = false;
   }
 
@@ -59,6 +59,6 @@ export class InternComponent extends SmartComponent {
       return;
 
     this.loading = true;
-    this.authService.login(this.loginForm.email, this.loginForm.password, true);
+    this.authService.login(this.loginForm.email, this.loginForm.password, true).then(() => this.loading = false);
   }
 }
