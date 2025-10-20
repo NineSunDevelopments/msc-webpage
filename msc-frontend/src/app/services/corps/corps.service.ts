@@ -19,6 +19,9 @@ export class CorpsService extends DataService<Corps> {
   public isInCharge(corps: Corps): boolean {
     const currentSemester = this.appService.state.currentSemester;
 
+    if (this.appService.state.user.isSuperAdmin)
+      return true;
+
     if (!corps || !currentSemester)
       return false;
 

@@ -32,12 +32,13 @@ export class ApplicationComponent extends SmartComponent {
   public async afterDataChange(state: IAppState) {
     this.loading = true;
 
+    await Promise.all([
+      this.corpsService.load(),
+      this.semesterSettingsService.loadCurrent(),
+      this.semesterSettingsService.load()
+    ]);
+
     if (!!state.user && !this.initialized) {
-      await Promise.all([
-        this.corpsService.load(),
-        this.semesterSettingsService.loadCurrent(),
-        this.semesterSettingsService.load()
-      ]);
 
       this.initialized = true;
       this.loading = false;

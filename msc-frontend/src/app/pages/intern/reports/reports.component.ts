@@ -1,7 +1,6 @@
 import {Component, Injector} from '@angular/core';
 import {LoadingComponent} from '@app/components/loading/loading.component';
 import {SmartComponent} from '@app/components/smart-component';
-import {IAppState} from '@app/services/app/app.service';
 import {MatTab, MatTabGroup} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
@@ -19,11 +18,10 @@ import {MatAnchor} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import MemberChangeType = Report.MemberChangeType;
 import {Corps} from '@shared/types/corps';
-import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.component';
 import {ConfirmationDialogConfig} from '@dialogs/constants/dialog-configs';
+import MemberChangeType = Report.MemberChangeType;
 
 interface ReportListEntry {
   type: string;
@@ -77,13 +75,25 @@ export class ReportsComponent extends SmartComponent {
     super(injector);
   }
 
-  public async afterDataChange(state: IAppState) {
-    if (!state.user?.corpsId)
+  public afterDataChange() {
+    this.loadData().then();
+  }
+
+  public async loadData() {
+    if (!this.appState.user?.corpsId)
       return;
 
-    const corps = state.corpsBase.find(x => x._id === state.user.corpsId);
+    const corps = this.appState.corpsBase.find(x => x._id === this.appState.user.corpsId);
     if (!corps)
-      return
+      return;
+
+    this.semesterReports = [];
+    this.fencingReports = [];
+    this.changes = [];
+    this.unsubmittedChanges = [];
+    this.reports = [];
+    this.openSemesterReports = [];
+    this.openFencingReports = [];
 
     [this.semesterReports, this.fencingReports, this.changes] = await Promise.all([
       this.reportSemesterService.loadForCorps(corps),
@@ -91,11 +101,10 @@ export class ReportsComponent extends SmartComponent {
       this.reportChangeService.loadForCorps(corps)
     ]);
 
-    console.log(state.semesterBase.length)
     const inserts: Promise<any>[] = [];
 
     if (this.semesterReports.length === 0) {
-      state.semesterBase.map(semester => {
+      this.appState.semesterBase.map(semester => {
         inserts.push(this.reportSemesterService.insert({
           changes: [],
           conSenior: "",
@@ -114,10 +123,10 @@ export class ReportsComponent extends SmartComponent {
     }
 
     if (this.fencingReports.length === 0) {
-      state.semesterBase.forEach(semester => {
+      this.appState.semesterBase.forEach(semester => {
         console.log("Insert")
         inserts.push(this.reportFencingService.insert({
-          corpsId: state.user.corpsId,
+          corpsId: this.appState.user.corpsId,
           createdAt: DateTime.now(),
           deleted: false,
           dueDate: semester.end,
@@ -167,6 +176,13 @@ export class ReportsComponent extends SmartComponent {
     this.loading = false;
   }
 
+  public removeChange(change: Report.Change, report: Report.Semester) {
+    this.reportChangeService.delete(change).then(() => {
+      this.changes = this.changes.filter(x => x._id !== change._id);
+    });
+    report.changes = report.changes.filter(x => x !== change._id);
+  }
+
   public getSemester(semesterId: string): Activities.Semester {
     return this.appState.semesterBase.find(x => x._id === semesterId);
   }
@@ -196,19 +212,18 @@ export class ReportsComponent extends SmartComponent {
     report.updatedAt = DateTime.now();
     report.changes = changes.map(x => x._id);
 
-    return this.reportSemesterService.update(report).then();
+    return this.reportSemesterService.update(report).then(() => this.loadData().then());
   }
 
   public submitSemesterReport(report: Report.Semester) {
-    this.dialog.open(ConfirmationComponent,{
+    this.dialog.open(ConfirmationComponent, {
       ...ConfirmationDialogConfig,
       data: {
         message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
         closeX: true,
         confirm: () => {
           report.submitDate = DateTime.now();
-          this.saveSemesterReport(report).then(() =>
-            this.reportSemesterService.load().then(() => window.location.reload()));
+          this.saveSemesterReport(report).then();
         }
       }
     })
@@ -216,19 +231,18 @@ export class ReportsComponent extends SmartComponent {
 
   public saveFencingReport(report: Report.Fencing) {
     report.updatedAt = DateTime.now();
-    return this.reportFencingService.update(report).then();
+    return this.reportFencingService.update(report).then(() => this.loadData().then());
   }
 
   public submitFencingReport(report: Report.Fencing) {
-    this.dialog.open(ConfirmationComponent,{
+    this.dialog.open(ConfirmationComponent, {
       ...ConfirmationDialogConfig,
       data: {
         message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
         closeX: true,
         confirm: () => {
           report.submitDate = DateTime.now();
-          this.saveFencingReport(report).then(() =>
-            this.reportFencingService.load().then(() => window.location.reload()));
+          this.saveFencingReport(report).then();
         }
       }
     })

@@ -191,8 +191,12 @@
 </ng-template>
 
 <ng-template #corpsListElement let-corps="corps" let-corpsAccount="corpsAccount">
-  <div class="corps-list__entry grid-2">
+  <div class="corps-list__entry">
+    <div class="corps-list__colors">
+      <msc-colors [corps]="corps" [vertical]="true"></msc-colors>
+    </div>
     <div class="corps-list__name">{{ corps.name }}</div>
+    <div class="corps-list__mail">{{ corpsAccount?.email }}</div>
     <div class="corps-list__actions">
       @if(!corpsAccount) {
         <button mat-stroked-button (click)="createCorpsAccount(corps)">Account anlegen</button>

@@ -23,7 +23,6 @@ import {NgIf} from '@angular/common';
     MatInput,
     FormsModule,
     MatFormFieldModule,
-    NgIf,
   ]
 })
 export class AddCorpsAccountDialogComponent {

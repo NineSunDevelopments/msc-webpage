@@ -20,7 +20,8 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
 
-            <div class="grid-4" *ngFor="let report of openSemesterReports">
+            @for(report of openSemesterReports; track report._id) {
+              <div class="grid-4">
               <h6 class="align-center">Semester:</h6>
               <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
               <h6 class="align-center">Fallig am:</h6>
@@ -47,11 +48,11 @@
               <div class="grid-column-span-4"></div>
 
               <h5 class="grid-column-span-4">Änderungen:</h5>
-              @for (changeId of report.changes; track changeId; ) {
-                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: getChange(changeId)}"></ng-container>
+              @for (changeId of report.changes; track changeId; let index = $index; ) {
+                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: getChange(changeId), index:index }"></ng-container>
               }
-              @for (change of unsubmittedChanges; track i; let i = $index; ) {
-                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: change}"></ng-container>
+              @for (change of unsubmittedChanges; track index; let index = $index; ) {
+                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: change, index:index}"></ng-container>
               }
               <div class="grid-column-span-4 align-center">
                 <div>
@@ -75,6 +76,7 @@
                 <div style="height: 100px;"></div>
               </div>
             </div>
+            }
 
             <div class="align-center" *ngIf="openSemesterReports.length === 0">
               <p>Sehr gut, keine Berichte offen.</p>
@@ -207,7 +209,7 @@
 </div>
 
 
-<ng-template #changeTemplate let-change="change">
+<ng-template #changeTemplate let-change="change" let-index="index" let-report="report">
   @if(change){
     <div class="grid-column-span-4 grid-3 grid-gap-5">
 
@@ -245,9 +247,15 @@
     </mat-form-field>
     <div class="grid-column-span-4 align-center">
       <div class="align-right">
-        <!--<a mat-stroked-button color="warn" (click)="unsubmittedChanges.splice(i, 1)">
-          <mat-icon>delete</mat-icon>
-        </a>-->
+        @if (change._id) {
+          <a mat-stroked-button color="warn" (click)="removeChange(change, report)">
+            <mat-icon>delete</mat-icon></a>
+        } @else {
+          <a mat-stroked-button color="warn" (click)="unsubmittedChanges.splice(index, 1)">
+            <mat-icon>delete</mat-icon>
+          </a>
+        }
+
       </div>
     </div>
     <div class="grid-column-span-3">&nbsp;</div>

@@ -1,7 +1,7 @@
 <dialog-wrapper [closeX]="true" [dialogRef]="dialogRef">
   <ng-template #body>
     <div class="body">
-      <p>Welche E-Mail Adresse soll eingeladen werden?</p>
+      <p>Welche E-Mail Adresse soll für das Corps {{data.corps.name}} eingeladen werden?</p>
       <mat-form-field>
         <input matInput [(ngModel)]="newAccount.email">
       </mat-form-field>

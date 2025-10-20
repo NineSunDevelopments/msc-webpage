@@ -185,7 +185,7 @@ export class DataService<T extends MongoEntity> {
   public update(data: T, skipLoading: boolean = false): Promise<T[]> {
     return new Promise<T[]>((resolve, reject) => {
       this.api.put<T>(this.dataLink, data).then(
-        (result: T) => skipLoading || !this.useLocalStorage ? resolve([]) : this.load().then(x => resolve(x)),
+        (result: T) => skipLoading || !this.useLocalStorage ? resolve([]) : this.load().then(x => resolve(this.mutate(x))),
       ).catch(error => reject(error));
     });
   }

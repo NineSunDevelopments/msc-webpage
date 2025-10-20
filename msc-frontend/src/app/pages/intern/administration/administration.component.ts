@@ -5,7 +5,7 @@ import {Activities} from '@shared/types/activities';
 import {SmartComponent} from '@app/components/smart-component';
 import {IAppState} from '@app/services/app/app.service';
 import {DateTime} from 'luxon';
-import {NgForOf, NgTemplateOutlet} from '@angular/common';
+import {NgIf, NgTemplateOutlet} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
@@ -15,7 +15,6 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {SemesterSettingsService} from '@app/services/activities/semester-settings/semester-settings.service';
 import {MatInput} from '@angular/material/input';
-import Semester = Activities.Semester;
 import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 import {Corps} from '@shared/types/corps';
 import {User} from '@shared/types/user';
@@ -23,6 +22,8 @@ import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.
 import {ConfirmationDialogConfig, DefaultDialogConfig} from '@dialogs/constants/dialog-configs';
 import {UserService} from '@app/services/user/user.service';
 import {AddCorpsAccountDialogComponent} from '@dialogs/dialogs/add-corps-account/add-corps-account.dialog.component';
+import {ColorsComponent} from '@app/components/colors/colors.component';
+import {MatCheckbox} from '@angular/material/checkbox';
 
 @Component({
   selector: 'msc-administration',
@@ -41,14 +42,17 @@ import {AddCorpsAccountDialogComponent} from '@dialogs/dialogs/add-corps-account
     MatInput,
     CorpsSelectorComponent,
     MatButton,
+    ColorsComponent,
+    MatCheckbox,
+    NgIf,
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
 })
 export class AdministrationComponent extends SmartComponent {
-  public pastSemester: Semester[] = [];
-  public nextSemester: Semester = null;
-  public currentSemester: Semester = null;
+  public pastSemester:Activities.Semester[] = [];
+  public nextSemester:Activities.Semester = null;
+  public currentSemester:Activities.Semester = null;
 
   constructor(
     injector: Injector,

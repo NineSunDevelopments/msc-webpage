@@ -13,5 +13,12 @@
 
 .corps-list__entry {
   display: grid;
-  flex-direction: row;
+  height: 35px;
+  align-items: center;
+  grid-template-columns: 150px 1fr 1fr 250px;
+  grid-gap: 25px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
