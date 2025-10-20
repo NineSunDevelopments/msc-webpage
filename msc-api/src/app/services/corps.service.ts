@@ -4,7 +4,7 @@ import {MongoConnector} from "../utilities/mongoConnector";
 import {Corps} from "@shared/types/corps";
 import {DateTime} from "luxon";
 
-const StaticCorpsList: {name: string, image: string, external: boolean}[] = [
+const StaticCorpsList: {name: string, image: string, external: boolean, colors?: string[], url?: string}[] = [
     { name: "suevia", image: "/assets/images/wappen/suevia.jpg", external: false },
     { name: "palatia", image: "/assets/images/wappen/palatia.jpg", external: false },
     { name: "bavaria", image: "/assets/images/wappen/bavaria.png", external: false },
@@ -27,6 +27,7 @@ const StaticCorpsList: {name: string, image: string, external: boolean}[] = [
     { name: "franconia_jena", image: "/assets/images/wappen/franconia_jena.jpg", external: true },
     { name: "pomerania", image: "/assets/images/wappen/pomerania.jpg", external: true },
     { name: "rhaetia", image: "/assets/images/wappen/rhaetia.jpg", external: true },
+    { name: "admins", image: "", external: true, colors: ["#515151", "#151515", "#FF8800", "#151515", "#515151"], url: "https://ninesun.de" },
 ];
 
 @Injectable()
@@ -50,9 +51,9 @@ export class CorpsService extends DataService<Corps, MongoConnector<Corps>> {
 
                     return this.create({
                         coatOfArms: corps.image,
-                        colors: [],
+                        colors: corps.colors ?? [],
                         position: index,
-                        url: "",
+                        url: corps.url ?? "",
                         createdAt: DateTime.now(),
                         deleted: false,
                         external: corps.external,

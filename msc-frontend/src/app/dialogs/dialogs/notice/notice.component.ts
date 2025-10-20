@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { deepEqual } from '@shared/utils/deep-equals';
-import {NgSwitchCase, NgSwitchDefault} from '@angular/common';
+import {NgSwitch, NgSwitchCase, NgSwitchDefault} from '@angular/common';
 import {DialogWrapperComponent} from '@dialogs/components/dialog-wrapper/dialog-wrapper.component';
 
 
@@ -20,7 +20,8 @@ export enum NoticeType {
   imports: [
     NgSwitchDefault,
     NgSwitchCase,
-    DialogWrapperComponent
+    DialogWrapperComponent,
+    NgSwitch
   ]
 })
 export class NoticeComponent {

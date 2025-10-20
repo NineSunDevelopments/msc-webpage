@@ -23,6 +23,7 @@ export interface User extends MongoEntity {
     password: string;
     corpsId: string;
     activated: boolean;
+    isSuperAdmin: boolean;
     token: string;
     salt?: string;
     passwordResetToken?: string;

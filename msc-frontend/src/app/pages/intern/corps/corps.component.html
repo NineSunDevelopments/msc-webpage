@@ -43,7 +43,7 @@
     </div>
 
   } @else {
-    <table *ngIf="!selectedCorps" mat-table [dataSource]="appState.corpsBase" class="shadow-6">
+    <table *ngIf="!selectedCorps" mat-table [dataSource]="getCorpsList()" class="shadow-6">
       <ng-container matColumnDef="position">
         <th mat-header-cell *matHeaderCellDef>ID</th>
         <td mat-cell class="align-center" *matCellDef="let e">{{ e.position + 1 }}</td>

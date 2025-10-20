@@ -1,8 +1,8 @@
-import { HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ApiService } from '@app/services/api/api.service';
-import { AppService } from '@app/services/app/app.service';
-import { User } from '@shared/types/user';
+import {HttpHeaders} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {ApiService} from '@app/services/api/api.service';
+import {AppService} from '@app/services/app/app.service';
+import {User} from '@shared/types/user';
 
 
 @Injectable({
@@ -29,10 +29,11 @@ export class AuthenticationService {
       if (authenticateByMail) delete authRequest.username;
       if (!authenticateByMail) delete authRequest.email;
 
-      return this.apiService.post<User>(this.dataLink, authRequest).then(user => {
-          return this.appService.mutate({ user });
-        },
-      );
+      this.apiService.post<User>(this.dataLink, authRequest)
+        .then(user => {
+          console.log("Setting user")
+          this.appService.mutate({user}).then(() => resolve(user));
+        }).catch(reject);
     });
   }
 
@@ -47,7 +48,7 @@ export class AuthenticationService {
 
   public checkPasswordResetToken(email: string, token: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.apiService.get<boolean>(`${ this.dataLink }/check-password-reset-token/${ email }/${ token }`).then(result => {
+      this.apiService.get<boolean>(`${this.dataLink}/check-password-reset-token/${email}/${token}`).then(result => {
         resolve(result);
       });
     });
@@ -55,7 +56,7 @@ export class AuthenticationService {
 
   public sendRestoreLink(email: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.apiService.get<boolean>(`${ this.dataLink }/request-password-reset/${ email }`).then(result => {
+      this.apiService.get<boolean>(`${this.dataLink}/request-password-reset/${email}`).then(result => {
         resolve(result);
       });
     });
@@ -63,7 +64,7 @@ export class AuthenticationService {
 
   public resetPassword(email: string, token: string, newPassword: string): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      this.apiService.post<boolean>(`${ this.dataLink }/reset-password`, { email, token, newPassword }).then(result => {
+      this.apiService.post<boolean>(`${this.dataLink}/reset-password`, {email, token, newPassword}).then(result => {
         resolve(result);
       });
     });
@@ -75,8 +76,8 @@ export class AuthenticationService {
     headers = headers.append('app-token', appToken);
 
     return new Promise<User>((resolve, reject) => {
-      return this.apiService.post<User>(this.dataLink, {}, { headers }).then(user => {
-        return this.appService.mutate({ user });
+      return this.apiService.post<User>(this.dataLink, {}, {headers}).then(user => {
+        return this.appService.mutate({user});
       });
     });
 

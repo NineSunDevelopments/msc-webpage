@@ -1,4 +1,4 @@
-<mat-form-field *ngIf="appState.corpsBase && corps" >
+<mat-form-field *ngIf="appState.corpsBase" >
   <mat-label *ngIf="!!label && label !== ''">{{label}}</mat-label>
   <mat-select [ngModel]="corps"
               (ngModelChange)="selectCorps($event)">

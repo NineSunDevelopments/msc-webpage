@@ -22,6 +22,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import MemberChangeType = Report.MemberChangeType;
 import {Corps} from '@shared/types/corps';
 import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
+import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.component';
+import {ConfirmationDialogConfig} from '@dialogs/constants/dialog-configs';
 
 interface ReportListEntry {
   type: string;
@@ -46,8 +48,7 @@ interface ReportListEntry {
     MatSelectModule,
     MatDatepickerModule,
     NgTemplateOutlet,
-    NgIf,
-    CorpsSelectorComponent
+    NgIf
   ],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.scss'
@@ -90,36 +91,52 @@ export class ReportsComponent extends SmartComponent {
       this.reportChangeService.loadForCorps(corps)
     ]);
 
+    console.log(state.semesterBase.length)
+    const inserts: Promise<any>[] = [];
+
     if (this.semesterReports.length === 0) {
-      this.semesterReports = [await this.reportSemesterService.insert({
-        changes: [],
-        conSenior: "",
-        corpsId: corps._id,
-        createdAt: DateTime.now(),
-        deleted: false,
-        dueDate: state.currentSemester.end,
-        fuchsMajor: "",
-        semesterId: state.currentSemester._id,
-        senior: "",
-        subSenior: "",
-        submitDate: null,
-        updatedAt: DateTime.now()
-      })];
+      state.semesterBase.map(semester => {
+        inserts.push(this.reportSemesterService.insert({
+          changes: [],
+          conSenior: "",
+          corpsId: corps._id,
+          createdAt: DateTime.now(),
+          deleted: false,
+          dueDate: semester.end,
+          fuchsMajor: "",
+          semesterId: semester._id,
+          senior: "",
+          subSenior: "",
+          submitDate: null,
+          updatedAt: DateTime.now()
+        }));
+      })
     }
 
     if (this.fencingReports.length === 0) {
-      this.fencingReports = [await this.reportFencingService.insert({
-        corpsId: state.user.corpsId,
-        createdAt: DateTime.now(),
-        deleted: false,
-        dueDate: state.currentSemester.end,
-        matches: [],
-        notes: "",
-        semesterId: state.currentSemester._id,
-        submitDate: null,
-        updatedAt: DateTime.now()
-      })];
+      state.semesterBase.forEach(semester => {
+        console.log("Insert")
+        inserts.push(this.reportFencingService.insert({
+          corpsId: state.user.corpsId,
+          createdAt: DateTime.now(),
+          deleted: false,
+          dueDate: semester.end,
+          matches: [],
+          notes: "",
+          semesterId: semester._id,
+          submitDate: null,
+          updatedAt: DateTime.now()
+        }));
+      })
     }
+
+    await Promise.all(inserts).then(async () =>
+      [this.semesterReports, this.fencingReports, this.changes] = await Promise.all([
+        this.reportSemesterService.loadForCorps(corps),
+        this.reportFencingService.loadForCorps(corps),
+        this.reportChangeService.loadForCorps(corps)
+      ])
+    );
 
     this.semesterReports.forEach(report => {
       report.changes = this.changes
@@ -178,22 +195,43 @@ export class ReportsComponent extends SmartComponent {
 
     report.updatedAt = DateTime.now();
     report.changes = changes.map(x => x._id);
-    this.reportSemesterService.update(report).then();
+
+    return this.reportSemesterService.update(report).then();
   }
 
   public submitSemesterReport(report: Report.Semester) {
-    report.submitDate = DateTime.now();
-    this.saveSemesterReport(report).then();
+    this.dialog.open(ConfirmationComponent,{
+      ...ConfirmationDialogConfig,
+      data: {
+        message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
+        closeX: true,
+        confirm: () => {
+          report.submitDate = DateTime.now();
+          this.saveSemesterReport(report).then(() =>
+            this.reportSemesterService.load().then(() => window.location.reload()));
+        }
+      }
+    })
   }
 
   public saveFencingReport(report: Report.Fencing) {
     report.updatedAt = DateTime.now();
-    this.reportFencingService.update(report).then();
+    return this.reportFencingService.update(report).then();
   }
 
   public submitFencingReport(report: Report.Fencing) {
-    report.submitDate = DateTime.now();
-    this.saveFencingReport(report);
+    this.dialog.open(ConfirmationComponent,{
+      ...ConfirmationDialogConfig,
+      data: {
+        message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
+        closeX: true,
+        confirm: () => {
+          report.submitDate = DateTime.now();
+          this.saveFencingReport(report).then(() =>
+            this.reportFencingService.load().then(() => window.location.reload()));
+        }
+      }
+    })
   }
 
   public addMatch(report: Report.Fencing) {

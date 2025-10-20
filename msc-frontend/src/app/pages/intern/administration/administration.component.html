@@ -5,12 +5,12 @@
     <mat-tab label="Semester">
 
       <h5>Aktuelles Semester</h5>
-      @if(currentSemester) {
+      @if (currentSemester) {
         <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: currentSemester}"></ng-container>
       }
 
       <h5>Nächstes Semester</h5>
-      @if(nextSemester) {
+      @if (nextSemester) {
         <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: nextSemester}"></ng-container>
       } @else {
         <a mat-stroked-button (click)="createSemester()">
@@ -21,12 +21,19 @@
 
       <h5>Vergangenes Semester</h5>
       @for (semester of pastSemester; track semester._id) {
-        <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: semester, readonly: true}"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="semesterTemplate; context: {semester: semester, readonly: true}"></ng-container>
       }
 
     </mat-tab>
     <mat-tab label="Corps">
-      <mat-tab-body>Test</mat-tab-body>
+      <div class="corps-list">
+        @for(corps of appState.corpsBase; track corps._id) {
+          <ng-container
+            *ngTemplateOutlet="corpsListElement; context: {corps: corps, corpsAccount: getCorpsAccount(corps)}"></ng-container>
+        }
+      </div>
+
     </mat-tab>
     <mat-tab label="Berichte">
       <mat-tab-body>Test</mat-tab-body>
@@ -35,15 +42,34 @@
 </div>
 
 <ng-template #semesterTemplate let-semester="semester" let-readonly="readonly">
-  <h4>{{semester.name}}</h4>
+  <h4>{{ semester.name }}</h4>
   <div class="grid-4">
-    <p>Start</p><p>{{semester.start.toLocaleString()}}</p>
-    <p>Ende</p><p>{{semester.end.toLocaleString()}}</p>
+    <p>Start</p>
+      @if (!readonly) {
+        <mat-form-field>
+          <input matInput [(ngModel)]="semester.start" [disabled]="readonly" [matDatepicker]="pickerStart">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
+      } @else {
+        <p>{{ semester.start.toLocaleString() }}</p>
+      }
+
+    <p>Ende</p>
+      @if (!readonly) {
+        <mat-form-field>
+          <input matInput [(ngModel)]="semester.end" [disabled]="readonly" [matDatepicker]="pickerEnd">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+      } @else {
+        <p>{{ semester.start.toLocaleString() }}</p>
+      }
   </div>
 
   <msc-corps-selector [label]="'Präsidierendes Corps'" [(corpsId)]="semester.corpsId"></msc-corps-selector>
 
-  @if(semester.corpsId) {
+  @if (semester.corpsId) {
     <div class="grid-4">
       <h5>SC-Senior</h5>
       <h5>SC-Consenior</h5>
@@ -101,9 +127,23 @@
         <input matInput [(ngModel)]="semester.banker.phone" [disabled]="readonly">
       </mat-form-field>
 
+      <h5 class="grid-column-span-4">Bankverbindung</h5>
+      <mat-form-field>
+        <mat-label>Bank</mat-label>
+        <input matInput [(ngModel)]="semester.banking.name" [disabled]="readonly">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>BIC</mat-label>
+        <input matInput [(ngModel)]="semester.banking.bic" [disabled]="readonly">
+      </mat-form-field>
+      <mat-form-field class="grid-column-span-2">
+        <mat-label>IBAN</mat-label>
+        <input matInput [(ngModel)]="semester.banking.iban" [disabled]="readonly">
+      </mat-form-field>
+
       <h5 class="grid-column-span-4">Ehrenrichter</h5>
-      @if(semester.honorableJudges?.length > 0) {
-        @for(judge of semester.honorableJudges; track i; let i = $index) {
+      @if (semester.honorableJudges?.length > 0) {
+        @for (judge of semester.honorableJudges; track i; let i = $index) {
           <mat-form-field>
             <mat-label>Nachname</mat-label>
             <input matInput [(ngModel)]="semester.honorableJudges[i].lastName" [disabled]="readonly">
@@ -127,7 +167,7 @@
         }
       }
 
-      @if(!readonly) {
+      @if (!readonly) {
         <div class="grid-column-span-4 align-center">
           <div>
             <a mat-stroked-button (click)="addHonorableJudge(semester)">
@@ -148,4 +188,17 @@
       }
     </div>
   }
+</ng-template>
+
+<ng-template #corpsListElement let-corps="corps" let-corpsAccount="corpsAccount">
+  <div class="corps-list__entry grid-2">
+    <div class="corps-list__name">{{ corps.name }}</div>
+    <div class="corps-list__actions">
+      @if(!corpsAccount) {
+        <button mat-stroked-button (click)="createCorpsAccount(corps)">Account anlegen</button>
+      } @else {
+        <button mat-stroked-button (click)="resetPassword(corpsAccount)">Passwort zurücksetzen</button>
+      }
+    </div>
+  </div>
 </ng-template>

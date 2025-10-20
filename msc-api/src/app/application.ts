@@ -17,6 +17,8 @@ import cors = require('cors');
 import {CorpsService} from "./services/corps.service";
 import {ActivitiesSemesterService} from "./services/activities-semester.service";
 import {ActivitiesActivityService} from "./services/activities-activity.service";
+import http from "http";
+import {MailService} from "./services/mail.service";
 
 
 /**
@@ -46,12 +48,14 @@ export class Application implements Instance {
 
     private exiting = false;
     private process: NodeJS.Process = process;
+    private server: http.Server;
     private express: ExpressApplication = null;
 
     public constructor(
         private router: Router,
         private mongoConnector: MongoConnector<any>,
         private redisConnector: RedisConnector<any>,
+        private mailService: MailService,
         private userService: UserService,
         private authorizationService: AuthorizationService,
         private corpsService: CorpsService,
@@ -65,12 +69,14 @@ export class Application implements Instance {
      * Initializes the application by setting up the necessary services, middlewares, and controllers.
      *
      * @param {ExpressApplication} express - The Express application instance to be used.
+     * @param {http.Server} server - The HTTP server instance to be used.
      * @param {NodeJS.Process} process - The Node.js process instance for handling system-level events.
      * @return {Promise<void>} A promise that resolves once the application initialization is complete.
      */
-    public async init(express: ExpressApplication, process: NodeJS.Process): Promise<void> {
+    public async init(express: ExpressApplication, server: http.Server, process: NodeJS.Process): Promise<void> {
         Log.info('Starting application');
 
+        this.server = server;
         this.process = process;
         this.express = express;
 
@@ -79,6 +85,7 @@ export class Application implements Instance {
         Log.info('\t...starting services');
         await this.mongoConnector.init();
         await this.redisConnector.init();
+        this.mailService.init();
         await this.userService.init();
         await this.authorizationService.init();
         await this.corpsService.init();
@@ -119,11 +126,8 @@ export class Application implements Instance {
             Log.info('instances gracefully stopped');
         }
 
-        this.process.off('exit', this.onInterrupt.bind(this));
-        this.process.off('SIGINT', this.onInterrupt.bind(this));
-        this.process.off('SIGTERM', this.onInterrupt.bind(this));
-        this.process.off('SIGUSR1', this.onInterrupt.bind(this));
-        this.process.off('SIGUSR2', this.onInterrupt.bind(this));
+        Log.info('stopping server');
+        this.server.close();
 
         Log.info('shutdown complete');
         this.process.exit();

@@ -3,14 +3,14 @@ import {RouterOutlet} from '@angular/router';
 import {SidebarComponent} from '@app/components/sidebar/sidebar.component';
 import {SmartComponent} from '@app/components/smart-component';
 import {NgIf} from '@angular/common';
-import {MatFormField, MatInput, MatInputModule} from '@angular/material/input';
+import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatAnchor, MatButton} from '@angular/material/button';
+import {MatAnchor} from '@angular/material/button';
 import {AuthenticationService} from '@app/services/authentication/authentication.service';
-import {IAppState} from '@app/services/app/app.service';
 import {LoadingComponent} from '@app/components/loading/loading.component';
+import {UserService} from '@app/services/user/user.service';
 
 @Component({
   selector: 'msc-intern',
@@ -41,12 +41,16 @@ export class InternComponent extends SmartComponent {
 
   constructor(
     injector: Injector,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private userService: UserService,
   ) {
     super(injector);
   }
 
-  public onInit() {
+  public async afterDataChange(state: any) {
+    if (this.appState.user) {
+      await this.userService.load();
+    }
     this.loading = false;
   }
 
@@ -59,6 +63,16 @@ export class InternComponent extends SmartComponent {
       return;
 
     this.loading = true;
-    this.authService.login(this.loginForm.email, this.loginForm.password, true).then(() => this.loading = false);
+    this.authService.login(this.loginForm.email, this.loginForm.password, true)
+      .then(async (user) => {
+        if (user) {
+          await this.userService.load();
+        }
+      })
+      .finally(() => {
+        this.loginForm.email = null;
+        this.loginForm.password = null;
+        this.loading = false;
+      });
   }
 }

@@ -7,9 +7,7 @@
   height: 100%;
 
   display: grid;
-  grid-template-rows: 1fr 30px;
-  justify-content: center;
-  align-items: center;
+  grid-template-rows: 1fr 60px;
 
   transition: 0.15s;
   box-shadow: none;
@@ -35,15 +33,9 @@
 }
 
 .label {
-  height: 100%;
   width: 100%;
-
-  svg {
-    height: 100%;
-    width: 100%;
-
-    text {
-      font-size: 50%;
-    }
-  }
+  height: 100%;
+  padding: 10px;
+  text-align: center;
+  font-size: 20px;
 }

@@ -25,7 +25,7 @@ export class IndexComponent extends SmartComponent {
 
   public afterDataChange(state: IAppState) {
     this.currentSemester = state.currentSemester;
-    this.corpsList = state.corpsBase;
+    this.corpsList = state.corpsBase.filter(x => x.name !== "admins");
   }
 
   public getCurrentYear(): string {

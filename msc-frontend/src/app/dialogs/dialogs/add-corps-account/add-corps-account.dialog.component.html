@@ -1,0 +1,19 @@
+<dialog-wrapper [closeX]="true" [dialogRef]="dialogRef">
+  <ng-template #body>
+    <div class="body">
+      <p>Welche E-Mail Adresse soll eingeladen werden?</p>
+      <mat-form-field>
+        <input matInput [(ngModel)]="newAccount.email">
+      </mat-form-field>
+    </div>
+  </ng-template>
+  <ng-template #footer>
+    <button (click)="onCancel()" mat-raised-button>
+       abbrechen
+      </button>
+    &nbsp;
+    <button (click)="onConfirm()" color="accent" mat-raised-button>
+      hinzufügen
+    </button>
+  </ng-template>
+</dialog-wrapper>

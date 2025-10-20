@@ -94,7 +94,7 @@ export class DataService<T extends MongoEntity> {
   public load(forceData?: boolean): Promise<T[]> {
     return new Promise<T[]>((resolve, reject) => {
       this.api.get<T[]>(this.dataLink, {})
-        .then((result: T[]) => resolve(this.mutate(result?.map(this.sanitize))))
+        .then((result: T[]) => resolve(this.mutate((result ?? []).map(this.sanitize))))
         .catch(error => reject(error))
         .finally(() => resolve([]));
     });

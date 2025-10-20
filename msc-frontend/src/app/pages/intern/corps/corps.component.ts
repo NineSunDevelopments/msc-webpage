@@ -51,6 +51,13 @@ export class CorpsComponent extends SmartComponent {
     }));
   }
 
+  public getCorpsList() : Corps[] {
+    return this.appState.corpsBase.filter(x =>
+      this.appState.user.isSuperAdmin ||
+      (x.deleted === false && x.name !== "Admins")
+    );
+  }
+
   public afterDataChange(state: IAppState) {
     if (this.corpsId) {
       this.selectedCorps = deepCopy(state.corpsBase.find(corps => corps._id === this.corpsId));
@@ -84,6 +91,6 @@ export class CorpsComponent extends SmartComponent {
   }
 
   public canEdit(corps: Corps): boolean {
-    return this.appState.user?.corpsId === corps._id;
+    return this.appState.user?.corpsId === corps._id || this.appState.user.isSuperAdmin;
   }
 }

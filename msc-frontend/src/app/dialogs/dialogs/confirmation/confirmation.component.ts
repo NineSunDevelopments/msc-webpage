@@ -2,6 +2,7 @@ import { Component, HostListener, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import {DialogWrapperComponent} from '@dialogs/components/dialog-wrapper/dialog-wrapper.component';
 import {MatButton} from '@angular/material/button';
+import {NgIf} from '@angular/common';
 
 
 @Component({
@@ -10,7 +11,8 @@ import {MatButton} from '@angular/material/button';
   styleUrls: ['./confirmation.component.scss'],
   imports: [
     DialogWrapperComponent,
-    MatButton
+    MatButton,
+    NgIf
   ]
 })
 export class ConfirmationComponent {
@@ -27,7 +29,7 @@ export class ConfirmationComponent {
       cancelBtn?: string;
     },
   ) {
-    data.closeX = data.closeX === undefined ? true : false;
+    data.closeX = data.closeX === undefined ? true : data.closeX;
   }
 
   @HostListener('window:keyup.esc')

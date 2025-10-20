@@ -71,6 +71,9 @@
                   <a mat-stroked-button color="accent" (click)="submitSemesterReport(report)">Einreichen</a>
                 </div>
               </div>
+              <div class="grid-column-span-4">
+                <div style="height: 100px;"></div>
+              </div>
             </div>
 
             <div class="align-center" *ngIf="openSemesterReports.length === 0">
@@ -162,7 +165,9 @@
                   <a mat-stroked-button color="accent" (click)="submitFencingReport(report)">Einreichen</a>
                 </div>
               </div>
-
+              <div class="grid-column-span-4">
+                <div style="height: 100px;"></div>
+              </div>
             </div>
 
             <div class="align-center" *ngIf="openFencingReports.length === 0">
@@ -204,9 +209,7 @@
 
 <ng-template #changeTemplate let-change="change">
   @if(change){
-    <div class="grid-column-span-4 grid-4 grid-gap-5">
-
-    <msc-corps-selector [(corpsId)]="change.corpsId"></msc-corps-selector>
+    <div class="grid-column-span-4 grid-3 grid-gap-5">
 
     <mat-form-field>
       <mat-label>Name</mat-label>
@@ -236,7 +239,7 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
-    <mat-form-field class="grid-column-span-4">
+    <mat-form-field class="grid-column-span-3">
       <mat-label> Weitere informationen </mat-label>
       <textarea matInput [(ngModel)]="change.additionalInfo"></textarea>
     </mat-form-field>
@@ -247,7 +250,7 @@
         </a>-->
       </div>
     </div>
-    <div class="grid-column-span-4">&nbsp;</div>
+    <div class="grid-column-span-3">&nbsp;</div>
 
   </div>
   }

@@ -1,6 +1,6 @@
 import {Component, Injector} from '@angular/core';
 import {MatTabBody, MatTabsModule} from '@angular/material/tabs';
-import {MatAnchor} from '@angular/material/button';
+import {MatAnchor, MatButton} from '@angular/material/button';
 import {Activities} from '@shared/types/activities';
 import {SmartComponent} from '@app/components/smart-component';
 import {IAppState} from '@app/services/app/app.service';
@@ -17,6 +17,12 @@ import {SemesterSettingsService} from '@app/services/activities/semester-setting
 import {MatInput} from '@angular/material/input';
 import Semester = Activities.Semester;
 import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
+import {Corps} from '@shared/types/corps';
+import {User} from '@shared/types/user';
+import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.component';
+import {ConfirmationDialogConfig, DefaultDialogConfig} from '@dialogs/constants/dialog-configs';
+import {UserService} from '@app/services/user/user.service';
+import {AddCorpsAccountDialogComponent} from '@dialogs/dialogs/add-corps-account/add-corps-account.dialog.component';
 
 @Component({
   selector: 'msc-administration',
@@ -32,9 +38,9 @@ import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selec
     MatSelectModule,
     MatDatepickerModule,
     NgTemplateOutlet,
-    NgForOf,
     MatInput,
     CorpsSelectorComponent,
+    MatButton,
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
@@ -47,6 +53,7 @@ export class AdministrationComponent extends SmartComponent {
   constructor(
     injector: Injector,
     private semesterSettingsService: SemesterSettingsService,
+    private userService: UserService,
   ) {
     super(injector);
 
@@ -59,6 +66,13 @@ export class AdministrationComponent extends SmartComponent {
     this.nextSemester = null;
 
     state.semesterBase.forEach(semester => {
+      semester.honorableJudges = semester.honorableJudges ?? [];
+      semester.banker = semester.banker ?? {name: "", email: "", phone: ""};
+      semester.senior = semester.senior ?? {name: "", email: "", phone: ""};
+      semester.conSenior = semester.conSenior ?? {name: "", email: "", phone: ""};
+      semester.subSenior = semester.subSenior ?? {name: "", email: "", phone: ""};
+      semester.banking = semester.banking ?? {iban: "", bic: "", name: ""};
+
       if (semester.end < DateTime.now())
         this.pastSemester.push(semester);
       else if (semester.start > DateTime.now())
@@ -68,7 +82,9 @@ export class AdministrationComponent extends SmartComponent {
     });
 
     if (this.currentSemester === null) {
-      const start = DateTime.fromObject({year: DateTime.now().year, month: 4, day: 1});
+      const start = DateTime.now().month < 9
+        ? DateTime.fromObject({year: DateTime.now().year, month: 4, day: 1})
+        : DateTime.fromObject({year: DateTime.now().year, month: 10, day: 1});
       const end = start.plus({months: 6});
       const name = (start.month < end.month ? 'SS ' + (start.year - 2000) : 'WS ' + (start.year - 2000) + '/' + (start.year - 2000 + 1));
       this.semesterSettingsService.insert({
@@ -87,6 +103,31 @@ export class AdministrationComponent extends SmartComponent {
         updatedAt: DateTime.now()
       });
     }
+  }
+
+  public getCorpsAccount(corps: Corps): User {
+    return this.appState.userBase.find(x => {
+      return x.corpsId == corps._id;
+    });
+  }
+
+  public createCorpsAccount(corps: Corps) {
+    this.dialog.open(AddCorpsAccountDialogComponent, {
+      ...DefaultDialogConfig,
+      data: { corps }
+    });
+  }
+
+  public resetPassword(corpsAccount: User) {
+    this.dialog.open(ConfirmationComponent, {
+      ...ConfirmationDialogConfig,
+      data: {
+        message: "Passwort für den Account '"+ corpsAccount.email +"' wirklich zurücksetzen?",
+        confirm: () => {
+          this.userService.resetPassword(corpsAccount).then();
+        }
+      }
+    })
   }
 
   public createSemester() {

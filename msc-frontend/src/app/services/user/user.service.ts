@@ -15,18 +15,6 @@ export class UserService extends DataService<User> {
     });
   }
 
-  public update(data: User): Promise<User[]> {
-    return super.update(data);
-  };
-
-  public load(): Promise<User[]> {
-    return new Promise<User[]>((resolve, reject) => {
-      super.load()
-        .then(resolve)
-        .catch(reject);
-    });
-  }
-
   public loadSingle(id: string): Promise<User> {
     return new Promise<User>((resolve, reject) => {
       this.api.get<User>(this.dataLink + '/' + id)
@@ -40,5 +28,13 @@ export class UserService extends DataService<User> {
         })
         .catch((error: any) => reject(error));
     });
+  }
+
+  public resetPassword(corpsAccount: User) {
+    return this.api.get(this.dataLink + '/reset-password/' + corpsAccount._id);
+  }
+
+  public createNewCorpsAccount(protoAccount: User) {
+    return this.api.post(this.dataLink + '/create-new-corps-account', protoAccount);
   }
 }

@@ -2,3 +2,16 @@
   box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.12), 0 0 10px 0 rgba(0, 0, 0, 0.14);
   padding: 20px;
 }
+
+
+::ng-deep {
+  .mat-mdc-tab-body, .mat-mdc-tab-body-content {
+    overflow: visible !important;
+  }
+}
+
+
+.corps-list__entry {
+  display: grid;
+  flex-direction: row;
+}

@@ -12,6 +12,7 @@ import {FencingDayController} from "./fencing/fencing-day.controller";
 import {FencingDoctorController} from "./fencing/fencing-doctor.controller";
 import {ReportSemesterController} from "./report/report-semester.controller";
 import {ReportChangeController} from "./report/report-change.controller";
+import {UserController} from "./user/user.controller";
 
 @Injectable()
 export class Router implements Instance {
@@ -22,6 +23,7 @@ export class Router implements Instance {
             // Basic API
             Injector.resolve(IndexController),
             Injector.resolve(AuthController),
+            Injector.resolve(UserController),
             Injector.resolve(ReportFencingController),
 
             // Corpo

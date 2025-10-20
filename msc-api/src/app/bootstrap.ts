@@ -82,22 +82,13 @@ export class Bootstrap {
      * @return {void} This method does not return a value.
      */
     public startApplication(): void {
-        const interfaces = os.networkInterfaces();
-        const keys = Object.keys(interfaces);
         let address = '0.0.0.0';
-
-        /*
-        keys.map(key => interfaces[key]?.map(network => {
-            if (network.family === 'IPv4' && !network.internal) {
-                address = network.address;
-            }
-        }));*/
 
         Log.info(`listening on http://${colors.yellow(address + ':' + this.port)}/`);
         if (process.env.NODE_ENV === 'development') {
             Log.info(`running in development mode`);
         }
-        Injector.resolve<Application>(Application).init(this.expressApplication, process).then();
+        Injector.resolve<Application>(Application).init(this.expressApplication, this.server, process).then();
     }
 
     /**

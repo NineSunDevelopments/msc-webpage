@@ -16,4 +16,12 @@ export class CorpsService extends DataService<Corps> {
     });
   }
 
+  public isInCharge(corps: Corps): boolean {
+    const currentSemester = this.appService.state.currentSemester;
+
+    if (!corps || !currentSemester)
+      return false;
+
+    return currentSemester.corpsId === corps._id || this.appService.state.user.isSuperAdmin;
+  }
 }

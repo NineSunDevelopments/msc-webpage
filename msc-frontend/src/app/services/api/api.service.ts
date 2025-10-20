@@ -108,7 +108,7 @@ export class ApiService implements OnDestroy {
           observable: this.http.post<T>(uri.href, body, options)
             .pipe(catchError(this.handleError)),
         },
-        resolve, reject);
+        resolve, reject, true);
     });
   }
 
@@ -134,7 +134,7 @@ export class ApiService implements OnDestroy {
           observable: this.http.put<T>(uri.href, body, options.observe === 'body' ? (options as BodyHttpOptions) : (options as ResponseHttpOptions))
             .pipe(catchError(this.handleError)),
         },
-        resolve, reject);
+        resolve, reject, true);
     });
   }
 
@@ -185,7 +185,7 @@ export class ApiService implements OnDestroy {
           observable: this.http.delete<boolean>(uri.href, options)
             .pipe(catchError(this.handleError)),
         },
-        resolve, reject);
+        resolve, reject, true);
     });
   }
 
@@ -218,14 +218,14 @@ export class ApiService implements OnDestroy {
   }
 
 
-  private addToQueue<T>(request: Request<T>, resolve: (value: T) => void, reject: (error: HttpErrorResponse) => void) {
+  private addToQueue<T>(request: Request<T>, resolve: (value: T) => void, reject: (error: HttpErrorResponse) => void, noReplace: boolean = false) {
     request.resolvers = request.resolvers && request.resolvers.length !== 0 ? request.resolvers : [resolve];
     request.rejecters = request.rejecters && request.rejecters.length !== 0 ? request.rejecters : [reject];
 
     let replaced = false;
 
     this.queue = this.queue.map(entry => {
-      if (entry.name === request.name) {
+      if (entry.name === request.name && !noReplace) {
         replaced = true;
         request.resolvers = entry.resolvers.concat(resolve);
         request.rejecters = entry.rejecters.concat(reject);
@@ -246,9 +246,19 @@ export class ApiService implements OnDestroy {
         let subscription: Subscription = null;
         try {
           subscription = item.observable.subscribe({
-            next: (data: any) => item.resolvers.map((entry: any) => entry(data)),
-            error: (error: APIErrorResponse) => item.rejecters.map((entry: any) => entry(error)),
-            complete: () => subscription.unsubscribe(),
+            next: (data: any) => {
+              if (data.status === undefined || (200 <= data.status && data.status < 300)) {
+                item.resolvers.map((entry: any) => entry(data))
+              } else {
+                item.rejecters.map((entry: any) => entry(data))
+              }
+            },
+            error: (error: any) => {
+              item.rejecters.map((entry: any) => entry(error))
+            },
+            complete: () =>{
+              subscription.unsubscribe()
+            },
           });
 
           if (!!subscription)
