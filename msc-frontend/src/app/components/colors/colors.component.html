@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="color" *ngIf="corps" [class.vertical]="vertical">
-    @for (color of corps.colors; track color) {
+    @for (color of corps.colors; let index = $index; track index) {
       <div [style.background-color]="color">&nbsp;</div>
     }
   </div>

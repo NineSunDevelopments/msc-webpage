@@ -29,7 +29,6 @@ import {MatCheckbox} from '@angular/material/checkbox';
   selector: 'msc-administration',
   imports: [
     MatTabsModule,
-    MatTabBody,
     MatExpansionModule,
     MatTableModule,
     FormsModule,
@@ -43,9 +42,6 @@ import {MatCheckbox} from '@angular/material/checkbox';
     CorpsSelectorComponent,
     MatButton,
     ColorsComponent,
-    MatCheckbox,
-    NgIf,
-    MatIconButton,
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
@@ -72,15 +68,15 @@ export class AdministrationComponent extends SmartComponent {
 
     state.semesterBase.forEach(semester => {
       semester.honorableJudges = semester.honorableJudges ?? [];
-      semester.banker = semester.banker ?? {name: "", email: "", phone: ""};
-      semester.senior = semester.senior ?? {name: "", email: "", phone: ""};
-      semester.conSenior = semester.conSenior ?? {name: "", email: "", phone: ""};
-      semester.subSenior = semester.subSenior ?? {name: "", email: "", phone: ""};
-      semester.banking = semester.banking ?? {iban: "", bic: "", name: ""};
+      semester.banker = {name: "", email: "", phone: "", ...semester.banker};
+      semester.senior = {name: "", email: "", phone: "", ...semester.senior};
+      semester.conSenior = {name: "", email: "", phone: "", ...semester.conSenior};
+      semester.subSenior = {name: "", email: "", phone: "", ...semester.subSenior};
+      semester.banking = {iban: "", bic: "", name: "", ...semester.banking};
 
-      if (semester.end < DateTime.now())
+      if (semester.end <= DateTime.now())
         this.pastSemester.push(semester);
-      else if (semester.start > DateTime.now())
+      else if (semester.start >= DateTime.now())
         this.nextSemester = semester;
       else
         this.currentSemester = semester;
