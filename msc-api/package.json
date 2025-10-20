@@ -12,6 +12,7 @@
     "release": "standard-version",
     "doc": "npx typedoc --name 'MSC API Docs'",
     "install:prod": "(cd ./dist && npm i --production)",
+    "docker:release": "npm run build && npm run docker:build && npm run docker:publish",
     "docker:build": "set \"DOCKER_BUILDKIT=true\" &&  docker buildx build  -t registry.msc-corps.de/msc/api:local .",
     "docker:run": "docker run -it -p 1951:80 registry.msc-corps.de/msc/api:local",
     "docker:publish": "docker tag registry.msc-corps.de/msc/api:local registry.msc-corps.de/msc/api:latest && docker push registry.msc-corps.de/msc/api:latest",
