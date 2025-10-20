@@ -17,8 +17,19 @@
   align-items: center;
   grid-template-columns: 150px 1fr 1fr 250px;
   grid-gap: 25px;
+  margin: 12.5px;
+
+  ::ng-deep {
+    .mat-icon {
+      margin: 0 !important;
+    }
+  }
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .corps-list__actions {
+    text-align: center;
   }
 }

@@ -29,14 +29,16 @@ export class ApplicationComponent extends SmartComponent {
     apiService.initialize();
   }
 
-  public async afterDataChange(state: IAppState) {
-    this.loading = true;
-
+  public async onInit() {
     await Promise.all([
       this.corpsService.load(),
       this.semesterSettingsService.loadCurrent(),
       this.semesterSettingsService.load()
     ]);
+  }
+
+  public async afterDataChange(state: IAppState) {
+    this.loading = true;
 
     if (!!state.user && !this.initialized) {
 

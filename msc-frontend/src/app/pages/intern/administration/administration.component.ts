@@ -1,6 +1,6 @@
 import {Component, Injector} from '@angular/core';
 import {MatTabBody, MatTabsModule} from '@angular/material/tabs';
-import {MatAnchor, MatButton} from '@angular/material/button';
+import {MatAnchor, MatButton, MatIconButton} from '@angular/material/button';
 import {Activities} from '@shared/types/activities';
 import {SmartComponent} from '@app/components/smart-component';
 import {IAppState} from '@app/services/app/app.service';
@@ -45,6 +45,7 @@ import {MatCheckbox} from '@angular/material/checkbox';
     ColorsComponent,
     MatCheckbox,
     NgIf,
+    MatIconButton,
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
@@ -115,11 +116,26 @@ export class AdministrationComponent extends SmartComponent {
     });
   }
 
-  public createCorpsAccount(corps: Corps) {
+  public createCorpsAccount(corps: Corps, user?: User) {
     this.dialog.open(AddCorpsAccountDialogComponent, {
       ...DefaultDialogConfig,
-      data: { corps }
+      data: {
+        corps,
+        existingUser: user ? user : undefined,
+      }
     });
+  }
+
+  public deleteCorpsAccount(user: User) {
+    this.dialog.open(ConfirmationComponent, {
+      ...ConfirmationDialogConfig,
+      data: {
+        message: "Sicher, dass Sie die Addresse '"+user.email+"' entfernen wollen?",
+        confirm: () => {
+          this.userService.delete(user).then(() => {})
+        }
+      }
+    })
   }
 
   public resetPassword(corpsAccount: User) {

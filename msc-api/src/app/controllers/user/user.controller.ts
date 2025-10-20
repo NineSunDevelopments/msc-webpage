@@ -74,12 +74,19 @@ export class UserController extends DataController<User, UserService> implements
         const protoUser: User = {...request.body};
         const now = DateTime.now();
         const randomPassword = this.service.generatePassword();
-        const newUser = await this.service.create({
+
+        let newUser = {
             ...protoUser,
             password: HashPassword(randomPassword, now),
             createdAt: now,
             updatedAt: now,
-        });
+        };
+
+        if (newUser._id) {
+            newUser = await this.service.update(newUser);
+        } else {
+            newUser = await this.service.create(newUser);
+        }
 
         this.mailService.sendMail({
             to: newUser.email,

@@ -34,12 +34,13 @@ export class AddCorpsAccountDialogComponent {
     private corpsService: CorpsService,
     private userService: UserService,
     @Inject(MAT_DIALOG_DATA) public data: {
-      corps: Corps
+      corps: Corps,
+      existingUser?: User,
     },
   ) {
 
     if (data.corps) {
-      this.newAccount = {
+      this.newAccount = data.existingUser ? data.existingUser : {
         email: null,
         password: null,
         corpsId: data.corps._id,

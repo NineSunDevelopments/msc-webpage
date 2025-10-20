@@ -196,12 +196,15 @@
       <msc-colors [corps]="corps" [vertical]="true"></msc-colors>
     </div>
     <div class="corps-list__name">{{ corps.name }}</div>
-    <div class="corps-list__mail">{{ corpsAccount?.email }}</div>
+    <div class="corps-list__mail">{{ corpsAccount?.email }}
+    </div>
     <div class="corps-list__actions">
       @if(!corpsAccount) {
-        <button mat-stroked-button (click)="createCorpsAccount(corps)">Account anlegen</button>
+        <button mat-stroked-button title="Addresse hinzufügen" (click)="createCorpsAccount(corps)"><mat-icon>add</mat-icon></button>
       } @else {
-        <button mat-stroked-button (click)="resetPassword(corpsAccount)">Passwort zurücksetzen</button>
+        <button mat-stroked-button title="Adresse bearbeiten" (click)="createCorpsAccount(corps, corpsAccount)"><mat-icon>edit</mat-icon></button>
+        <button mat-stroked-button title="Passwort zurücksetzen" (click)="resetPassword(corpsAccount)"><mat-icon>cached</mat-icon></button>
+        <button mat-stroked-button title="Addresse löschen" color="warn" (click)="deleteCorpsAccount(corpsAccount)"><mat-icon>delete</mat-icon></button>
       }
     </div>
   </div>
