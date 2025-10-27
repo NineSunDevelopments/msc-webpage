@@ -20,62 +20,96 @@
               </mat-panel-description>
             </mat-expansion-panel-header>
 
-            @for(report of openSemesterReports; track report._id) {
+            @for (report of openSemesterReports; track report._id) {
               <div class="grid-4">
-              <h6 class="align-center">Semester:</h6>
-              <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
-              <h6 class="align-center">Fallig am:</h6>
-              <h5  class="align-center">{{report.dueDate.toLocaleString()}}</h5>
+                <h6 class="align-center">Semester:</h6>
+                <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
+                <h6 class="align-center">Fallig am:</h6>
+                <h5 class="align-center">{{ report.dueDate.toLocaleString() }}</h5>
 
-              <h5 class="grid-column-span-4">Senioren:</h5>
-              <mat-form-field>
-                <mat-label>Senior</mat-label>
-                <input matInput [(ngModel)]="report.senior">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Consenior</mat-label>
-                <input matInput [(ngModel)]="report.conSenior">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Subsenior</mat-label>
-                <input matInput [(ngModel)]="report.subSenior">
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Fuchsmajor</mat-label>
-                <input matInput [(ngModel)]="report.fuchsMajor">
-              </mat-form-field>
+                <h5 class="grid-column-span-4">Senioren:</h5>
+                <mat-form-field>
+                  <mat-label>Senior</mat-label>
+                  <input matInput [(ngModel)]="report.senior">
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Consenior</mat-label>
+                  <input matInput [(ngModel)]="report.conSenior">
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Subsenior</mat-label>
+                  <input matInput [(ngModel)]="report.subSenior">
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Fuchsmajor</mat-label>
+                  <input matInput [(ngModel)]="report.fuchsMajor">
+                </mat-form-field>
 
-              <div class="grid-column-span-4"></div>
+                <div class="grid-column-span-4"></div>
 
-              <h5 class="grid-column-span-4">Änderungen:</h5>
-              @for (changeId of report.changes; track changeId; let index = $index; ) {
-                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: getChange(changeId), index:index }"></ng-container>
-              }
-              @for (change of unsubmittedChanges; track index; let index = $index; ) {
-                <ng-container *ngTemplateOutlet="changeTemplate; context: {change: change, index:index}"></ng-container>
-              }
-              <div class="grid-column-span-4 align-center">
-                <div>
-                  <a mat-stroked-button (click)="addUnsubmittedChange()">
-                    <mat-icon>add</mat-icon>
-                    Neu
-                  </a>
+
+                <h5 class="grid-column-span-4">Corpsbestand:</h5>
+
+                <div class="grid-column-span-4 grid-3 grid-gap-5">
+                  <mat-form-field>
+                    <mat-label>F</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.f">
+                  </mat-form-field>
+                  <mat-form-field >
+                    <mat-label>CB</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.cb">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>iaCB</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.iaCb">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>CK</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.ck">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>AH</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.ah">
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>AH</mat-label>
+                    <input matInput type="number" min="0" [(ngModel)]="report.corpsInventory.eb">
+                  </mat-form-field>
+                </div>
+
+                <div class="grid-column-span-4"></div>
+
+                <h5 class="grid-column-span-4">Änderungen:</h5>
+                @for (changeId of report.changes; track changeId; let index = $index; ) {
+                  <ng-container
+                    *ngTemplateOutlet="changeTemplate; context: {change: getChange(changeId), index:index }"></ng-container>
+                }
+                @for (change of unsubmittedChanges; track index; let index = $index; ) {
+                  <ng-container
+                    *ngTemplateOutlet="changeTemplate; context: {change: change, index:index}"></ng-container>
+                }
+                <div class="grid-column-span-4 align-center">
+                  <div>
+                    <a mat-stroked-button (click)="addUnsubmittedChange()">
+                      <mat-icon>add</mat-icon>
+                      Neu
+                    </a>
+                  </div>
+                </div>
+
+                <div class="grid-column-span-4"></div>
+
+                <div class="grid-column-span-4 align-right">
+                  <div>
+                    <a mat-stroked-button color="primary" (click)="saveSemesterReport(report)">Speichern</a>
+                    &nbsp;
+                    <a mat-stroked-button color="accent" (click)="submitSemesterReport(report)">Einreichen</a>
+                  </div>
+                </div>
+                <div class="grid-column-span-4">
+                  <div style="height: 100px;"></div>
                 </div>
               </div>
-
-              <div class="grid-column-span-4"></div>
-
-              <div class="grid-column-span-4 align-right">
-                <div>
-                  <a mat-stroked-button color="primary" (click)="saveSemesterReport(report)">Speichern</a>
-                  &nbsp;
-                  <a mat-stroked-button color="accent" (click)="submitSemesterReport(report)">Einreichen</a>
-                </div>
-              </div>
-              <div class="grid-column-span-4">
-                <div style="height: 100px;"></div>
-              </div>
-            </div>
             }
 
             <div class="align-center" *ngIf="openSemesterReports.length === 0">
@@ -83,7 +117,7 @@
             </div>
 
           </mat-expansion-panel>
-          <mat-expansion-panel  [expanded]="openFencingReports.length !== 0">
+          <mat-expansion-panel [expanded]="openFencingReports.length !== 0">
             <mat-expansion-panel-header>
               <mat-panel-title><h4>Fechtfragebogen</h4></mat-panel-title>
               <mat-panel-description></mat-panel-description>
@@ -95,7 +129,7 @@
               <h6 class="align-center">Semester:</h6>
               <h5 class="align-center">{{ getSemester(report.semesterId)?.name }}</h5>
               <h6 class="align-center">Fallig am:</h6>
-              <h5 class="align-center">{{report.dueDate.toLocaleString()}}</h5>
+              <h5 class="align-center">{{ report.dueDate.toLocaleString() }}</h5>
 
               <mat-form-field class="grid-column-span-4">
                 <mat-label>Bemerkungen</mat-label>
@@ -210,56 +244,57 @@
 
 
 <ng-template #changeTemplate let-change="change" let-index="index" let-report="report">
-  @if(change){
+  @if (change) {
     <div class="grid-column-span-4 grid-3 grid-gap-5">
 
-    <mat-form-field>
-      <mat-label>Name</mat-label>
-      <input matInput [(ngModel)]="change.name">
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="change.name">
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label>Art</mat-label>
-      <mat-select [(ngModel)]="change.type">
-        <mat-option [value]="MemberChangeType.ACEPIERT"> Acepiert</mat-option>
-        <mat-option [value]="MemberChangeType.RECEPIERT"> Recepiert</mat-option>
-        <mat-option [value]="MemberChangeType.INAKTIVIERT"> Inaktiviert</mat-option>
-        <mat-option [value]="MemberChangeType.PHILISTRIERT"> Philistriert</mat-option>
-        <mat-option [value]="MemberChangeType.IP"> Dim. I.P.</mat-option>
-        <mat-option [value]="MemberChangeType.CI"> Dim. C.I.</mat-option>
-        <mat-option [value]="MemberChangeType.LEAVE"> Ausgetreten</mat-option>
-        <mat-option [value]="MemberChangeType.RENAME"> Umbenannt</mat-option>
-        <mat-option [value]="MemberChangeType.DIED"> Verstorben</mat-option>
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Art</mat-label>
+        <mat-select [(ngModel)]="change.type">
+          <mat-option [value]="MemberChangeType.ACEPIERT"> Acepiert</mat-option>
+          <mat-option [value]="MemberChangeType.RECEPIERT"> Recepiert</mat-option>
+          <mat-option [value]="MemberChangeType.INAKTIVIERT"> Inaktiviert</mat-option>
+          <mat-option [value]="MemberChangeType.PHILISTRIERT"> Philistriert</mat-option>
+          <mat-option [value]="MemberChangeType.IP"> Dim. I.P.</mat-option>
+          <mat-option [value]="MemberChangeType.CI"> Dim. C.I.</mat-option>
+          <mat-option [value]="MemberChangeType.LEAVE"> Ausgetreten</mat-option>
+          <mat-option [value]="MemberChangeType.RENAME"> Umbenannt</mat-option>
+          <mat-option [value]="MemberChangeType.DIED"> Verstorben</mat-option>
+        </mat-select>
+      </mat-form-field>
 
 
-    <mat-form-field>
-      <mat-label>Datum</mat-label>
-      <input matInput [(ngModel)]="change.date" [matDatepicker]="picker">
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+      <mat-form-field>
+        <mat-label>Datum</mat-label>
+        <input matInput [(ngModel)]="change.date" [matDatepicker]="picker">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
 
-    <mat-form-field class="grid-column-span-3">
-      <mat-label> Weitere informationen </mat-label>
-      <textarea matInput [(ngModel)]="change.additionalInfo"></textarea>
-    </mat-form-field>
-    <div class="grid-column-span-4 align-center">
-      <div class="align-right">
-        @if (change._id) {
-          <a mat-stroked-button color="warn" (click)="removeChange(change, report)">
-            <mat-icon>delete</mat-icon></a>
-        } @else {
-          <a mat-stroked-button color="warn" (click)="unsubmittedChanges.splice(index, 1)">
-            <mat-icon>delete</mat-icon>
-          </a>
-        }
+      <mat-form-field class="grid-column-span-3">
+        <mat-label> Weitere informationen</mat-label>
+        <textarea matInput [(ngModel)]="change.additionalInfo"></textarea>
+      </mat-form-field>
+      <div class="grid-column-span-4 align-center">
+        <div class="align-right">
+          @if (change._id) {
+            <a mat-stroked-button color="warn" (click)="removeChange(change, report)">
+              <mat-icon>delete</mat-icon>
+            </a>
+          } @else {
+            <a mat-stroked-button color="warn" (click)="unsubmittedChanges.splice(index, 1)">
+              <mat-icon>delete</mat-icon>
+            </a>
+          }
 
+        </div>
       </div>
-    </div>
-    <div class="grid-column-span-3">&nbsp;</div>
+      <div class="grid-column-span-3">&nbsp;</div>
 
-  </div>
+    </div>
   }
 </ng-template>

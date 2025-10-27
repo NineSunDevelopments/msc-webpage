@@ -117,7 +117,15 @@ export class ReportsComponent extends SmartComponent {
           senior: "",
           subSenior: "",
           submitDate: null,
-          updatedAt: DateTime.now()
+          updatedAt: DateTime.now(),
+          corpsInventory: {
+            f: 0,
+            cb: 0,
+            iaCb: 0,
+            ck: 0,
+            ah: 0,
+            eb: 0,
+          }
         }));
       })
     }
@@ -209,6 +217,15 @@ export class ReportsComponent extends SmartComponent {
       this.unsubmittedChanges.map(change => this.reportChangeService.insert(change))
     )
 
+    report.corpsInventory = {
+      f: Math.max(0, report.corpsInventory.f),
+      cb: Math.max(0, report.corpsInventory.cb),
+      iaCb: Math.max(0, report.corpsInventory.iaCb),
+      ck: Math.max(0, report.corpsInventory.ck),
+      ah: Math.max(0, report.corpsInventory.ah),
+      eb: Math.max(0, report.corpsInventory.eb),
+    }
+
     report.updatedAt = DateTime.now();
     report.changes = changes.map(x => x._id);
 
@@ -221,9 +238,9 @@ export class ReportsComponent extends SmartComponent {
       data: {
         message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
         closeX: true,
-        confirm: () => {
+        confirm: async () => {
           report.submitDate = DateTime.now();
-          this.saveSemesterReport(report).then();
+          return this.saveSemesterReport(report);
         }
       }
     })
@@ -251,14 +268,14 @@ export class ReportsComponent extends SmartComponent {
   public addMatch(report: Report.Fencing) {
     report.matches.push({
       partyA: {
-        level: '1',
+        level: '',
         corps: this.getCorps(this.appState.user.corpsId).name,
         paukant: '',
         sekundant: '',
       },
       partyB: {
-        level: '1',
-        corps: 'B! Frittonia zu Berlin',
+        level: '',
+        corps: '',
         paukant: '',
         sekundant: '',
       }

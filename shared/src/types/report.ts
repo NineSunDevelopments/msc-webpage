@@ -75,6 +75,14 @@ export namespace Report {
         subSenior: string;
         fuchsMajor: string;
         submitDate: DateTime;
+        corpsInventory: {
+            f: number;
+            cb: number;
+            iaCb: number;
+            ck: number;
+            ah: number;
+            eb: number;
+        }
     }
 
     /**
