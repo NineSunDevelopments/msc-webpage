@@ -1,5 +1,5 @@
 import {Component, Injector} from '@angular/core';
-import {RouterOutlet} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router, RouterOutlet} from '@angular/router';
 import {SidebarComponent} from '@app/components/sidebar/sidebar.component';
 import {SmartComponent} from '@app/components/smart-component';
 import {NgIf} from '@angular/common';
@@ -32,6 +32,7 @@ import {UserService} from '@app/services/user/user.service';
 export class InternComponent extends SmartComponent {
 
   public loading: boolean = true;
+  public sidebarOpen: boolean = false;
 
   public loginForm = {
     email: null,
@@ -45,6 +46,17 @@ export class InternComponent extends SmartComponent {
     private userService: UserService,
   ) {
     super(injector);
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.sidebarOpen = true;
+
+        const viewport = document.querySelector("body").getBoundingClientRect();
+        if (viewport.width < 768) {
+          this.sidebarOpen = false;
+        }
+      }
+    });
   }
 
   public async afterDataChange(state: any) {
@@ -56,6 +68,10 @@ export class InternComponent extends SmartComponent {
 
   public emptyOrNull(str: string): boolean {
     return str === null || str === undefined || str.trim() === '';
+  }
+
+  public toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
   }
 
   public login() {

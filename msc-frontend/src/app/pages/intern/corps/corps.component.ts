@@ -23,7 +23,7 @@ import {MatCheckbox} from '@angular/material/checkbox';
 })
 export class CorpsComponent extends SmartComponent {
 
-  public displayedColumns: (keyof Corps | string)[] = ['position', 'colors', 'name', 'url', 'external', 'actions'];
+  public displayedColumns: (keyof Corps | string)[] = ['colors', 'name', 'url', 'external', 'actions'];
   public corpsId: string = null;
   public selectedCorps: Corps = null;
   public selectedCorpsOriginal: Corps = null;
@@ -46,6 +46,7 @@ export class CorpsComponent extends SmartComponent {
         this.selectedCorpsOriginal = null;
       }
     }));
+
     this.subs.add(this.route.url.subscribe((url) => {
       this.editMode = url.some(x => x.path === "edit");
     }));
@@ -65,6 +66,13 @@ export class CorpsComponent extends SmartComponent {
 
       if (!this.selectedCorps.colors)
         this.selectedCorps.colors = [];
+    }
+
+    const viewport = document.querySelector("body").getBoundingClientRect();
+    if (viewport.width < 768) {
+      this.displayedColumns = ['colors', 'name', 'actions'];
+    } else {
+      this.displayedColumns = ['colors', 'name', 'url', 'external', 'actions'];
     }
 
     this.loading = false;
