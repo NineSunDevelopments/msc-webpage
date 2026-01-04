@@ -9,7 +9,7 @@ import {ReportChangeService} from '@app/services/reports/changes/report-change.s
 import {ReportFencingService} from '@app/services/reports/fencing/report-fencing.service';
 import {DateTime} from 'luxon';
 import {Activities} from '@shared/types/activities';
-import {NgForOf, NgIf, NgTemplateOutlet} from '@angular/common';
+import {NgIf, NgTemplateOutlet} from '@angular/common';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {FormsModule} from '@angular/forms';
 import {MatInput} from '@angular/material/input';
@@ -19,14 +19,13 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {Corps} from '@shared/types/corps';
-import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.component';
-import {ConfirmationDialogConfig} from '@dialogs/constants/dialog-configs';
 import MemberChangeType = Report.MemberChangeType;
 
 interface ReportListEntry {
   type: string;
   semester: Activities.Semester;
   submitDate: DateTime;
+  report: Report.Semester | Report.Fencing;
 }
 
 @Component({
@@ -40,7 +39,6 @@ interface ReportListEntry {
     FormsModule,
     MatFormFieldModule,
     MatInput,
-    NgForOf,
     MatAnchor,
     MatIconModule,
     MatSelectModule,
@@ -57,7 +55,7 @@ export class ReportsComponent extends SmartComponent {
 
   public loading = true;
   public reports: ReportListEntry[] = [];
-  public reportColumns: (keyof ReportListEntry | string)[] = ['type', 'semester', 'submitDate'];
+  public reportColumns: (keyof ReportListEntry | string)[] = ['type', 'semester', 'submitDate', 'actions'];
   public openSemesterReports: Report.Semester[] = [];
   public openFencingReports: Report.Fencing[] = [];
 
@@ -164,7 +162,8 @@ export class ReportsComponent extends SmartComponent {
         this.reports.push({
           semester: this.getSemester(report.semesterId),
           submitDate: report.submitDate ?? null,
-          type: 'Corpsbestand'
+          type: 'Corpsbestand',
+          report
         })
       else
         this.openSemesterReports.push(report);
@@ -175,12 +174,14 @@ export class ReportsComponent extends SmartComponent {
         this.reports.push({
           semester: this.getSemester(report.semesterId),
           submitDate: report.submitDate ?? null,
-          type: 'Fechtfragebogen'
+          type: 'Fechtfragebogen',
+          report
         })
       else
         this.openFencingReports.push(report);
     });
 
+    this.reports = [...this.reports];
     this.loading = false;
   }
 
@@ -213,6 +214,7 @@ export class ReportsComponent extends SmartComponent {
   }
 
   public async saveSemesterReport(report: Report.Semester) {
+    this.loading = true;
     const changes = await Promise.all(
       this.unsubmittedChanges.map(change => this.reportChangeService.insert(change))
     )
@@ -229,40 +231,33 @@ export class ReportsComponent extends SmartComponent {
     report.updatedAt = DateTime.now();
     report.changes = changes.map(x => x._id);
 
-    return this.reportSemesterService.update(report).then(() => this.loadData().then());
+    return this.reportSemesterService.update(report).then(() => this.loadData());
   }
 
   public submitSemesterReport(report: Report.Semester) {
-    this.dialog.open(ConfirmationComponent, {
-      ...ConfirmationDialogConfig,
-      data: {
-        message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
-        closeX: true,
-        confirm: async () => {
-          report.submitDate = DateTime.now();
-          return this.saveSemesterReport(report);
-        }
-      }
-    })
+    report.submitDate = DateTime.now();
+    return this.saveSemesterReport(report);
+  }
+
+  public unSubmitSemesterReport(report: ReportListEntry) {
+    report.report.submitDate = null;
+    return this.saveSemesterReport(report.report as Report.Semester);
   }
 
   public saveFencingReport(report: Report.Fencing) {
+    this.loading = true;
     report.updatedAt = DateTime.now();
-    return this.reportFencingService.update(report).then(() => this.loadData().then());
+    return this.reportFencingService.update(report).then(() => this.loadData());
   }
 
   public submitFencingReport(report: Report.Fencing) {
-    this.dialog.open(ConfirmationComponent, {
-      ...ConfirmationDialogConfig,
-      data: {
-        message: "Den Bericht wirklich einreichen? <br>Dies kann nicht rückgängig gemacht werden.",
-        closeX: true,
-        confirm: () => {
-          report.submitDate = DateTime.now();
-          this.saveFencingReport(report).then();
-        }
-      }
-    })
+    report.submitDate = DateTime.now();
+    return this.saveFencingReport(report).then();
+  }
+
+  public unSubmitFencingReport(report: ReportListEntry) {
+    report.report.submitDate = null;
+    return this.saveFencingReport(report.report as Report.Fencing).then();
   }
 
   public addMatch(report: Report.Fencing) {

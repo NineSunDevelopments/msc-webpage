@@ -1,9 +1,79 @@
-<h1>MSC-Ball</h1>
-
+<h1 class="text-ellipsis">
+  <span>MSC-Ball</span>
+</h1>
 <div class="wrapper">
-  <div class="loading">
-    <div>
-      <msc-loading></msc-loading>
+  @if (loading) {
+    <div class="loading">
+      <div>
+        <msc-loading></msc-loading>
+      </div>
     </div>
-  </div>
+  } @else {
+    <div>
+      <h3>Kartengesuch / -angebot</h3>
+      <div class="grid-4" [formGroup]="entryForm">
+        <mat-form-field>
+          <input matInput [formControlName]="'contactPerson'">
+          <mat-label>Kontaktperson</mat-label>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput [formControlName]="'contactPhone'">
+          <mat-label>Kontakt (Telefon / E-Mail)</mat-label>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="number" [formControlName]="'amount'">
+          <mat-label>Anzahl</mat-label>
+          <mat-hint>Negative Anzahl für ein Gesuch</mat-hint>
+        </mat-form-field>
+
+        @if (entryForm.valid) {
+          <div class="align-center vertical-align-center">
+            @if (!ownEntry) {
+              <button mat-stroked-button (click)="addEntry()">
+                {{ entryForm.get('amount').value <= 0 ? 'Gesuch' : 'Angebot' }}
+                einstellen
+              </button>
+            } @else {
+              <button mat-stroked-button (click)="updateEntry()">
+                {{ entryForm.get('amount').value < 0 ? 'Gesuch' : 'Angebot' }}
+                anpassen
+              </button>
+              &nbsp;
+              <button mat-stroked-button color="warn" (click)="deleteEntry()">
+                {{ entryForm.get('amount').value < 0 ? 'Gesuch' : 'Angebot' }}
+                löschen
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <h3>Aktuelle Angebote und Gesuche <small>{{ getOverview() }}</small></h3>
+  @if (ballTicketEntries.length === 0) {
+    <p>Aktuell gibt es weder Angebote noch Gesuche.</p>
+  } @else {
+    <div class="grid-2">
+      <div>
+        @for (entry of ballTicketOfferings; track entry._id) {
+          <div>
+            <h5>{{ getCorps(entry.corpsId) }}</h5>
+            <p>bietet {{ entry.amount }} Karten</p>
+            <p>Ansprechpartner: {{ entry.contactPerson }} ( {{ entry.contactPhone }} )</p>
+          </div>
+        }
+      </div>
+
+      <div>
+        @for (entry of ballTicketRequests; track entry._id) {
+          <div>
+            <h5>{{ getCorps(entry.corpsId) }}</h5>
+            <p>sucht {{ entry.amount * -1 }} Karten</p>
+            <p>Ansprechpartner: {{ entry.contactPerson }} ( {{ entry.contactPhone }} )</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>

@@ -29,7 +29,7 @@
     </mat-tab>
     <mat-tab label="Corps">
       <div class="corps-list">
-        @for(corps of appState.corpsBase; track corps._id) {
+        @for (corps of appState.corpsBase; track corps._id) {
           <ng-container
             *ngTemplateOutlet="corpsListElement; context: {corps: corps, corpsAccount: getCorpsAccount(corps)}"></ng-container>
         }
@@ -37,11 +37,9 @@
 
     </mat-tab>
 
-    <!-- TODO: Actually implement this...
     <mat-tab label="Berichte">
-      <mat-tab-body>Test</mat-tab-body>
+      <ng-container *ngTemplateOutlet="reportsTemplate; context: {semester: semesterReports}"></ng-container>
     </mat-tab>
-    -->
   </mat-tab-group>
 </div>
 
@@ -49,26 +47,26 @@
   <h4>{{ semester.name }}</h4>
   <div class="grid-4">
     <p>Start</p>
-      @if (!readonly) {
-        <mat-form-field>
-          <input matInput [(ngModel)]="semester.start" [disabled]="readonly" [matDatepicker]="pickerStart">
-          <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
-          <mat-datepicker #pickerStart></mat-datepicker>
-        </mat-form-field>
-      } @else {
-        <p>{{ semester.start.toLocaleString() }}</p>
-      }
+    @if (!readonly) {
+      <mat-form-field>
+        <input matInput [(ngModel)]="semester.start" [disabled]="readonly" [matDatepicker]="pickerStart">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerStart></mat-datepicker>
+      </mat-form-field>
+    } @else {
+      <p>{{ semester.start.toLocaleString() }}</p>
+    }
 
     <p>Ende</p>
-      @if (!readonly) {
-        <mat-form-field>
-          <input matInput [(ngModel)]="semester.end" [disabled]="readonly" [matDatepicker]="pickerEnd">
-          <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-          <mat-datepicker #pickerEnd></mat-datepicker>
-        </mat-form-field>
-      } @else {
-        <p>{{ semester.start.toLocaleString() }}</p>
-      }
+    @if (!readonly) {
+      <mat-form-field>
+        <input matInput [(ngModel)]="semester.end" [disabled]="readonly" [matDatepicker]="pickerEnd">
+        <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerEnd></mat-datepicker>
+      </mat-form-field>
+    } @else {
+      <p>{{ semester.start.toLocaleString() }}</p>
+    }
   </div>
 
   <msc-corps-selector [label]="'Präsidierendes Corps'" [(corpsId)]="semester.corpsId"></msc-corps-selector>
@@ -203,13 +201,85 @@
     <div class="corps-list__mail">{{ corpsAccount?.email }}
     </div>
     <div class="corps-list__actions">
-      @if(!corpsAccount) {
-        <button mat-stroked-button title="Addresse hinzufügen" (click)="createCorpsAccount(corps)"><mat-icon>add</mat-icon></button>
+      @if (!corpsAccount) {
+        <button mat-stroked-button title="Addresse hinzufügen" (click)="createCorpsAccount(corps)">
+          <mat-icon>add</mat-icon>
+        </button>
       } @else {
-        <button mat-stroked-button title="Adresse bearbeiten" (click)="createCorpsAccount(corps, corpsAccount)"><mat-icon>edit</mat-icon></button>
-        <button mat-stroked-button title="Passwort zurücksetzen" (click)="resetPassword(corpsAccount)"><mat-icon>cached</mat-icon></button>
-        <button mat-stroked-button title="Addresse löschen" color="warn" (click)="deleteCorpsAccount(corpsAccount)"><mat-icon>delete</mat-icon></button>
+        <button mat-stroked-button title="Adresse bearbeiten" (click)="createCorpsAccount(corps, corpsAccount)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-stroked-button title="Passwort zurücksetzen" (click)="resetPassword(corpsAccount)">
+          <mat-icon>cached</mat-icon>
+        </button>
+        <button mat-stroked-button title="Addresse löschen" color="warn" (click)="deleteCorpsAccount(corpsAccount)">
+          <mat-icon>delete</mat-icon>
+        </button>
       }
     </div>
   </div>
+</ng-template>
+
+<ng-template #reportsTemplate let-semesters="semester">
+  <mat-tab-group>
+    <mat-tab label="Corpsbestand">
+      <mat-accordion>
+
+        @for (semester of semesters; track semester._id) {
+          <mat-expansion-panel [expanded]="semester._id === currentSemester?._id">
+            <mat-expansion-panel-header>{{ semester.name }}</mat-expansion-panel-header>
+            <table mat-table [dataSource]="semester.semesterReports">
+              <ng-container matColumnDef="corps">
+                <th mat-header-cell *matHeaderCellDef> Corps</th>
+                <td mat-cell class="align-center" *matCellDef="let element"> {{ getCorpsName(element.corpsId) }}</td>
+              </ng-container>
+              <ng-container matColumnDef="submittedAt">
+                <th mat-header-cell *matHeaderCellDef> Eingereicht am</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.submitDate?.toLocaleString() }}</td>
+              </ng-container>
+              <ng-container matColumnDef="F">
+                <th mat-header-cell *matHeaderCellDef> F</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.f }}</td>
+              </ng-container>
+              <ng-container matColumnDef="CB">
+                <th mat-header-cell *matHeaderCellDef> CB</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.cb }}</td>
+              </ng-container>
+              <ng-container matColumnDef="CK">
+                <th mat-header-cell *matHeaderCellDef> CK</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.ck }}</td>
+              </ng-container>
+              <ng-container matColumnDef="iaCB">
+                <th mat-header-cell *matHeaderCellDef> iaCB</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.iaCb }}</td>
+              </ng-container>
+              <ng-container matColumnDef="AH">
+                <th mat-header-cell *matHeaderCellDef> AH</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.ah }}</td>
+              </ng-container>
+              <ng-container matColumnDef="EB">
+                <th mat-header-cell *matHeaderCellDef> EB</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.eb }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="semesterReportColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: semesterReportColumns;"></tr>
+            </table>
+          </mat-expansion-panel>
+        }
+
+      </mat-accordion>
+    </mat-tab>
+    <mat-tab label="Fencing">
+      <mat-accordion>
+
+        @for (semester of semesters; track semester._id) {
+          <mat-expansion-panel [expanded]="semester._id === currentSemester?._id">
+            <mat-expansion-panel-header>{{ semester.name }}</mat-expansion-panel-header>
+          </mat-expansion-panel>
+        }
+
+      </mat-accordion>
+    </mat-tab>
+  </mat-tab-group>
 </ng-template>

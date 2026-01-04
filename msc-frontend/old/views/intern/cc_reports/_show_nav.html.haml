@@ -1,7 +1,0 @@
-- if can?(:read, CcReport)
-  = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-arrow-left"}), intern_reports_path, {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:back_to_the_list)}
-- if can?(:read, @cc_report)
-  = link_to content_tag(:span, nil, {class: "fa fa-file-pdf-o"}), export_intern_export_index_path(export_type: "cc_reports", cid: @corp.id, rid: @cc_report.id, sid: @semester.id), {class: "btn btn-info local-nav-links pull-right"}
-- if can?(:update, @cc_report)
-  = link_to content_tag(:span, nil, {class: "glyphicon glyphicon-pencil"}), edit_intern_corp_semester_cc_report_path(@corp, @semester, @cc_report), {class: "btn btn-primary local-nav-links pull-right", data: {toggle: "tooltip", placement: "bottom"}, title: I18n.t(:"cc_reports.edit_link_title")}
-

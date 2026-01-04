@@ -1,11 +1,11 @@
 import {Component, Injector} from '@angular/core';
-import {MatTabBody, MatTabsModule} from '@angular/material/tabs';
-import {MatAnchor, MatButton, MatIconButton} from '@angular/material/button';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatAnchor, MatButton} from '@angular/material/button';
 import {Activities} from '@shared/types/activities';
 import {SmartComponent} from '@app/components/smart-component';
 import {IAppState} from '@app/services/app/app.service';
 import {DateTime} from 'luxon';
-import {NgIf, NgTemplateOutlet} from '@angular/common';
+import {NgTemplateOutlet} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
@@ -23,7 +23,14 @@ import {ConfirmationDialogConfig, DefaultDialogConfig} from '@dialogs/constants/
 import {UserService} from '@app/services/user/user.service';
 import {AddCorpsAccountDialogComponent} from '@dialogs/dialogs/add-corps-account/add-corps-account.dialog.component';
 import {ColorsComponent} from '@app/components/colors/colors.component';
-import {MatCheckbox} from '@angular/material/checkbox';
+import {Report} from '@shared/types/report';
+import {ReportSemesterService} from '@app/services/reports/semester/report-semester.service';
+import {ReportFencingService} from '@app/services/reports/fencing/report-fencing.service';
+
+interface SemesterWithReports extends Activities.Semester {
+  semesterReports: Report.Semester[];
+  fencingReports: Report.Semester[];
+}
 
 @Component({
   selector: 'msc-administration',
@@ -42,26 +49,33 @@ import {MatCheckbox} from '@angular/material/checkbox';
     CorpsSelectorComponent,
     MatButton,
     ColorsComponent,
+
   ],
   templateUrl: './administration.component.html',
   styleUrl: './administration.component.scss'
 })
 export class AdministrationComponent extends SmartComponent {
-  public pastSemester:Activities.Semester[] = [];
-  public nextSemester:Activities.Semester = null;
-  public currentSemester:Activities.Semester = null;
+  public pastSemester: Activities.Semester[] = [];
+  public nextSemester: Activities.Semester = null;
+  public currentSemester: Activities.Semester = null;
+
+  public semesterReportColumns: string[] = ['corps', 'submittedAt', 'F', 'CB', 'CK', 'iaCB', 'AH', 'EB'];
+  public semesterReports: SemesterWithReports[] = [];
+
 
   constructor(
     injector: Injector,
     private semesterSettingsService: SemesterSettingsService,
     private userService: UserService,
+    private reportSemesterService: ReportSemesterService,
+    private reportFencingService: ReportFencingService,
   ) {
     super(injector);
 
     this.semesterSettingsService.load();
   }
 
-  public afterDataChange(state: IAppState) {
+  public async afterDataChange(state: IAppState) {
     this.pastSemester = [];
     this.currentSemester = null;
     this.nextSemester = null;
@@ -104,12 +118,35 @@ export class AdministrationComponent extends SmartComponent {
         updatedAt: DateTime.now()
       });
     }
+
+    for (const semester of state.semesterBase) {
+      const semesterReports: SemesterWithReports = {
+        ...semester,
+        semesterReports: await this.loadReportsForSemester(semester),
+        fencingReports: [],
+      }
+
+      this.semesterReports.push(semesterReports);
+    }
   }
 
   public getCorpsAccount(corps: Corps): User {
     return this.appState.userBase.find(x => {
       return x.corpsId == corps._id;
     });
+  }
+
+  public getCorpsName(corpsId: string): string {
+    return this.appState.corpsBase.find(x => x._id == corpsId)?.name;
+
+  }
+
+  public getSemester() {
+    return this.appState.semesterBase.sort((a, b) => b.start.valueOf() - a.start.valueOf());
+  }
+
+  public async loadReportsForSemester(semester: Activities.Semester): Promise<Report.Semester[]> {
+    return await this.reportSemesterService.loadForSemester(semester);
   }
 
   public createCorpsAccount(corps: Corps, user?: User) {
@@ -126,9 +163,10 @@ export class AdministrationComponent extends SmartComponent {
     this.dialog.open(ConfirmationComponent, {
       ...ConfirmationDialogConfig,
       data: {
-        message: "Sicher, dass Sie die Addresse '"+user.email+"' entfernen wollen?",
+        message: "Sicher, dass Sie die Addresse '" + user.email + "' entfernen wollen?",
         confirm: () => {
-          this.userService.delete(user).then(() => {})
+          this.userService.delete(user).then(() => {
+          })
         }
       }
     })
@@ -138,7 +176,7 @@ export class AdministrationComponent extends SmartComponent {
     this.dialog.open(ConfirmationComponent, {
       ...ConfirmationDialogConfig,
       data: {
-        message: "Passwort für den Account '"+ corpsAccount.email +"' wirklich zurücksetzen?",
+        message: "Passwort für den Account '" + corpsAccount.email + "' wirklich zurücksetzen?",
         confirm: () => {
           this.userService.resetPassword(corpsAccount).then();
         }

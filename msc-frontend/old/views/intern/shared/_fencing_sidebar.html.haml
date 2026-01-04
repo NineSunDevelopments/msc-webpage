@@ -1,4 +1,0 @@
-.sidebar-item.with-filter-links
-  .sidebar-item-header= I18n.t(:"events.filter.refine_by_visibility")
-  = link_to "#{content_tag(:span, nil, {class: "fa fa-#{(params[:old].blank?) ? 'circle' : 'circle-o'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.actual")}".html_safe, intern_fencing_days_path
-  = link_to "#{content_tag(:span, nil, {class: "fa fa-#{(params[:old].present?) ? 'circle' : 'circle-o'}", style: "color: #333333;"})} #{I18n.t(:"events.filter.all")}".html_safe, intern_fencing_days_path(old: 1)
