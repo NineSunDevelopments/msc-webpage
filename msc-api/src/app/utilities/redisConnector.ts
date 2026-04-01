@@ -80,7 +80,7 @@ export class RedisConnector<T extends { key: string, value: string }> implements
         }
 
         this.client = await createClient(redisConfig).connect();
-        Log.info(`\t\t...connected to redisDB on ${host}:${port}`);
+        Log.info(`\t\t...connected to redisDB on ${host}:${port}`, password);
 
         return this.client;
     }

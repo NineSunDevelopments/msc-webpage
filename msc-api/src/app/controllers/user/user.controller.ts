@@ -20,7 +20,7 @@ import {MailService} from "../../services/mail.service";
 
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class UserController extends DataController<User, UserService> implements ControllerInstance {
 

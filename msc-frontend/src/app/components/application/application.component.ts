@@ -1,10 +1,10 @@
 import {Component, Injector} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {SmartComponent} from '@app/components/smart-component';
-import {CorpsService} from '@app/services/corps/corps.service';
-import {ApiService} from '@app/services/api/api.service';
-import {SemesterSettingsService} from '@app/services/activities/semester-settings/semester-settings.service';
-import {IAppState} from '@app/services/app/app.service';
+import {CorpsService} from '@app/services/corps.service';
+import {ApiService} from '@app/services/api.service';
+import {SemesterSettingsService} from '@app/services/semester-settings.service';
+import {IAppState} from '@app/services/app.service';
 
 @Component({
   selector: 'msc-application',
@@ -21,10 +21,9 @@ export class ApplicationComponent extends SmartComponent {
   constructor(
     apiService: ApiService,
     private corpsService: CorpsService,
-    private semesterSettingsService: SemesterSettingsService,
-    injector: Injector
+    private semesterSettingsService: SemesterSettingsService
   ) {
-    super(injector);
+    super();
 
     apiService.initialize();
   }

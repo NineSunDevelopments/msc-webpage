@@ -8,12 +8,11 @@ import {FormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAnchor} from '@angular/material/button';
-import {AuthenticationService} from '@app/services/authentication/authentication.service';
+import {AuthenticationService} from '@app/services/authentication.service';
 import {LoadingComponent} from '@app/components/loading/loading.component';
-import {UserService} from '@app/services/user/user.service';
+import {UserService} from '@app/services/user.service';
 
 @Component({
-  selector: 'msc-intern',
   imports: [
     RouterOutlet,
     SidebarComponent,
@@ -22,12 +21,12 @@ import {UserService} from '@app/services/user/user.service';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    MatIconModule,
     MatAnchor,
     LoadingComponent,
   ],
-  templateUrl: './intern.component.html',
-  styleUrl: './intern.component.scss'
+  selector: 'msc-intern',
+  styleUrl: './intern.component.scss',
+  templateUrl: './intern.component.html'
 })
 export class InternComponent extends SmartComponent {
 
@@ -41,11 +40,10 @@ export class InternComponent extends SmartComponent {
   }
 
   constructor(
-    injector: Injector,
     private authService: AuthenticationService,
     private userService: UserService,
   ) {
-    super(injector);
+    super();
 
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {

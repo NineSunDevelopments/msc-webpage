@@ -95,14 +95,13 @@
   overflow: hidden;
   overflow-y: auto;
   padding: 40px 60px;
+  background-color: color.adjust(var.$grey, $lightness: -20%);
 
   @media screen and (max-width: 768px) {
     padding: 40px 10px 40px 35px;
     width: 100vw;
     min-width: 100vw;
   }
-
-  background-color: color.adjust(var.$grey, $lightness: -20%);
 
   ::ng-deep {
     & > *:not(.login-wrapper):not(.loading-wrapper) {

@@ -8,7 +8,7 @@ import {Request, Response} from "express";
 
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class BallTicketsController extends DataController<BallTickets, BallTicketsService> implements ControllerInstance {
 

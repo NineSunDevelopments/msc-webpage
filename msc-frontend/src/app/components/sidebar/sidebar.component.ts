@@ -1,14 +1,16 @@
 import {Component, Injector} from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
-import {AuthenticationService} from '@app/services/authentication/authentication.service';
+import {AuthenticationService} from '@app/services/authentication.service';
 import {SmartComponent} from '@app/components/smart-component';
-import {CorpsService} from '@app/services/corps/corps.service';
+import {CorpsService} from '@app/services/corps.service';
+import {MatIcon} from '@angular/material/icon';
 
 @Component({
   selector: 'msc-sidebar',
   imports: [
     RouterLinkActive,
-    RouterLink
+    RouterLink,
+    MatIcon
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss'
@@ -16,18 +18,11 @@ import {CorpsService} from '@app/services/corps/corps.service';
 export class SidebarComponent extends SmartComponent {
   constructor(
     private authService: AuthenticationService,
-    private corpsService: CorpsService,
-    injector: Injector,
   ) {
-    super(injector);
+    super();
   }
 
   public logout() {
     this.authService.logout().then();
-  }
-
-  public isInCharge(): boolean {
-    const corps = this.appService.state.corpsBase.find(x => this.appService.state.user.corpsId === x._id);
-    return this.corpsService.isInCharge(corps);
   }
 }

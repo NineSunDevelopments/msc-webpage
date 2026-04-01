@@ -45,19 +45,17 @@ export namespace Fencing {
     }
 
     /**
-     * Represents a Doctor entity in the system, which extends the base properties of a MongoEntity.
-     * The Doctor entity contains information about a medical professional, including their status,
-     * identification, and contact details.
+     * Represents a Doctor entity with relevant details.
+     * Extends the MongoEntity interface.
      *
-     * Properties:
+     * @interface Doctor
+     *
      * @property {string} name - The full name of the doctor.
      * @property {boolean} active - Indicates whether the doctor is currently active.
-     * @property {string} corpsId - The unique identifier associated with the doctor's organization or corps.
-     * @property {boolean} external - Specifies if the doctor is an external professional.
-     * @property {string} email - The doctor's email address used for contact and communication.
-     * @property {string} phone - The phone number of the doctor for contact purposes.
-     * @property {string} description - A brief description or additional information about the doctor.
-     *
+     * @property {string} corpsId - The identifier associated with the doctor in the organization's system.
+     * @property {boolean} external - Specifies if the doctor is an external consultant.
+     * @property {string} email - The email address of the doctor.
+     * @property {string} phone - The contact phone number of the doctor.
      */
     export interface Doctor extends MongoEntity {
         name: string;
@@ -66,6 +64,26 @@ export namespace Fencing {
         external: boolean;
         email: string;
         phone: string;
-        description: string;
+    }
+
+    /**
+     * Represents an Arbiter entity, which extends MongoEntity.
+     * An Arbiter is responsible for overseeing operations and is identified by specific attributes.
+     *
+     * @interface Arbiter
+     * @extends MongoEntity
+     *
+     * @property {string} name - The name of the arbiter.
+     * @property {boolean} active - Indicates whether the arbiter is currently active.
+     * @property {string} corpsId - The identifier of the corps this arbiter is associated with.
+     * @property {string} email - The email address of the arbiter.
+     * @property {string} phone - The phone number of the arbiter.
+     */
+    export interface Arbiter extends MongoEntity {
+        name: string;
+        active: boolean;
+        corpsId: string;
+        email: string;
+        phone: string;
     }
 }

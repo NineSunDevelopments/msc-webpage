@@ -21,9 +21,10 @@ import {DateTime} from "luxon";
 export interface User extends MongoEntity {
     email: string;
     password: string;
-    corpsId: string;
+    corpsId?: string;
     activated: boolean;
-    isSuperAdmin: boolean;
+    isSuperAdmin?: boolean;
+    isAdmin?: boolean;
     token: string;
     salt?: string;
     passwordResetToken?: string;

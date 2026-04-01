@@ -7,7 +7,7 @@ import {
   HttpResponse
 } from '@angular/common/http';
 import {Injectable, isDevMode, OnDestroy} from '@angular/core';
-import {AppService} from '../app/app.service';
+import {AppService} from './app.service';
 import {APIErrorResponse, Request} from '@app/types/api';
 import {catchError, fromEvent, Observable, ObservableInput, of, Subscription, throwError} from 'rxjs';
 

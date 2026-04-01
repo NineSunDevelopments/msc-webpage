@@ -13,6 +13,10 @@ import {FencingDoctorController} from "./fencing/fencing-doctor.controller";
 import {ReportSemesterController} from "./report/report-semester.controller";
 import {ReportChangeController} from "./report/report-change.controller";
 import {UserController} from "./user/user.controller";
+import {FileController} from "./file/file.controller";
+import {FencingArbiterService} from "../services/fencing-arbiter.service";
+import {FencingArbiterController} from "./fencing/fencing-arbiter.controller";
+import {JudgeController} from "./judge/judge.controller";
 
 @Injectable()
 export class Router implements Instance {
@@ -24,7 +28,7 @@ export class Router implements Instance {
             Injector.resolve(IndexController),
             Injector.resolve(AuthController),
             Injector.resolve(UserController),
-            Injector.resolve(ReportFencingController),
+            Injector.resolve(FileController),
 
             // Corpo
             Injector.resolve(BallTicketsController),
@@ -33,9 +37,11 @@ export class Router implements Instance {
             Injector.resolve(ActivitiesSemesterController),
             Injector.resolve(FencingDayController),
             Injector.resolve(FencingDoctorController),
+            Injector.resolve(FencingArbiterController),
             Injector.resolve(ReportFencingController),
             Injector.resolve(ReportSemesterController),
             Injector.resolve(ReportChangeController),
+            Injector.resolve(JudgeController),
         ]
     }
 

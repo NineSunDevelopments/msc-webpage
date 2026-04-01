@@ -1,8 +1,8 @@
 import {DateTime} from "luxon";
 
 export function isDateString(dateString: string): boolean {
-    const dateRegExp = /(\d{4}-\d{2}-\d{2})T?(\d{2}:\d{2}:\d{2}.\d{3})?\+?(\d{2}:\d{2})?/;
-    const dateRegExp2 = /(\d{4}-\d{2}-\d{2})T?(\d{2}:\d{2}:\d{2}.\d{3})?Z/;
+    const dateRegExp = /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}.\d{3})?\+?(\d{2}:\d{2})?/;
+    const dateRegExp2 = /(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}.\d{3})?Z/;
 
     return dateRegExp.test(dateString) || dateRegExp2.test(dateString);
 }

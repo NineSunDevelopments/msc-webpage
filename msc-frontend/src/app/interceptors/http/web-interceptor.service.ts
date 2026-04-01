@@ -1,7 +1,7 @@
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {MatDialog as MatDialog} from '@angular/material/dialog';
-import {AppService} from '@app/services/app/app.service';
+import {AppService, AppState} from '@app/services/app.service';
 import {NoticeDialogConfig} from '@dialogs/constants/dialog-configs';
 import {NoticeComponent, NoticeType} from '@dialogs/dialogs/notice/notice.component';
 import {APIErrorResponse} from '@app/types/api';
@@ -61,20 +61,12 @@ export class WebInterceptorService implements HttpInterceptor {
               });
               break;
             case 401:
-              this.appService.mutate({
-                api: {
-                  ...api,
-                  error: {
-                    code: errorResponse.status,
-                    text: errorResponse.error.message ?? 'api.error.auth.sessionExpired'
-                  },
-                },
-              }).then(() => {
+              this.appService.mutate(AppState.Initial).then(() => {
                 this.dialog.open(NoticeComponent, {
                   ...NoticeDialogConfig,
                   data: {
                     type: NoticeType.Warning,
-                    message: "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+                    message: errorResponse.error.message ?? "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
                   },
                 });
               });

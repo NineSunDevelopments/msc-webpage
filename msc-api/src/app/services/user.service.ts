@@ -32,6 +32,7 @@ export class UserService extends DataService<User, MongoConnector<User>> {
                     deleted: false,
                     activated: true,
                     isSuperAdmin: true,
+                    isAdmin: true,
                     email: "no-reply.msc@ninesun.de",
                     token: "",
                     password: HashPassword("admin", now),

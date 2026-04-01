@@ -4,9 +4,9 @@ import {SmartComponent} from '@app/components/smart-component';
 import {MatTab, MatTabGroup} from '@angular/material/tabs';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatTableModule} from '@angular/material/table';
-import {ReportSemesterService} from '@app/services/reports/semester/report-semester.service';
-import {ReportChangeService} from '@app/services/reports/changes/report-change.service';
-import {ReportFencingService} from '@app/services/reports/fencing/report-fencing.service';
+import {ReportSemesterService} from '@app/services/report-semester.service';
+import {ReportChangeService} from '@app/services/report-change.service';
+import {ReportFencingService} from '@app/services/report-fencing.service';
 import {DateTime} from 'luxon';
 import {Activities} from '@shared/types/activities';
 import {NgIf, NgTemplateOutlet} from '@angular/common';
@@ -65,12 +65,20 @@ export class ReportsComponent extends SmartComponent {
   public unsubmittedChanges: Report.Change[] = [];
 
   constructor(
-    injector: Injector,
     private reportSemesterService: ReportSemesterService,
     private reportFencingService: ReportFencingService,
     private reportChangeService: ReportChangeService,
   ) {
-    super(injector);
+    super();
+  }
+
+  public onInit() {
+    console.log(this.appState.user.corpsId)
+    if (this.appState.user.corpsId === null) {
+      console.log("REDIRECT!")
+      // Redirect if current user has no assigned corps
+      this.router.navigate(['/intern/corps']).then()
+    }
   }
 
   public afterDataChange() {

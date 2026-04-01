@@ -19,6 +19,7 @@ import {ActivitiesSemesterService} from "./services/activities-semester.service"
 import {ActivitiesActivityService} from "./services/activities-activity.service";
 import http from "http";
 import {MailService} from "./services/mail.service";
+import {FileManagerService} from "./services/file-manager.service";
 
 
 /**
@@ -32,9 +33,9 @@ import {MailService} from "./services/mail.service";
  * NO_AUTH: Represents a middleware that does not require authentication to access.
  */
 export const enum MIDDLEWARE {
-    AUTH,
-    AUTH_SUPERADMIN,
-    NO_AUTH,
+    AUTH = "AUTH",
+    AUTH_SUPERADMIN = "AUTH_SUPERADMIN",
+    NO_AUTH = "NO_AUTH",
 }
 
 
@@ -55,6 +56,7 @@ export class Application implements Instance {
         private router: Router,
         private mongoConnector: MongoConnector<any>,
         private redisConnector: RedisConnector<any>,
+        private fileManagerService: FileManagerService,
         private mailService: MailService,
         private userService: UserService,
         private authorizationService: AuthorizationService,
@@ -90,6 +92,7 @@ export class Application implements Instance {
         await this.authorizationService.init();
         await this.corpsService.init();
         await this.activitiesSemesterService.init();
+        await this.fileManagerService.init();
         //await this.activitiesActivityService.init();
 
         Log.info('\t...serving documentation');
@@ -205,20 +208,19 @@ export class Application implements Instance {
 
         this.router.routes.forEach((instance) => {
             const controllerType = instance.constructor as ControllerInstance;
-            const prefix = Reflect.getMetadata('prefix', controllerType);
-            const routes: RouteDefinition[] = Reflect.getMetadata('routes', controllerType);
-            const defaultMiddlewares: MIDDLEWARE[] = Reflect.getMetadata('defaultMiddleware', controllerType);
-
-            // Log.info(`Register controller: ${prefix} with routes:`);
+            const prefix = Reflect.getOwnMetadata('prefix', controllerType);
+            const routes: RouteDefinition[] = Reflect.getOwnMetadata('routes', controllerType) ?? [];
+            const defaultMiddlewares: MIDDLEWARE[] = Reflect.getOwnMetadata('defaultMiddleware', controllerType) ?? [];
 
             routes.forEach(route => {
-                // Log.info(`  [${(route.requestMethod + ']       ').slice(0, 8)} ${(prefix + route.path).replace(/\/\//g, '/')}`);
+                const middlewares = [...defaultMiddlewares, ...route.middlewares];
+
                 this.express[route.requestMethod](
                     // Route
                     (prefix + route.path).replace(/\/\//g, '/'),
 
                     // Middleware
-                    (request: Request, response: Response, next: NextFunction) => this.getMiddlewareFn(defaultMiddlewares.concat(route.middlewares), request, response, next),
+                    (request: Request, response: Response, next: NextFunction) => this.getMiddlewareFn(middlewares, request, response, next),
 
                     // ControllerFn
                     // @ts-ignore
@@ -287,7 +289,7 @@ export class Application implements Instance {
             switch (middleware) {
                 case MIDDLEWARE.AUTH:
                     // Override if NO_AUTH is set
-                    if (!middlewares.includes(MIDDLEWARE.NO_AUTH)) {
+                    if (!middlewares.includes(MIDDLEWARE.NO_AUTH) ) {
                         const success = await this.authorizationService.authorized(request, response);
                         if (!success) {
                             Respond({response, status: STATUS_CODE.UNAUTHORIZED});

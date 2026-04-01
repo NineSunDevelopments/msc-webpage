@@ -1,8 +1,8 @@
 import {Component, Injector} from '@angular/core';
 import {LoadingComponent} from "@app/components/loading/loading.component";
 import {SmartComponent} from '@app/components/smart-component';
-import {IAppState} from '@app/services/app/app.service';
-import {ActivitiesService} from '@app/services/activities/activities/activities.service';
+import {IAppState} from '@app/services/app.service';
+import {ActivitiesService} from '@app/services/activities.service';
 import {
   MatCell,
   MatCellDef,
@@ -24,6 +24,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {Corps} from '@shared/types/corps';
 import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {RouterLink} from '@angular/router';
 
 interface Activity extends Activities.Activity{
   editMode: boolean;
@@ -58,13 +59,12 @@ interface Activity extends Activities.Activity{
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
+    RouterLink,
   ],
   templateUrl: './activities.component.html',
   styleUrl: './activities.component.scss'
 })
 export class ActivitiesComponent extends SmartComponent {
-
-
 
   public columns: (keyof Activity | string)[] = [
     "date", "official", "public", "attendanceRequired", "name", "description", "corps", "location", "actions"
@@ -74,10 +74,9 @@ export class ActivitiesComponent extends SmartComponent {
   public activities: Activity[] = [];
 
   constructor(
-    injector: Injector,
     private activitiesService: ActivitiesService
   ) {
-    super(injector);
+    super();
   }
 
   public onInit(): void {

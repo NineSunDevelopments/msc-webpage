@@ -4,7 +4,7 @@ import {SmartComponent} from '@app/components/smart-component';
 import {NgForOf, NgIf} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
-import {IAppState} from '@app/services/app/app.service';
+import {IAppState} from '@app/services/app.service';
 
 @Component({
   selector: 'msc-corps-selector',
@@ -27,8 +27,8 @@ export class CorpsSelectorComponent extends SmartComponent {
   @Input() public corps: Corps = null;
   @Output() public corpsChange: EventEmitter<Corps> = new EventEmitter();
 
-  constructor(injector: Injector) {
-    super(injector);
+  constructor() {
+    super();
   }
 
   public afterDataChange(state: IAppState) {

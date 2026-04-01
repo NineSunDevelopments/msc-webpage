@@ -6,7 +6,7 @@ import {Request, Response} from "express";
 
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class ActivitiesSemesterController extends DataController<Activities.Semester, ActivitiesSemesterService> implements ControllerInstance {
 
@@ -16,9 +16,20 @@ export class ActivitiesSemesterController extends DataController<Activities.Seme
         super(service);
     }
 
-    @Get({ path: "current" })
+    @Get({
+        path: "current",
+        middlewares: [MIDDLEWARE.NO_AUTH]
+    })
     public async getCurrent(request: Request, response: Response): Promise<void> {
         const data = await this.service.getCurrent();
         Respond({response, data});
+    }
+
+    @Get({
+        path: '/',
+        middlewares: [MIDDLEWARE.NO_AUTH]
+    })
+    public override async getAll(request: Request, response: Response): Promise<void> {
+        await super.getAll(request, response);
     }
 }

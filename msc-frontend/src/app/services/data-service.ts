@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
-import { ApiService } from '@app/services/api/api.service';
-import { AppService, IAppState } from '@app/services/app/app.service';
+import { ApiService } from '@app/services/api.service';
+import { AppService, IAppState } from '@app/services/app.service';
 import { SHA256 } from 'crypto-js';
 import { camelize } from '@shared/utils/camelize';
 import { Observable } from 'rxjs';

@@ -1,0 +1,145 @@
+<div class="grid-3">
+
+  <div class="grid-column-span-2 align-left vertical-align-center">
+    <h1 class="text-ellipsis">
+      <span [routerLink]="'/intern/documents'">Dokumente</span>
+    </h1>
+  </div>
+
+  <div class="action-bar">
+    <div class="align-left">
+      <mat-select [(ngModel)]="selectedFilter" (selectionChange)="filter()">
+        <mat-option [value]="'all'">Alle</mat-option>
+        <mat-option [value]="FILE_TYPE.PROTOCOL">Protokolle</mat-option>
+        <mat-option [value]="FILE_TYPE.COMMENT">Comments</mat-option>
+        <mat-option [value]="FILE_TYPE.UNKNOWN">Unbekannt</mat-option>
+      </mat-select>
+    </div>
+
+    <div class="align-right">
+      @if (isInCharge()) {
+        <input type="file"
+               #fileUpload
+               multiple
+               accept=".pdf,.txt"
+               style="display: none"
+               (change)="upload($event)"/>
+        <a mat-stroked-button
+           *ngIf="isInCharge()"
+           (click)="fileUpload.click()"
+           class="pull-right">
+          <mat-icon>upload</mat-icon>
+          Hochladen
+        </a>
+      }
+    </div>
+
+  </div>
+</div>
+
+<div class="wrapper">
+  @if (loading) {
+    <div class="loading">
+      <div>
+        <msc-loading></msc-loading>
+      </div>
+    </div>
+
+  } @else {
+    <div class="table-responsive shadow-6">
+      <table mat-table [dataSource]="files">
+        <!-- "thumbnail", "name", "size", "type", "actions" -->
+        <ng-container matColumnDef="thumbnail">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let e" [class.hidden]="e.editMode">
+            <msc-thumbnail [file]="e"></msc-thumbnail>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let e" [colSpan]="e.editMode ? 2 : 1">
+            @if (e.editMode) {
+              <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input matInput [(ngModel)]="e.name">
+              </mat-form-field>
+            } @else {
+              {{ e.name }}.{{ e.extension }}
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Datum</th>
+          <td mat-cell *matCellDef="let e" [class.hidden]="e.editMode">
+            {{ e.fileDate }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="size">
+          <th mat-header-cell *matHeaderCellDef>Dateigröße</th>
+          <td mat-cell *matCellDef="let e" [class.hidden]="e.editMode">
+            {{ getFileSize(e) }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef>Dateityp</th>
+          <td mat-cell *matCellDef="let e" [colSpan]="e.editMode ? 2 : 1">
+            @if (e.editMode) {
+              <mat-form-field>
+                <mat-label>Typ</mat-label>
+                <mat-select [(ngModel)]="e.fileType">
+                  <mat-option [value]="FILE_TYPE.PROTOCOL">Protocol</mat-option>
+                  <mat-option [value]="FILE_TYPE.COMMENT">Comment</mat-option>
+                </mat-select>
+              </mat-form-field>
+            } @else {
+              {{ e.fileType }}
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let e" class="align-right" [class.hidden]="e.editMode">
+            @if (!e.editMode) {
+              <a mat-icon-button color="primary" (click)="download(e)">
+                <mat-icon>download</mat-icon>
+              </a>
+            }
+            @if (isInCharge() && !e.editMode) {
+              <a mat-icon-button color="primary" (click)="toggleEdit(e)">
+                <mat-icon>edit</mat-icon>
+              </a>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <ng-container *matRowDef="let row; columns: displayedColumns;">
+          <tr mat-row></tr>
+          @if (isInCharge() && row.editMode) {
+            <tr>
+              <td [colSpan]="displayedColumns.length" class="align-center">
+                <a mat-icon-button color="warn" (click)="delete(row)">
+                  <mat-icon>delete</mat-icon>
+                </a>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                <a mat-icon-button (click)="toggleEdit(row)">
+                  <mat-icon>cancel</mat-icon>
+                </a>
+                <a mat-icon-button color="accent" (click)="save(row)">
+                  <mat-icon>save</mat-icon>
+                </a>
+              </td>
+            </tr>
+          }
+        </ng-container>
+      </table>
+    </div>
+  }
+</div>

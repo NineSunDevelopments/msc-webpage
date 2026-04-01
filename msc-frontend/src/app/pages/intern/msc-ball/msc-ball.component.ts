@@ -1,6 +1,6 @@
 import {Component, Injector} from '@angular/core';
 import {LoadingComponent} from "@app/components/loading/loading.component";
-import {BallTicketService} from '@app/services/ball-ticket/ball-ticket.service';
+import {BallTicketService} from '@app/services/ball-ticket.service';
 import {SmartComponent} from '@app/components/smart-component';
 import {BallTickets} from '@shared/types/ball-tickets';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -8,6 +8,7 @@ import {DateTime} from 'luxon';
 import {MatInput} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatButton} from '@angular/material/button';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'msc-msc-ball',
@@ -17,6 +18,7 @@ import {MatButton} from '@angular/material/button';
     ReactiveFormsModule,
     MatInput,
     MatButton,
+    RouterLink,
   ],
   templateUrl: './msc-ball.component.html',
   styleUrl: './msc-ball.component.scss'
@@ -35,8 +37,8 @@ export class MscBallComponent extends SmartComponent {
     amount: new FormControl(null, [Validators.required]),
   });
 
-  constructor(injector: Injector, private ballTicketService: BallTicketService) {
-    super(injector)
+  constructor(private ballTicketService: BallTicketService) {
+    super()
   }
 
   public onInit(): void {

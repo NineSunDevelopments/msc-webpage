@@ -2,4 +2,10 @@
 // Import all mixins and functions
 
 @forward './breakpoints';
-@forward './headings';
+
+@mixin md-icon-size($size: 24px) {
+  font-size: $size;
+  height: $size;
+  width: $size;
+  line-height: $size;
+}

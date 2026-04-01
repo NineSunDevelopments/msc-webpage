@@ -10,8 +10,13 @@ import {hash} from "@konfirm/checksum";
 import {TimeSpan} from "./time-span.class";
 import _ from "lodash";
 import {DataService} from "./data.service";
-import {MongoEntity} from "@shared/types/mongo-entity";
 import {DateTime} from "luxon";
+import {MongoEntity} from "@shared/types/mongo-entity";
+
+export interface CacheResponse<T> {
+    cache: Cache<T>,
+    status: IStatusCode
+}
 
 /**
  * Represents a route definition for mapping HTTP requests in an application.
@@ -30,6 +35,7 @@ export interface RouteDefinition {
     requestMethod: 'get' | 'post' | 'delete' | 'options' | 'put';
     middlewares: MIDDLEWARE[];
     methodName: string;
+    isBaseRoute?: boolean;
 }
 
 /**
@@ -147,6 +153,11 @@ export const Respond = (responseObject: ResponseObject | Observable<ResponseObje
         for (const header of Object.keys(response.header)) {
             response.response.append(header, response.header[header]);
         }
+
+        // Append CORS HEADER
+        response.response.append("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.response.append("Access-Control-Allow-Headers", "*");
+        response.response.append("Access-Control-Allow-Credentials", "true");
     }
 
     switch (response.type) {
@@ -356,7 +367,7 @@ export function Controller<T extends Instance>(options?: ControllerDecoratorOpti
         });
 
         if (!options.prefix)
-            options.prefix = '/' + target.name.replace('Controller', '').toLowerCase().trim();
+            options.prefix = '/' + target.name.replace('Controller', '');
 
         options.prefix = sanitizePath(options.prefix);
 
@@ -378,6 +389,44 @@ export function Controller<T extends Instance>(options?: ControllerDecoratorOpti
 export interface RouteDecoratorOptions {
     path?: string;
     middlewares?: MIDDLEWARE[];
+    isBaseRoute?: boolean;
+}
+
+const setRouteDefinition = (definition: RouteDefinition, target: Object) => {
+    definition.path = sanitizePath(definition.path);
+
+    if (!Reflect.hasOwnMetadata('routes', target))
+    Reflect.defineMetadata('routes', [], target);
+
+    const allRoutes: RouteDefinition[] = (Reflect.getMetadata('routes', target.constructor) ?? []).sort((a: any, b: any) => {
+        // Workaround so /asdf is evaluated before /:id
+        return a.path.localeCompare(b.path) * -1;
+    }) as RouteDefinition[];
+    const routes = [] as RouteDefinition[];
+
+    for (let route of allRoutes) {
+        const match = routes.findIndex(route => route.path == definition.path && route.requestMethod == definition.requestMethod);
+        if (match !== -1)
+            routes[match] = route;
+        else
+            routes.push(route);
+    }
+
+    const matchingRouteIndex = routes.findIndex(route =>
+        route.path == definition.path &&
+        route.requestMethod == definition.requestMethod
+    );
+
+    if (matchingRouteIndex !== -1 && !definition.isBaseRoute) {
+        routes[matchingRouteIndex] = definition
+    } else {
+        routes.push(definition);
+    }
+
+    Reflect.defineMetadata('routes', routes.sort((a: any, b: any) => {
+        // Workaround so /asdf is evaluated before /:id
+        return a.path.localeCompare(b.path) * -1;
+    }), target.constructor);
 }
 
 /**
@@ -394,23 +443,17 @@ export interface RouteDecoratorOptions {
  * using reflection. This metadata can be used by the framework to register and configure routes in the application.
  */
 export const Get = (options?: RouteDecoratorOptions): MethodDecorator => (target, propertyKey: string | symbol): void => {
-    options = options ?? {path: '/', middlewares: []} as RouteDecoratorOptions;
+    const routeDefinition = {
+        path: '/',
+        middlewares: [],
+        permissions: [],
+        requestMethod: 'get',
+        methodName: propertyKey as string,
+        isBaseRoute: false,
+        ...options,
+    } as RouteDefinition;
 
-    options.path = sanitizePath(options.path);
-
-    if (!Reflect.hasMetadata('routes', target.constructor))
-        Reflect.defineMetadata('routes', [], target.constructor);
-
-    Reflect.defineMetadata('routes', Reflect.getMetadata('routes', target.constructor)
-        .concat({
-            requestMethod: 'get',
-            path: options?.path ?? '/',
-            middlewares: options?.middlewares ?? [],
-            methodName: propertyKey as string,
-        }).sort((a: any, b: any) => {
-            // Workaround so /asdf is evaluated before /:id
-            return a.path.localeCompare(b.path) * -1;
-        }), target.constructor);
+    setRouteDefinition(routeDefinition, target);
 };
 
 /**
@@ -424,22 +467,17 @@ export const Get = (options?: RouteDecoratorOptions): MethodDecorator => (target
  * @returns {MethodDecorator} A method decorator function that adds the POST route metadata to the target class.
  */
 export const Post = (options?: RouteDecoratorOptions): MethodDecorator => (target, propertyKey: string | symbol): void => {
-    options = options ?? {path: '/', middlewares: []} as RouteDecoratorOptions;
-
-    options.path = sanitizePath(options.path);
-
-    if (!Reflect.hasMetadata('routes', target.constructor))
-        Reflect.defineMetadata('routes', [], target.constructor);
-
-    Reflect.defineMetadata('routes', Reflect.getMetadata('routes', target.constructor).concat({
+    const routeDefinition = {
+        path: '/',
+        middlewares: [],
+        permissions: [],
         requestMethod: 'post',
-        path: options?.path ?? '/',
-        middlewares: options?.middlewares ?? [],
-        methodName: propertyKey,
-    }).sort((a: any, b: any) => {
-        // Workaround so /asdf is evaluated before /:id
-        return a.path.localeCompare(b.path) * -1;
-    }), target.constructor);
+        methodName: propertyKey as string,
+        isBaseRoute: false,
+        ...options,
+    } as RouteDefinition;
+
+    setRouteDefinition(routeDefinition, target);
 };
 
 /**
@@ -463,22 +501,17 @@ export const Post = (options?: RouteDecoratorOptions): MethodDecorator => (targe
  *   - `methodName`: The name of the method this decorator is applied to.
  */
 export const Put = (options?: RouteDecoratorOptions): MethodDecorator => (target, propertyKey: string | symbol): void => {
-    options = options ?? {path: '/', middlewares: []} as RouteDecoratorOptions;
-
-    options.path = sanitizePath(options.path);
-
-    if (!Reflect.hasMetadata('routes', target.constructor))
-        Reflect.defineMetadata('routes', [], target.constructor);
-
-    Reflect.defineMetadata('routes', Reflect.getMetadata('routes', target.constructor).concat({
+    const routeDefinition = {
+        path: '/',
+        middlewares: [],
+        permissions: [],
         requestMethod: 'put',
-        path: options.path ?? '/',
-        middlewares: options.middlewares ?? [],
-        methodName: propertyKey,
-    }).sort((a: any, b: any) => {
-        // Workaround so /asdf is evaluated before /:id
-        return a.path.localeCompare(b.path) * -1;
-    }), target.constructor);
+        methodName: propertyKey as string,
+        isBaseRoute: false,
+        ...options,
+    } as RouteDefinition;
+
+    setRouteDefinition(routeDefinition, target);
 };
 
 /**
@@ -496,22 +529,17 @@ export const Put = (options?: RouteDecoratorOptions): MethodDecorator => (target
  *                             with the method it decorates, storing the configuration under the `routes` metadata key.
  */
 export const Delete = (options?: RouteDecoratorOptions): MethodDecorator => (target, propertyKey: string | symbol): void => {
-    options = options ?? {path: '/', middlewares: []} as RouteDecoratorOptions;
-
-    options.path = sanitizePath(options.path);
-
-    if (!Reflect.hasMetadata('routes', target.constructor))
-        Reflect.defineMetadata('routes', [], target.constructor);
-
-    Reflect.defineMetadata('routes', Reflect.getMetadata('routes', target.constructor).concat({
+    const routeDefinition = {
+        path: '/',
+        middlewares: [],
+        permissions: [],
         requestMethod: 'delete',
-        path: options?.path ?? '/',
-        middlewares: options?.middlewares ?? [],
-        methodName: propertyKey,
-    }).sort((a: any, b: any) => {
-        // Workaround so /asdf is evaluated before /:id
-        return a.path.localeCompare(b.path) * -1;
-    }), target.constructor);
+        methodName: propertyKey as string,
+        isBaseRoute: false,
+        ...options,
+    } as RouteDefinition;
+
+    setRouteDefinition(routeDefinition, target);
 };
 
 /**
@@ -526,21 +554,18 @@ export const Delete = (options?: RouteDecoratorOptions): MethodDecorator => (tar
  * and can later be retrieved to create HTTP routing logic.
  */
 export const Options = (options?: RouteDecoratorOptions): MethodDecorator => (target, propertyKey: string | symbol): void => {
-    options = options ?? {path: '/', middlewares: []} as RouteDecoratorOptions;
-
-    options.path = sanitizePath(options.path);
-
-    if (!Reflect.hasMetadata('routes', target.constructor))
-        Reflect.defineMetadata('routes', [], target.constructor);
-
-    Reflect.defineMetadata('routes', Reflect.getMetadata('routes', target.constructor).concat({
+    const routeDefinition = {
+        path: '/',
+        middlewares: [],
+        permissions: [],
         requestMethod: 'options',
-        path: options?.path ?? '/',
-        middlewares: options?.middlewares ?? [],
-        methodName: propertyKey,
-    }), target.constructor);
-};
+        methodName: propertyKey as string,
+        isBaseRoute: false,
+        ...options,
+    } as RouteDefinition;
 
+    setRouteDefinition(routeDefinition, target);
+};
 
 /**
  * Sanitizes a file path by ensuring it starts with a single forward slash `/` and replaces
@@ -629,7 +654,7 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * to hold an array of elements, with the specific type of the elements being flexible (any[]).
      * This variable can be utilized as a mechanism to manage and retrieve stored data efficiently.
      */
-    protected caches: Cache<any[]>[] = [];
+    protected caches: Cache<any>[] = [];
 
     /**
      * Protected constructor for initializing the class with actions and a default cache lifetime.
@@ -642,6 +667,15 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
         protected defaultCacheLifetime: TimeSpan = TimeSpan.fromMinutes(1)
     ) {
         super();
+    }
+
+    public handleCache<T>(response: Response, cache: CacheResponse<T>): boolean {
+        if (cache.status === STATUS_CODE.NOT_MODIFIED) {
+            Respond({response, status: cache.status, header: cache.cache.getHeader()});
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -661,25 +695,23 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      *     .then(data => data
      `
      */
-    public async loadDataAndGenerateChecksum<T>(request: Request, dataLoader: Promise<T[]>): Promise<{
-        cache: Cache<T[]>,
-        status: IStatusCode
-    }> {
+    public async loadWithCache<T>(request: Request, dataLoader: Promise<T>): Promise<CacheResponse<T>> {
         // Remove all outdated local caches
         this.caches = this.caches.filter(x => x.validUntil > DateTime.now());
 
         // Generate cacheId and check if it already exists
         const cacheId = hash({path: request.path, params: request.params, body: request.body});
         const cacheIndex = this.caches.findIndex(x => x.id === cacheId);
-        let cache = (cacheIndex >= 0 ? this.caches[cacheIndex] : null) as any as Cache<T[]>;
+        let cache = (cacheIndex >= 0 ? this.caches[cacheIndex] : null) as any as Cache<T>;
 
         // Generate new cache if not already present
         if (!cache) {
-            cache = new Cache<T[]>({
+            cache = new Cache<T>({
                 id: cacheId,
                 data: await dataLoader,
                 lifeTime: this.defaultCacheLifetime
             });
+            return {cache: _.cloneDeep(cache), status: STATUS_CODE.OK};
         } else {
             // Check if local cache needs to be rebuild
             if (cache.validUntil < DateTime.now())
@@ -699,7 +731,7 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
         // Return null if checksums are identical (client has the same cache as the API)
         const requestedChecksum = request.header("X-Cache-Checksum");
         if (!!requestedChecksum && requestedChecksum === cache.checksum) {
-            return {cache: null, status: STATUS_CODE.NOT_MODIFIED};
+            return {cache: _.cloneDeep(cache), status: STATUS_CODE.NOT_MODIFIED};
         }
 
         return {cache: _.cloneDeep(cache), status: STATUS_CODE.OK};
@@ -712,28 +744,25 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * @param {Response} response - The response object used to send back the processed data or error information.
      * @return {void} This method does not return anything directly, but responds to the client with the processed data or an error.
      */
-    @Get()
+    @Get({
+        isBaseRoute: true
+    })
     public async getAll(request: Request, response: Response): Promise<void> {
         try {
-            const result = await this.loadDataAndGenerateChecksum(request, this.service.getAll()
-                .then(data => data
-                    .filter(this.filter.bind(this))
-                    .map(this.sanitizeFromDB.bind(this))
-                ));
-            const {cache, status} = result;
-
-            if (status === STATUS_CODE.NOT_MODIFIED) {
-                Respond({response, status});
-                return;
-            }
-            let data = cache.data;
+            const result = await this.loadWithCache(request,
+                this.service.getAll()
+                    .then(data => data
+                        .filter(this.filter.bind(this))
+                        .map(this.sanitizeFromDB.bind(this))
+                    ));
+            if (this.handleCache(response, result)) return;
+            let data = result.cache.data;
 
             if (data.length > 1 && data[0].hasOwnProperty("id")) {
-                // @ts-ignore
                 data = data.sort(SortFn<TInterface>("id" as keyof TInterface));
             }
 
-            Respond({response, data: data, status: STATUS_CODE.OK, header: cache.getHeader()});
+            Respond({response, data: data, status: STATUS_CODE.OK, header: result.cache.getHeader()});
         } catch (e) {
             const exception = e as ApiException;
             Respond({response, status: exception.status, data: exception.message});
@@ -750,18 +779,23 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * @return {void} Does not return a value, as it sends the response directly to the client.
      */
     @Get({
-        path: "/:id"
+        path: "/:id",
+        isBaseRoute: true
     })
     public async getById(request: Request, response: Response): Promise<void> {
         try {
             let id = BaseController.getId(request);
+            const result = await this.loadWithCache(request,
+                this.service.findOne("id = $1", [id])
+                    .then(data => this.sanitizeFromDB(data))
+            );
+            if (this.handleCache(response, result)) return;
+            let data = result.cache.data;
 
-            const result = this.sanitizeFromDB(await this.service.findOne("id = :0", [id]));
-
-            if (!result)
+            if (!data)
                 throw new ApiException(`Can't find object with id: ${id}`, STATUS_CODE.NOT_FOUND);
 
-            Respond({response, data: result});
+            Respond({response, data, header: result.cache.getHeader()});
         } catch (e) {
             const exception = e as ApiException;
             Respond({response, status: exception.status, data: exception.message});
@@ -776,7 +810,9 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * @param {Response} response - The HTTP response used to send the result back to the client.
      * @return {void} This method does not return a value, it sends a response to the client.
      */
-    @Post()
+    @Post({
+        isBaseRoute: true
+    })
     public async create(request: Request, response: Response): Promise<void> {
         try {
             let data = this.sanitizeForDB(request.body as TInterface);
@@ -800,7 +836,9 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * @param {Response} response - The response object used to send the result or error to the client.
      * @return {void} This method does not return a value; it sends a response back to the client.
      */
-    @Put()
+    @Put({
+        isBaseRoute: true
+    })
     public async update(request: Request, response: Response): Promise<void> {
         try {
             let data = this.sanitizeForDB(request.body);
@@ -825,7 +863,8 @@ export abstract class DataController<TInterface extends MongoEntity, TService ex
      * @return {void} No value is returned, the response object is used to communicate the result.
      */
     @Delete({
-        path: "/:id"
+        path: "/:id",
+        isBaseRoute: true
     })
     public async delete(request: Request, response: Response): Promise<void> {
         try {

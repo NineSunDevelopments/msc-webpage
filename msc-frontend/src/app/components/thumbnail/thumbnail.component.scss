@@ -1,0 +1,32 @@
+@use "mixins" as mix;
+
+:host {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+}
+
+div {
+  display: block;
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+  margin: 10px;
+}
+
+.image {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.file {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  mat-icon {
+    @include mix.md-icon-size(64px);
+  }
+}

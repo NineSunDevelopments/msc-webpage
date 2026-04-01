@@ -1,0 +1,209 @@
+<div class="align-left">
+  <h1 class="text-ellipsis">
+    <span [routerLink]="'/intern/fencing'">Mensur</span>
+  </h1>
+</div>
+
+<div class="wrapper">
+  <div *ngIf="loading" class="loading">
+    <div>
+      <msc-loading></msc-loading>
+    </div>
+  </div>
+
+  <h2>Unparteiische</h2>
+  <table mat-table [dataSource]="arbiters">
+
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Aktiv</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-checkbox [(ngModel)]="e.active"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="e.active">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Name</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.name"/>
+          </mat-form-field>
+        } @else {
+          {{ e.name }}
+        }
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="corpsId">
+      <th mat-header-cell *matHeaderCellDef> Corps</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <msc-corps-selector [label]="null" [(corpsId)]="e.corpsId"></msc-corps-selector>
+        } @else {
+          {{ getCorps(e.corpsId)?.name }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> E-Mail</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.email"/>
+          </mat-form-field>
+        } @else {
+          {{ e.email }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Telefon</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.phone" type="tel" />
+          </mat-form-field>
+        } @else {
+          {{ e.phone }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="align-right" *matCellDef="let e; let i = index">
+        @if (e.editMode) {
+          <a mat-stroked-button class="icon-button" color="primary" (click)="saveArbiter(e)" title="Speichern">
+            <mat-icon>save</mat-icon>
+          </a>
+          &nbsp;
+          <a mat-stroked-button class="icon-button" color="warn" (click)="deleteArbiter(e, i)" title="Löschen">
+            <mat-icon>delete</mat-icon>
+          </a>
+        } @else {
+          <a mat-stroked-button class="icon-button" (click)="e.editMode = true"> ... </a>
+        }
+      </td>
+      <td mat-footer-cell *matFooterCellDef [colSpan]="arbiterColumns.length" class="align-center">
+        <a mat-stroked-button (click)="addArbiter()">
+          <mat-icon>add</mat-icon>
+          hinzufügen</a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="arbiterColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: arbiterColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="['actions']"></tr>
+  </table>
+
+  <h2>Paukärzte</h2>
+  <table mat-table [dataSource]="doctors">
+
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Aktiv</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-checkbox [(ngModel)]="e.active"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="e.active">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="external">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Extern</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-checkbox [(ngModel)]="e.external"></mat-checkbox>
+        } @else {
+          <mat-icon *ngIf="e.external">checkbox</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Name</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.name"/>
+          </mat-form-field>
+        } @else {
+          {{ e.name }}
+        }
+      </td>
+    </ng-container>
+
+
+    <ng-container matColumnDef="corpsId">
+      <th mat-header-cell *matHeaderCellDef> Corps</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <msc-corps-selector [label]="null" [(corpsId)]="e.corpsId"></msc-corps-selector>
+        } @else {
+          {{ getCorps(e.corpsId)?.name }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> E-Mail</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.email"/>
+          </mat-form-field>
+        } @else {
+          {{ e.email }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Telefon</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.phone" type="tel" />
+          </mat-form-field>
+        } @else {
+          {{ e.phone }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell class="align-right" *matCellDef="let e; let i = index">
+        @if (e.editMode) {
+          <a mat-stroked-button class="icon-button" color="primary" (click)="saveDoctor(e)" title="Speichern">
+            <mat-icon>save</mat-icon>
+          </a>
+          &nbsp;
+          <a mat-stroked-button class="icon-button" color="warn" (click)="deleteDoctor(e, i)" title="Löschen">
+            <mat-icon>delete</mat-icon>
+          </a>
+        } @else {
+          <a mat-stroked-button class="icon-button" (click)="e.editMode = true"> ... </a>
+        }
+      </td>
+      <td mat-footer-cell *matFooterCellDef [colSpan]="doctorColumns.length" class="align-center">
+        <a mat-stroked-button (click)="addDoctor()">
+          <mat-icon>add</mat-icon>
+          hinzufügen</a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="doctorColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: doctorColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="['actions']"></tr>
+  </table>
+
+</div>

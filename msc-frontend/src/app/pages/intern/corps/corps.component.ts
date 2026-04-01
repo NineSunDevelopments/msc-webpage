@@ -1,7 +1,7 @@
 import {Component, Injector} from '@angular/core';
-import {CorpsService} from '@app/services/corps/corps.service';
+import {CorpsService} from '@app/services/corps.service';
 import {SmartComponent} from '@app/components/smart-component';
-import {IAppState} from '@app/services/app/app.service';
+import {IAppState} from '@app/services/app.service';
 import {MatTableModule} from '@angular/material/table';
 import {Corps} from '@shared/types/corps';
 import {NgForOf, NgIf} from '@angular/common';
@@ -32,10 +32,9 @@ export class CorpsComponent extends SmartComponent {
   public loading = true;
 
   constructor(
-    injector: Injector,
     private corpsService: CorpsService,
   ) {
-    super(injector);
+    super();
 
     this.subs.add(this.route.paramMap.subscribe(paramsMap => {
       this.corpsId = paramsMap.get("id") ?? null;

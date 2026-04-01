@@ -1,7 +1,7 @@
 import {HttpHeaders} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {ApiService} from '@app/services/api/api.service';
-import {AppService} from '@app/services/app/app.service';
+import {ApiService} from '@app/services/api.service';
+import {AppService} from '@app/services/app.service';
 import {User} from '@shared/types/user';
 
 

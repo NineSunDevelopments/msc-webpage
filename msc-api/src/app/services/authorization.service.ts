@@ -42,12 +42,12 @@ export class AuthorizationService implements Instance {
                 .digest('hex');
 
             // Cancel other sessions
-            const authToken = await this.redisConnector.getById(null, user._id);
+            const authToken = await this.redisConnector.getById(null, user._id.toString());
             if (authToken)
                 await this.redisConnector.delete(null, authToken.key);
 
             // Create new session
-            this.redisConnector.create(null, {key: user._id, value: hash}).then();
+            this.redisConnector.create(null, {key: user._id.toString(), value: hash}).then();
 
             // Return session
             return {authId: user._id, authToken: hash};
@@ -63,7 +63,7 @@ export class AuthorizationService implements Instance {
 
             if (!user) return false;
 
-            const dbAuthToken = await this.redisConnector.getById(null, user._id);
+            const dbAuthToken = await this.redisConnector.getById(null, user._id.toString());
             if (dbAuthToken && dbAuthToken.value == authToken) {
                 request.user = user;
                 return true;

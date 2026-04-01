@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {WindowSizeService} from '@app/services/window-size/window-size.service';
+import {WindowSizeService} from '@app/services/window-size.service';
 
 import {Api, InitialApi} from '@app/types/api';
 import {User} from '@shared/types/user';
@@ -10,6 +10,10 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {Corps} from '@shared/types/corps';
 import {Activities} from '@shared/types/activities';
 import {parseObjectForDate} from '@shared/utils/is-date-string';
+import {Judge} from '@shared/types/judge';
+import {Fencing} from '@shared/types/fencing';
+import Doctor = Fencing.Doctor;
+import Arbiter = Fencing.Arbiter;
 
 
 const Constructors: { [key: string]: (value: any) => any } = {}
@@ -25,6 +29,9 @@ export interface IAppState {
   semesterBase?: Activities.Semester[];
   user?: User;
   userBase?: User[];
+  arbiterBase?: Arbiter[];
+  doctorBase?: Doctor[];
+  judgeBase?: Judge[];
   windowSize?: WindowSize;
 }
 
@@ -39,6 +46,9 @@ export class AppState implements Concrete<IAppState> {
   public user: User;
   public userBase: User[];
   public windowSize: WindowSize;
+  public arbiterBase: Arbiter[];
+  public doctorBase: Doctor[];
+  public judgeBase: Judge[];
 
 
   public static get Initial(): AppState {
@@ -53,6 +63,9 @@ export class AppState implements Concrete<IAppState> {
     initial.activities = [];
     initial.currentSemester = null;
     initial.semesterBase = [];
+    initial.arbiterBase = [];
+    initial.doctorBase = [];
+    initial.judgeBase = [];
     initial.windowSize = WindowSizeService.SetSize(window.innerWidth, window.innerHeight);
 
     return initial;

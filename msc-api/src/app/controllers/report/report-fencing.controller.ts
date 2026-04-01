@@ -13,7 +13,7 @@ import {Request, Response} from "express";
 
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class ReportFencingController extends DataController<Report.Fencing, ReportFencingService> implements ControllerInstance {
 

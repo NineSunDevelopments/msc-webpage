@@ -3,7 +3,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatAnchor, MatButton} from '@angular/material/button';
 import {Activities} from '@shared/types/activities';
 import {SmartComponent} from '@app/components/smart-component';
-import {IAppState} from '@app/services/app/app.service';
+import {IAppState} from '@app/services/app.service';
 import {DateTime} from 'luxon';
 import {NgTemplateOutlet} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
@@ -13,19 +13,20 @@ import {FormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatDatepickerModule} from '@angular/material/datepicker';
-import {SemesterSettingsService} from '@app/services/activities/semester-settings/semester-settings.service';
+import {SemesterSettingsService} from '@app/services/semester-settings.service';
 import {MatInput} from '@angular/material/input';
 import {CorpsSelectorComponent} from '@app/components/corps-selector/corps-selector.component';
 import {Corps} from '@shared/types/corps';
 import {User} from '@shared/types/user';
 import {ConfirmationComponent} from '@dialogs/dialogs/confirmation/confirmation.component';
 import {ConfirmationDialogConfig, DefaultDialogConfig} from '@dialogs/constants/dialog-configs';
-import {UserService} from '@app/services/user/user.service';
+import {UserService} from '@app/services/user.service';
 import {AddCorpsAccountDialogComponent} from '@dialogs/dialogs/add-corps-account/add-corps-account.dialog.component';
 import {ColorsComponent} from '@app/components/colors/colors.component';
 import {Report} from '@shared/types/report';
-import {ReportSemesterService} from '@app/services/reports/semester/report-semester.service';
-import {ReportFencingService} from '@app/services/reports/fencing/report-fencing.service';
+import {ReportSemesterService} from '@app/services/report-semester.service';
+import {ReportFencingService} from '@app/services/report-fencing.service';
+import {RouterLink} from '@angular/router';
 
 interface SemesterWithReports extends Activities.Semester {
   semesterReports: Report.Semester[];
@@ -49,6 +50,7 @@ interface SemesterWithReports extends Activities.Semester {
     CorpsSelectorComponent,
     MatButton,
     ColorsComponent,
+    RouterLink,
 
   ],
   templateUrl: './administration.component.html',
@@ -64,13 +66,11 @@ export class AdministrationComponent extends SmartComponent {
 
 
   constructor(
-    injector: Injector,
     private semesterSettingsService: SemesterSettingsService,
     private userService: UserService,
-    private reportSemesterService: ReportSemesterService,
-    private reportFencingService: ReportFencingService,
+    private reportSemesterService: ReportSemesterService
   ) {
-    super(injector);
+    super();
 
     this.semesterSettingsService.load();
   }

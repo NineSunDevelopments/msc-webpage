@@ -1,3 +1,7 @@
+<div class="link-to-internal">
+  <a mat-icon-button [routerLink]="'/intern'"><mat-icon>login</mat-icon></a>
+</div>
+
 <section class='parallax dark' style="background-image: url('/assets/images/site/munich.jpg'); height: 100vh">
   <div>
     <h1 class="plain">
@@ -272,7 +276,7 @@
           }
         </p>
       </div>
-      <div>
+      <div *ngIf="currentSemester.banking">
         <h4>Bankverbindung:</h4>
         <p class="long-text">
           IBAN: {{ currentSemester.banking.iban }}

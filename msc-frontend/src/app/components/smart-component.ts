@@ -1,7 +1,7 @@
-import { Directive, Injector, NgZone, OnDestroy, OnInit } from '@angular/core';
+import {Directive, inject, Injector, NgZone, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AppService, AppState, IAppState } from '@app/services/app/app.service';
+import { AppService, AppState, IAppState } from '@app/services/app.service';
 import { Debounce } from '@app/decorators/debounce.decorator';
 import { User } from '@shared/types/user';
 import { deepCopy, deepEqual } from '@shared/utils/deep-equals';
@@ -10,26 +10,21 @@ import { Subscription } from 'rxjs';
 @Directive()
 export abstract class SmartComponent implements OnInit, OnDestroy {
 
-  public appService: AppService = {} as AppService;
   public appState: IAppState = AppState.Initial;
-  public router: Router;
-  public route: ActivatedRoute;
 
-  protected dialog: MatDialog;
+  public router = inject(Router);
+  public route = inject(ActivatedRoute);
+  public dialog = inject(MatDialog);
+  public appService = inject(AppService);
+
+  private ngZone = inject(NgZone);
 
   protected subs: Subscription = new Subscription();
   protected waitForUserTimeout: number;
 
-  protected constructor(
-    private i: Injector,
-  ) {
-    this.router = this.i.get(Router);
-    this.route = this.i.get(ActivatedRoute);
-    this.dialog = this.i.get(MatDialog);
-    this.appService = this.i.get(AppService);
-
+  protected constructor() {
     this.subs.add(this.appService.observable.subscribe((state) => {
-      this.i.get(NgZone).run(() => {
+      this.ngZone.run(() => {
         if (!deepEqual(state, this.appState)) {
           this.onDataChange(state, this.appState);
 

@@ -1,0 +1,107 @@
+<div class="align-left">
+  <h1 class="text-ellipsis">
+    <span [routerLink]="'/intern/judges'">Ehrenrichter</span>
+  </h1>
+</div>
+
+<div class="wrapper">
+  <div *ngIf="loading" class="loading">
+    <div>
+      <msc-loading></msc-loading>
+    </div>
+  </div>
+
+  <table mat-table [dataSource]="judges">
+
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Nachname</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.lastName"/>
+          </mat-form-field>
+        } @else {
+          {{ e.lastName }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Vorname</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.firstName"/>
+          </mat-form-field>
+        } @else {
+          {{ e.firstName }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> E-Mail</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.email"/>
+          </mat-form-field>
+        } @else {
+          {{ e.email }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Telefon</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.phone" type="tel" />
+          </mat-form-field>
+        } @else {
+          {{ e.phone }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef style="width: 75px"> Adresse</th>
+      <td mat-cell class="align-center" *matCellDef="let e">
+        @if (e.editMode) {
+          <mat-form-field >
+            <input matInput [(ngModel)]="e.address" type="tel" />
+          </mat-form-field>
+        } @else {
+          {{ e.address }}
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef style="width: 150px"></th>
+      <td mat-cell class="align-right" *matCellDef="let e; let i = index">
+        @if (e.editMode) {
+          <a mat-stroked-button class="icon-button" color="primary" (click)="saveJudge(e)" title="Speichern">
+            <mat-icon>save</mat-icon>
+          </a>
+          &nbsp;
+          <a mat-stroked-button class="icon-button" color="warn" (click)="deleteJudge(e, i)" title="Löschen">
+            <mat-icon>delete</mat-icon>
+          </a>
+        } @else {
+          <a mat-stroked-button class="icon-button" (click)="e.editMode = true"> ... </a>
+        }
+      </td>
+      <td mat-footer-cell *matFooterCellDef [colSpan]="judgeColumns.length" class="align-center">
+        <a mat-stroked-button (click)="addJudge()">
+          <mat-icon>add</mat-icon>
+          hinzufügen</a>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="judgeColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: judgeColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="['actions']"></tr>
+  </table>
+</div>

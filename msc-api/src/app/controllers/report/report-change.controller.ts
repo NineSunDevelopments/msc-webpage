@@ -12,7 +12,7 @@ import {Report} from "@shared/types/report";
 import {Request, Response} from "express";
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class ReportChangeController extends DataController<Report.Change, ReportChangeService> implements ControllerInstance {
 

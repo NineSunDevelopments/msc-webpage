@@ -7,9 +7,9 @@ import {MatFormField, MatInput} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import {User} from '@shared/types/user';
 import {DateTime} from 'luxon';
-import {UserService} from '@app/services/user/user.service';
+import {UserService} from '@app/services/user.service';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {CorpsService} from '@app/services/corps/corps.service';
+import {CorpsService} from '@app/services/corps.service';
 import {NgIf} from '@angular/common';
 
 

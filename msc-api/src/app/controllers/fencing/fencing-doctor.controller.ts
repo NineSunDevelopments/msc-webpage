@@ -1,11 +1,12 @@
-import {Controller, ControllerInstance, DataController,} from "../../utilities/controller";
+import {Controller, ControllerInstance, DataController, Get,} from "../../utilities/controller";
 import {MIDDLEWARE} from "../../application";
 import {FencingDoctorService} from "../../services/fencing-doctor.service";
 import {Fencing} from "@shared/types/fencing";
+import {Request, Response} from "express";
 
 
 @Controller({
-    middlewares: [MIDDLEWARE.NO_AUTH]
+    middlewares: [MIDDLEWARE.AUTH]
 })
 export class FencingDoctorController extends DataController<Fencing.Doctor, FencingDoctorService> implements ControllerInstance {
 
@@ -13,6 +14,11 @@ export class FencingDoctorController extends DataController<Fencing.Doctor, Fenc
         service: FencingDoctorService,
     ) {
         super(service);
+    }
+
+    @Get()
+    public override async getAll(request: Request, response: Response): Promise<void> {
+        await super.getAll(request, response);
     }
 
 }

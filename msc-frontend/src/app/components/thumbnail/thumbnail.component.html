@@ -1,0 +1,18 @@
+@if (file) {
+  @if (getType() === 'image') {
+    <div class="image" [style.background-image]="'url(' + getThumbnailUrl() + ')'"></div>
+  } @else {
+    <div class="file">
+      @if (getType() === 'pdf') {
+        <mat-icon inline>picture_as_pdf</mat-icon>
+      }
+      @if (getType() === 'text') {
+        <mat-icon inline>text_snippet</mat-icon>
+      }
+
+      @if (getType() === 'unknown') {
+        <mat-icon inline>insert_drive_file</mat-icon>
+      }
+    </div>
+  }
+}

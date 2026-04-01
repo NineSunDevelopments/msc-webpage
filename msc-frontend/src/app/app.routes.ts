@@ -8,6 +8,9 @@ import {MscBallComponent} from '@app/pages/intern/msc-ball/msc-ball.component';
 import {ActivitiesComponent} from '@app/pages/intern/activities/activities.component';
 import {AdministrationComponent} from '@app/pages/intern/administration/administration.component';
 import {SettingsComponent} from '@app/pages/intern/settings/settings.component';
+import {DocumentsComponent} from '@app/pages/intern/documents/documents.component';
+import {FencingComponent} from '@app/pages/intern/fencing/fencing.component';
+import {JudgesComponent} from '@app/pages/intern/judges/judges.component';
 
 export const routes: Routes = [
   {
@@ -43,8 +46,20 @@ export const routes: Routes = [
         component: MscBallComponent,
       },
       {
+        path: 'judges',
+        component: JudgesComponent,
+      },
+      {
         path: 'activities',
         component: ActivitiesComponent,
+      },
+      {
+        path: 'fencing',
+        component: FencingComponent,
+      },
+      {
+        path: 'documents',
+        component: DocumentsComponent,
       },
       {
         path: 'administration',
