@@ -12,8 +12,9 @@ import {Activities} from '@shared/types/activities';
 import {parseObjectForDate} from '@shared/utils/is-date-string';
 import {Judge} from '@shared/types/judge';
 import {Fencing} from '@shared/types/fencing';
-import Doctor = Fencing.Doctor;
-import Arbiter = Fencing.Arbiter;
+
+interface Doctor extends Fencing.Doctor {}
+interface Arbiter extends Fencing.Arbiter {}
 
 
 const Constructors: { [key: string]: (value: any) => any } = {}
