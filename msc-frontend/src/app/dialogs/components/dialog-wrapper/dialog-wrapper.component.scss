@@ -15,7 +15,7 @@
     justify-content: end;
     padding: 10px;
     color: var.$light-grey;
-    background-color: var.$grey;
+    background-color: color.adjust(var.$grey, $lightness: 10%);
     cursor: move;
     border: 0;
     border-bottom: 1px solid color.adjust(var.$grey, $lightness: -10%);
@@ -44,6 +44,7 @@
     position: relative;
     box-sizing: border-box;
     padding: 10px;
+    background-color: color.adjust(var.$grey, $lightness: -10%);
 
     &--loading {
       overflow: hidden;
@@ -74,10 +75,10 @@
   &__footer {
     position: relative;
     justify-content: end;
-    color: color.adjust(var.$highlight, $lightness: 10%);
-    background-color: color.adjust(var.$grey, $lightness: 60%);
+    color: color.adjust(var.$grey, $lightness: 10%);
+    background-color: color.adjust(var.$grey, $lightness: 0%);
     border: 0;
-    border-top: 1px solid color.adjust(var.$highlight, $lightness: 10%);
+    border-top: 1px solid color.adjust(var.$grey, $lightness: 10%);
 
     &--minimized {
       display: none;

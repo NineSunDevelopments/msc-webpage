@@ -25,7 +25,7 @@ export interface IAppState {
   autoUpdateEnabled?: boolean;
   autoUpdateTime?: number;
   corpsBase?: Corps[];
-  activities?: Activities.Activity[];
+  activities?: (Activities.Activity)[];
   currentSemester?: Activities.Semester;
   semesterBase?: Activities.Semester[];
   user?: User;

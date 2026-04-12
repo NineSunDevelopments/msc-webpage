@@ -8,27 +8,41 @@
   <mat-tab-group>
     <mat-tab label="Semester">
 
-      <h5>Aktuelles Semester</h5>
-      @if (currentSemester) {
-        <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: currentSemester}"></ng-container>
-      }
+      <div class="semester-section">
+        <h5>Aktuelles Semester</h5>
+        @if (currentSemester) {
+          <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: currentSemester}"></ng-container>
+        }
+      </div>
 
-      <h5>Nächstes Semester</h5>
-      @if (nextSemester) {
-        <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: nextSemester}"></ng-container>
-      } @else {
-        <a mat-stroked-button (click)="createSemester()">
-          <mat-icon>add</mat-icon>
-          Neues Semester anlegen
-        </a>
-      }
+      <div class="semester-section">
+        <h5>Nächstes Semester</h5>
+        @if (nextSemester) {
+          <ng-container *ngTemplateOutlet="semesterTemplate; context: {semester: nextSemester}"></ng-container>
+        } @else {
+          <a mat-stroked-button (click)="createSemester()">
+            <mat-icon>add</mat-icon>
+            Neues Semester anlegen
+          </a>
+        }
+      </div>
 
-
-      <h5>Vergangenes Semester</h5>
-      @for (semester of pastSemester; track semester._id) {
-        <ng-container
-          *ngTemplateOutlet="semesterTemplate; context: {semester: semester, readonly: true}"></ng-container>
-      }
+      <div class="semester-section">
+        <h5>Vergangenes Semester</h5>
+        <mat-accordion>
+          @for (semester of pastSemester; track semester._id) {
+          <mat-expansion-panel [expanded]="false">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <h4>{{semester.name}}</h4>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <ng-container
+              *ngTemplateOutlet="semesterTemplate; context: {semester: semester, readonly: true}"></ng-container>
+          </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
 
     </mat-tab>
     <mat-tab label="Corps">
@@ -48,152 +62,128 @@
 </div>
 
 <ng-template #semesterTemplate let-semester="semester" let-readonly="readonly">
-  <h4>{{ semester.name }}</h4>
-  <div class="grid-4">
-    <p>Start</p>
-    @if (!readonly) {
-      <mat-form-field>
-        <input matInput [(ngModel)]="semester.start" [disabled]="readonly" [matDatepicker]="pickerStart">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
-        <mat-datepicker #pickerStart></mat-datepicker>
-      </mat-form-field>
-    } @else {
-      <p>{{ semester.start.toLocaleString() }}</p>
-    }
-
-    <p>Ende</p>
-    @if (!readonly) {
-      <mat-form-field>
-        <input matInput [(ngModel)]="semester.end" [disabled]="readonly" [matDatepicker]="pickerEnd">
-        <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
-        <mat-datepicker #pickerEnd></mat-datepicker>
-      </mat-form-field>
-    } @else {
-      <p>{{ semester.start.toLocaleString() }}</p>
-    }
-  </div>
-
-  <msc-corps-selector [label]="'Präsidierendes Corps'" [(corpsId)]="semester.corpsId"></msc-corps-selector>
-
-  @if (semester.corpsId) {
+  <div class="semster-view">
+    <h4>{{ semester.name }}</h4>
     <div class="grid-4">
-      <h5>SC-Senior</h5>
-      <h5>SC-Consenior</h5>
-      <h5>SC-Subsenior</h5>
-      <h5>SC-Kassenwart</h5>
-
-      <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="semester.senior.name" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="semester.conSenior.name" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="semester.subSenior.name" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Name</mat-label>
-        <input matInput [(ngModel)]="semester.banker.name" [disabled]="readonly">
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>E-Mail</mat-label>
-        <input matInput [(ngModel)]="semester.senior.email" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>E-Mail</mat-label>
-        <input matInput [(ngModel)]="semester.conSenior.email" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>E-Mail</mat-label>
-        <input matInput [(ngModel)]="semester.subSenior.email" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>E-Mail</mat-label>
-        <input matInput [(ngModel)]="semester.banker.email" [disabled]="readonly">
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>Telefon</mat-label>
-        <input matInput [(ngModel)]="semester.senior.phone" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Telefon</mat-label>
-        <input matInput [(ngModel)]="semester.conSenior.phone" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Telefon</mat-label>
-        <input matInput [(ngModel)]="semester.subSenior.phone" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Telefon</mat-label>
-        <input matInput [(ngModel)]="semester.banker.phone" [disabled]="readonly">
-      </mat-form-field>
-
-      <h5 class="grid-column-span-4">Bankverbindung</h5>
-      <mat-form-field>
-        <mat-label>Bank</mat-label>
-        <input matInput [(ngModel)]="semester.banking.name" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>BIC</mat-label>
-        <input matInput [(ngModel)]="semester.banking.bic" [disabled]="readonly">
-      </mat-form-field>
-      <mat-form-field class="grid-column-span-2">
-        <mat-label>IBAN</mat-label>
-        <input matInput [(ngModel)]="semester.banking.iban" [disabled]="readonly">
-      </mat-form-field>
-
-      <h5 class="grid-column-span-4">Ehrenrichter</h5>
-      @if (semester.honorableJudges?.length > 0) {
-        @for (judge of semester.honorableJudges; track i; let i = $index) {
-          <mat-form-field>
-            <mat-label>Nachname</mat-label>
-            <input matInput [(ngModel)]="semester.honorableJudges[i].lastName" [disabled]="readonly">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Vorname</mat-label>
-            <input matInput [(ngModel)]="semester.honorableJudges[i].firstName" [disabled]="readonly">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>Telefon</mat-label>
-            <input matInput [(ngModel)]="semester.honorableJudges[i].phone" [disabled]="readonly">
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>E-Mail</mat-label>
-            <input matInput [(ngModel)]="semester.honorableJudges[i].email" [disabled]="readonly">
-          </mat-form-field>
-          <mat-form-field class="grid-column-span-4">
-            <mat-label>Adresse</mat-label>
-            <input matInput [(ngModel)]="semester.honorableJudges[i].address" [disabled]="readonly">
-          </mat-form-field>
-        }
+      <p>Start</p>
+      @if (!readonly) {
+        <mat-form-field>
+          <input matInput [(ngModel)]="semester.start" [disabled]="readonly" [matDatepicker]="pickerStart">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerStart"></mat-datepicker-toggle>
+          <mat-datepicker #pickerStart></mat-datepicker>
+        </mat-form-field>
+      } @else {
+        <p>{{ semester.start.toLocaleString() }}</p>
       }
 
+      <p>Ende</p>
       @if (!readonly) {
-        <div class="grid-column-span-4 align-center">
-          <div>
-            <a mat-stroked-button (click)="addHonorableJudge(semester)">
-              <mat-icon>add</mat-icon>
-              hinzufügen
-            </a>
-          </div>
-        </div>
-
-        <div class="grid-column-span-4 align-right">
-          <div>
-            <a mat-stroked-button (click)="updateSemester(semester)">
-              <mat-icon>save</mat-icon>
-              Speichern
-            </a>
-          </div>
-        </div>
+        <mat-form-field>
+          <input matInput [(ngModel)]="semester.end" [disabled]="readonly" [matDatepicker]="pickerEnd">
+          <mat-datepicker-toggle matIconSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEnd></mat-datepicker>
+        </mat-form-field>
+      } @else {
+        <p>{{ semester.start.toLocaleString() }}</p>
       }
     </div>
-  }
+
+    <msc-corps-selector [label]="'Präsidierendes Corps'" [(corpsId)]="semester.corpsId"></msc-corps-selector>
+
+    @if (semester.corpsId) {
+      <div class="grid-4">
+        <h5>SC-Senior</h5>
+        <h5>SC-Consenior</h5>
+        <h5>SC-Subsenior</h5>
+        <h5>SC-Kassenwart</h5>
+
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="semester.senior.name" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="semester.conSenior.name" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="semester.subSenior.name" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Name</mat-label>
+          <input matInput [(ngModel)]="semester.banker.name" [disabled]="readonly">
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput [(ngModel)]="semester.senior.email" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput [(ngModel)]="semester.conSenior.email" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput [(ngModel)]="semester.subSenior.email" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>E-Mail</mat-label>
+          <input matInput [(ngModel)]="semester.banker.email" [disabled]="readonly">
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Telefon</mat-label>
+          <input matInput [(ngModel)]="semester.senior.phone" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Telefon</mat-label>
+          <input matInput [(ngModel)]="semester.conSenior.phone" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Telefon</mat-label>
+          <input matInput [(ngModel)]="semester.subSenior.phone" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Telefon</mat-label>
+          <input matInput [(ngModel)]="semester.banker.phone" [disabled]="readonly">
+        </mat-form-field>
+
+        <h5 class="grid-column-span-4">Bankverbindung</h5>
+        <mat-form-field>
+          <mat-label>Bank</mat-label>
+          <input matInput [(ngModel)]="semester.banking.name" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>BIC</mat-label>
+          <input matInput [(ngModel)]="semester.banking.bic" [disabled]="readonly">
+        </mat-form-field>
+        <mat-form-field class="grid-column-span-2">
+          <mat-label>IBAN</mat-label>
+          <input matInput [(ngModel)]="semester.banking.iban" [disabled]="readonly">
+        </mat-form-field>
+
+        @if (!readonly) {
+          <div class="grid-column-span-4 align-center">
+            <div>
+              <a mat-stroked-button (click)="addHonorableJudge(semester)">
+                <mat-icon>add</mat-icon>
+                hinzufügen
+              </a>
+            </div>
+          </div>
+
+          <div class="grid-column-span-4 align-right">
+            <div>
+              <a mat-stroked-button (click)="updateSemester(semester)">
+                <mat-icon>save</mat-icon>
+                Speichern
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
 </ng-template>
 
 <ng-template #corpsListElement let-corps="corps" let-corpsAccount="corpsAccount">
@@ -243,27 +233,27 @@
               </ng-container>
               <ng-container matColumnDef="F">
                 <th mat-header-cell *matHeaderCellDef> F</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.f }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.f === 0"> {{ row.corpsInventory.f }}</td>
               </ng-container>
               <ng-container matColumnDef="CB">
                 <th mat-header-cell *matHeaderCellDef> CB</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.cb }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.cb === 0"> {{ row.corpsInventory.cb }}</td>
               </ng-container>
               <ng-container matColumnDef="CK">
                 <th mat-header-cell *matHeaderCellDef> CK</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.ck }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.ck === 0"> {{ row.corpsInventory.ck }}</td>
               </ng-container>
               <ng-container matColumnDef="iaCB">
                 <th mat-header-cell *matHeaderCellDef> iaCB</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.iaCb }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.iaCb === 0"> {{ row.corpsInventory.iaCb }}</td>
               </ng-container>
               <ng-container matColumnDef="AH">
                 <th mat-header-cell *matHeaderCellDef> AH</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.ah }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.ah === 0"> {{ row.corpsInventory.ah }}</td>
               </ng-container>
               <ng-container matColumnDef="EB">
                 <th mat-header-cell *matHeaderCellDef> EB</th>
-                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.corpsInventory.eb }}</td>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.corpsInventory.eb === 0"> {{ row.corpsInventory.eb }}</td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="semesterReportColumns"></tr>
@@ -279,7 +269,26 @@
 
         @for (semester of semesters; track semester._id) {
           <mat-expansion-panel [expanded]="semester._id === currentSemester?._id">
-            <mat-expansion-panel-header>{{ semester.name }}</mat-expansion-panel-header>
+            <mat-expansion-panel-header>{{ semester.name }} {{semester.fencingReports.length}}</mat-expansion-panel-header>
+
+            <table mat-table [dataSource]="semester.fencingReports">
+              <ng-container matColumnDef="corps">
+                <th mat-header-cell *matHeaderCellDef> Corps</th>
+                <td mat-cell class="align-center" *matCellDef="let element"> {{ getCorpsName(element.corpsId) }}</td>
+              </ng-container>
+              <ng-container matColumnDef="submittedAt">
+                <th mat-header-cell *matHeaderCellDef> Eingereicht am</th>
+                <td mat-cell class="align-center" *matCellDef="let row"> {{ row.submitDate?.toLocaleString() }}</td>
+              </ng-container>
+              <ng-container matColumnDef="matches">
+                <th mat-header-cell *matHeaderCellDef> Partien</th>
+                <td mat-cell class="align-center" *matCellDef="let row" [class.muted]="row.matches.length === 0"> {{ row.matches.length }}</td>
+              </ng-container>
+
+
+              <tr mat-header-row *matHeaderRowDef="['corps', 'submittedAt', 'matches']"></tr>
+              <tr mat-row *matRowDef="let row; columns: ['corps', 'submittedAt', 'matches'];"></tr>
+            </table>
           </mat-expansion-panel>
         }
 

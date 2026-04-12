@@ -53,6 +53,7 @@ export class CorpsComponent extends SmartComponent {
 
   public getCorpsList() : Corps[] {
     return this.appState.corpsBase.filter(x =>
+      this.appState.user.isAdmin ||
       this.appState.user.isSuperAdmin ||
       (x.deleted === false && x.name !== "Admins")
     );

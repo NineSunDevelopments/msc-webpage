@@ -30,7 +30,7 @@ import {RouterLink} from '@angular/router';
 
 interface SemesterWithReports extends Activities.Semester {
   semesterReports: Report.Semester[];
-  fencingReports: Report.Semester[];
+  fencingReports: Report.Fencing[];
 }
 
 @Component({
@@ -68,7 +68,8 @@ export class AdministrationComponent extends SmartComponent {
   constructor(
     private semesterSettingsService: SemesterSettingsService,
     private userService: UserService,
-    private reportSemesterService: ReportSemesterService
+    private reportSemesterService: ReportSemesterService,
+    private reportFencingService: ReportFencingService
   ) {
     super();
 
@@ -122,8 +123,8 @@ export class AdministrationComponent extends SmartComponent {
     for (const semester of state.semesterBase) {
       const semesterReports: SemesterWithReports = {
         ...semester,
-        semesterReports: await this.loadReportsForSemester(semester),
-        fencingReports: [],
+        semesterReports: await this.loadSemesterReportsForSemester(semester),
+        fencingReports: await this.loadFencingReportsForSemester(semester),
       }
 
       this.semesterReports.push(semesterReports);
@@ -145,8 +146,12 @@ export class AdministrationComponent extends SmartComponent {
     return this.appState.semesterBase.sort((a, b) => b.start.valueOf() - a.start.valueOf());
   }
 
-  public async loadReportsForSemester(semester: Activities.Semester): Promise<Report.Semester[]> {
+  public async loadSemesterReportsForSemester(semester: Activities.Semester): Promise<Report.Semester[]> {
     return await this.reportSemesterService.loadForSemester(semester);
+  }
+
+  public async loadFencingReportsForSemester(semester: Activities.Semester): Promise<Report.Fencing[]> {
+    return await this.reportFencingService.loadForSemester(semester);
   }
 
   public createCorpsAccount(corps: Corps, user?: User) {

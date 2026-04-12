@@ -115,7 +115,7 @@ export class DocumentsComponent extends SmartComponent {
   }
 
   public isInCharge(): boolean {
-    return this.appState.user.isSuperAdmin;
+    return this.appState.user.isAdmin || this.appState.user.isSuperAdmin;
   }
 
   public toggleEdit(file: EditableFile): void {

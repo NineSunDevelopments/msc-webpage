@@ -1,0 +1,74 @@
+<dialog-wrapper [closeX]="true" [dialogRef]="dialogRef">
+  <ng-template #body>
+    <div class="body">
+      <mat-form-field>
+        <mat-label>Veranstaltungstitel</mat-label>
+        <input matInput [(ngModel)]="activity.name">
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Beschreibung</mat-label>
+        <textarea matInput [(ngModel)]="activity.description" rows="4">
+          </textarea>
+      </mat-form-field>
+
+      <div class="grid-2 grid-gap-0">
+        <mat-form-field>
+          <mat-label>Meeting date</mat-label>
+          <input matInput [matDatepicker]="datepicker" [(ngModel)]="activity.date">
+          <mat-datepicker #datepicker/>
+          <mat-datepicker-toggle [for]="datepicker" matSuffix/>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Meeting time</mat-label>
+          <input matInput
+                 [matTimepicker]="timepicker"
+                 [(ngModel)]="activity.date"
+                 [ngModelOptions]="{updateOn: 'blur'}">
+          <mat-timepicker #timepicker/>
+          <mat-timepicker-toggle [for]="timepicker" matSuffix/>
+        </mat-form-field>
+      </div>
+
+      <div class="grid-2">
+        <msc-corps-selector [(corpsId)]="activity.corpsId"
+                            (corpsChange)="activity.location = 'adH ' + $event.name"></msc-corps-selector>
+
+        <mat-form-field>
+          <mat-label>Ort</mat-label>
+          <input matInput [(ngModel)]="activity.location">
+        </mat-form-field>
+      </div>
+
+      <div class="grid-3">
+        <div class="align-center">
+          <mat-checkbox [(ngModel)]="activity.attendanceRequired">Vertreter notwendig</mat-checkbox>
+        </div>
+
+        <div class="align-center">
+          <mat-checkbox [(ngModel)]="activity.official">Offiziel</mat-checkbox>
+        </div>
+
+        <div class="align-center">
+          <mat-checkbox [(ngModel)]="activity.public">Öffentlich</mat-checkbox>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #footer>
+    <button (click)="onCancel()" mat-raised-button>
+      abbrechen
+    </button>
+    &nbsp;
+    @if (activity._id) {
+      <button (click)="onConfirm()" color="accent" mat-raised-button>
+        speichern
+      </button>
+    } @else {
+      <button (click)="onConfirm()" color="accent" mat-raised-button>
+        hinzufügen
+      </button>
+    }
+  </ng-template>
+</dialog-wrapper>

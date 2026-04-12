@@ -11,6 +11,7 @@ import {SettingsComponent} from '@app/pages/intern/settings/settings.component';
 import {DocumentsComponent} from '@app/pages/intern/documents/documents.component';
 import {FencingComponent} from '@app/pages/intern/fencing/fencing.component';
 import {JudgesComponent} from '@app/pages/intern/judges/judges.component';
+import {UserComponent} from '@app/pages/intern/user/user.component';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,10 @@ export const routes: Routes = [
       {
         path: 'administration',
         component: AdministrationComponent,
+      },
+      {
+        path: 'users',
+        component: UserComponent,
       },
       {
         path: 'settings',

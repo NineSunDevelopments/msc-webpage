@@ -45,6 +45,25 @@ export class UserService extends DataService<User, MongoConnector<User>> {
         });
     }
 
+    public async update(user: User, skipSanitization: boolean = false): Promise<User> {
+        // Get old user to check if password has changed
+        const oldUser = await this.getById(user._id, true);
+        if (!oldUser)
+            throw new Error("User not found");
+
+        const now = DateTime.now();
+        user.updatedAt = now;
+
+        if (!user.password) {
+            console.log("No password provided, keeping old password");
+            user.password = oldUser.password;
+        } else {
+            user.password = HashPassword(user.password, user.createdAt);
+        }
+
+        return super.update(user, skipSanitization);
+    }
+
     public generatePassword(): string {
         return Math.random().toString(36).slice(-8);
     }

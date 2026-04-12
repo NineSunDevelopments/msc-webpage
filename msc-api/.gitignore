@@ -26,6 +26,8 @@ config.json
 # Maven
 target/
 dist/
+tmp/storage
+tmp/*
 
 # JetBrains IDE
 .idea/

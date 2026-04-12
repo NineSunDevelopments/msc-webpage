@@ -23,33 +23,34 @@
       @if (appState.user) {
         <router-outlet></router-outlet>
       } @else {
-        <div class="login-wrapper">
+        <form class="login-wrapper" [formGroup]="loginForm">
           <div class="login mat-elevation-z5">
             <h1>Login</h1>
             <mat-form-field>
               <mat-label>E-Mail</mat-label>
-              <input matInput [(ngModel)]="loginForm.email" type="email">
+              <input matInput formControlName="email" type="email">
             </mat-form-field>
+
             <mat-form-field>
               <mat-label>Passwort</mat-label>
-              <input matInput [(ngModel)]="loginForm.password"
-                     type="{{loginForm.passwordHidden ? 'password' : 'text'}}">
-              <mat-icon (click)="loginForm.passwordHidden = !loginForm.passwordHidden" matSuffix>
-                {{ loginForm.passwordHidden ? 'visibility_off' : 'visibility' }}
+              <input matInput formControlName="password"
+                     type="{{loginForm.get('passwordHidden').value ? 'password' : 'text'}}">
+              <mat-icon (click)="loginForm.get('passwordHidden').setValue(!loginForm.get('passwordHidden').value)" matSuffix>
+                {{ loginForm.get('passwordHidden').value ? 'visibility_off' : 'visibility' }}
               </mat-icon>
             </mat-form-field>
 
             <div class="grid-2">
               <div></div>
               <div class="align-right">
-                <a mat-stroked-button
-                   (click)="login()"
-                   [disabled]="emptyOrNull(loginForm.email) || emptyOrNull(loginForm.password)">Login
-                </a>
+                <button mat-stroked-button
+                        type="submit"
+                        (click)="login()">Login
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       }
     }
   </div>

@@ -1,8 +1,15 @@
+@use "variables" as var;
+@use "sass:color";
+
 .container {
   box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, 0.12), 0 0 10px 0 rgba(0, 0, 0, 0.14);
   padding: 20px;
 }
 
+
+td.muted {
+  color: rgba(var.$dark-text-color, .5);
+}
 
 ::ng-deep {
   .mat-mdc-tab-body, .mat-mdc-tab-body-content {
@@ -10,6 +17,13 @@
   }
 }
 
+.semester-section {
+  margin-bottom: 100px;
+}
+
+.semster-view {
+  margin-bottom: 50px;
+}
 
 .corps-list__entry {
   display: grid;

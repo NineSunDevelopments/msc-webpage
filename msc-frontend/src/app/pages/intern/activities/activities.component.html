@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <table mat-table [dataSource]="activities">
+  <table mat-table [dataSource]="activities" multiTemplateDataRows>
     <ng-container matColumnDef="date">
       <th mat-header-cell *matHeaderCellDef style="width: 150px"> Datum </th>
       <td mat-cell class="align-center" *matCellDef="let element">
@@ -26,6 +26,12 @@
         }
       </td>
     </ng-container>
+    <ng-container matColumnDef="time">
+      <td mat-cell class="align-center" *matCellDef="let element">
+          {{ element.date.toFormat('HH:mm') }} Uhr
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="official">
       <th mat-header-cell *matHeaderCellDef style="width: 75px"> Offiziell </th>
       <td mat-cell class="align-center" *matCellDef="let element">
@@ -71,8 +77,7 @@
     </ng-container>
 
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef> Beschreibung </th>
-      <td mat-cell class="align-center" *matCellDef="let element">
+      <td mat-cell class="align-center" [colSpan]="columns.length - 1" *matCellDef="let element">
         @if(element.editMode) {
           <mat-form-field>
             <input matInput [(ngModel)]="element.description">
@@ -111,22 +116,19 @@
       <th mat-header-cell *matHeaderCellDef> </th>
       <td mat-cell class="align-right" *matCellDef="let element; let i = index">
         @if(canEdit(element)) {
-          @if(element.editMode) {
-            <a mat-stroked-button class="icon-button" color="primary" (click)="save(element)" title="Speichern"><mat-icon>save</mat-icon></a>
-            &nbsp;
-            <a mat-stroked-button class="icon-button" color="warn" (click)="delete(element, i)" title="Löschen"><mat-icon>delete</mat-icon></a>
-          } @else {
-            <a mat-stroked-button class="icon-button" (click)="element.editMode = true"> ... </a>
-          }
+          <a mat-stroked-button class="icon-button" color="primary" (click)="edit(element)" title="Bearbeiten"><mat-icon>edit</mat-icon></a>
+          &nbsp;
+          <a mat-stroked-button class="icon-button" color="warn" (click)="delete(element, i)" title="Löschen"><mat-icon>delete</mat-icon></a>
         }
       </td>
       <td mat-footer-cell *matFooterCellDef [colSpan]="columns.length" class="align-center">
-        <a *ngIf="canEdit()" mat-stroked-button (click)="addActivity()"><mat-icon>add</mat-icon> hinzufügen</a>
+        <a mat-stroked-button (click)="add()"><mat-icon>add</mat-icon> hinzufügen</a>
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columns"></tr>
     <tr mat-row *matRowDef="let row; columns: columns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['time', 'description'];"></tr>
     <tr mat-footer-row *matFooterRowDef="['actions']"></tr>
   </table>
 

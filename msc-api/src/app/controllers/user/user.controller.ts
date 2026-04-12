@@ -114,14 +114,16 @@ export class UserController extends DataController<User, UserService> implements
             return;
         }
 
-        if (!request.body.password) {
-            const oldUser = await this.service.getById(user._id);
-            user.password = oldUser.password;
+        try {
+            Respond({response, data: await this.service.update(user)});
+        } catch (e) {
+            Respond({
+                response,
+                status: STATUS_CODE.INTERNAL,
+                data: "Failed to update user: " + e.message
+            });
+            return;
         }
-
-        user = await this.service.update(user);
-
-        Respond({response, data: user});
     }
 
     @Delete({path: '/:id'})

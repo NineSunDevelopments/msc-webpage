@@ -4,10 +4,10 @@ import {SidebarComponent} from '@app/components/sidebar/sidebar.component';
 import {SmartComponent} from '@app/components/smart-component';
 import {NgIf} from '@angular/common';
 import {MatInputModule} from '@angular/material/input';
-import {FormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatAnchor} from '@angular/material/button';
+import {MatAnchor, MatButton} from '@angular/material/button';
 import {AuthenticationService} from '@app/services/authentication.service';
 import {LoadingComponent} from '@app/components/loading/loading.component';
 import {UserService} from '@app/services/user.service';
@@ -23,6 +23,8 @@ import {UserService} from '@app/services/user.service';
     MatIconModule,
     MatAnchor,
     LoadingComponent,
+    MatButton,
+    ReactiveFormsModule,
   ],
   selector: 'msc-intern',
   styleUrl: './intern.component.scss',
@@ -33,11 +35,11 @@ export class InternComponent extends SmartComponent {
   public loading: boolean = true;
   public sidebarOpen: boolean = false;
 
-  public loginForm = {
-    email: null,
-    password: null,
-    passwordHidden: true
-  }
+  public loginForm = new FormGroup( {
+    email: new FormControl("", [Validators.required]),
+    password: new FormControl("", [Validators.required]),
+    passwordHidden: new FormControl(true)
+  });
 
   constructor(
     private authService: AuthenticationService,
@@ -73,19 +75,22 @@ export class InternComponent extends SmartComponent {
   }
 
   public login() {
-    if (this.emptyOrNull(this.loginForm.email) || this.emptyOrNull(this.loginForm.password))
+    console.log("Login");
+    console.log(this.loginForm.value);
+    if (!this.loginForm.valid)
       return;
 
     this.loading = true;
-    this.authService.login(this.loginForm.email, this.loginForm.password, true)
+    this.authService.login(this.loginForm.get('email').value, this.loginForm.get('password').value, true)
       .then(async (user) => {
         if (user) {
           await this.userService.load();
         }
       })
       .finally(() => {
-        this.loginForm.email = null;
-        this.loginForm.password = null;
+        this.loginForm.get('email').setValue(null);
+        this.loginForm.get('password').setValue(null);
+        this.loginForm.get('passwordHidden').setValue(true);
         this.loading = false;
       });
   }

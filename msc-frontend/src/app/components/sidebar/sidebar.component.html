@@ -39,6 +39,12 @@
           <mat-icon>logout</mat-icon>
           Verwaltung
         </li>
+        @if (appState.user.isSuperAdmin) {
+          <li [routerLink]="'/intern/users'" [routerLinkActive]="'active'">
+            <mat-icon>user</mat-icon>
+            Nutzer
+          </li>
+        }
       }
     </ul>
 
