@@ -30,10 +30,10 @@ export class FileService extends DataService<FileManager.File> {
   }
 
   public download(file: FileManager.File) {
-    window.open(this.getDownloadUrl(file), '_blank');
+    this.api.download(this.getDownloadUrl(file)).then();
   }
 
   public getDownloadUrl(file: FileManager.File) {
-    return `${this.api.backendURI}${this.dataLink}/download/${file._id}`;
+    return `${this.dataLink}/download/${file._id}`;
   }
 }

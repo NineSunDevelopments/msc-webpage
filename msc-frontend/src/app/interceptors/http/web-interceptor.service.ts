@@ -39,7 +39,12 @@ export class WebInterceptorService implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       tap(
-        (response) => response instanceof HttpResponse ? this.parseDates(response, 'decode') : response,
+        (response) => {
+          if (req.url.includes('/file/download'))
+            return response
+          else
+            return response instanceof HttpResponse ? this.parseDates(response, 'decode') : response
+        },
         (errorResponse: APIErrorResponse) => {
           const api = this.appService.state.api;
           switch (errorResponse.status) {

@@ -8,18 +8,27 @@ import {
 } from '@angular/common/http';
 import {Injectable, isDevMode, OnDestroy} from '@angular/core';
 import {AppService} from './app.service';
-import {APIErrorResponse, Request} from '@app/types/api';
-import {catchError, fromEvent, Observable, ObservableInput, of, Subscription, throwError} from 'rxjs';
+import {Request} from '@app/types/api';
+import {catchError, fromEvent, Observable, of, Subscription} from 'rxjs';
+import {map} from 'rxjs/operators';
+import {DateTime} from 'luxon';
 
-
-export interface HttpOptions {
+export interface Options {
   raw?: boolean;
   headers?: HttpHeaders;
   observe?: 'body' | 'response';
   params?: HttpParams;
   reportProgress?: boolean;
-  responseType?: 'json';
+  responseType?: string;
   withCredentials?: boolean;
+}
+
+export interface HttpOptions extends Options {
+  responseType?: 'json';
+}
+
+export interface HttpDownloadOptions extends Options {
+  responseType?: 'blob';
 }
 
 export interface BodyHttpOptions extends HttpOptions {
@@ -79,7 +88,7 @@ export class ApiService implements OnDestroy {
     this.workQueue();
   }
 
-  public status<T>(url: string, body: any, options?: HttpOptions): Promise<HttpResponse<T>> {
+  public status<T>(url: string, body: any, options?: BodyHttpOptions): Promise<HttpResponse<T>> {
     return new Promise((resolve, reject) => {
       const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
 
@@ -172,6 +181,33 @@ export class ApiService implements OnDestroy {
       .pipe(catchError(this.handleError));
   }
 
+  public download(url: string, options?: HttpDownloadOptions): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const uri = new URL(this.backendURI + ApiService.SanitizeURL(url));
+      options = options ?? {};
+      options.responseType = 'blob';
+      options = this.makeHttpOptions(options);
+
+      this.addToQueue<any>({
+          name: this.backendURI + ApiService.SanitizeURL(url),
+          // @ts-ignore
+          observable: this.http.get(uri.href, options)
+            .pipe(map((response: any) => {
+              let dataType = response.type ?? "application/octet-stream";
+              let binaryData = [];
+              binaryData.push(response);
+              let downloadLink = document.createElement('a');
+              downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+              downloadLink.setAttribute('download', 'msc-download-' + DateTime.now().toISO());
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+              return response;
+            })),
+        },
+        resolve, reject);
+    });
+  }
+
 
   public delete<T>(url: string, options?: HttpOptions): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
@@ -256,7 +292,7 @@ export class ApiService implements OnDestroy {
             error: (error: any) => {
               item.rejecters.map((entry: any) => entry(error))
             },
-            complete: () =>{
+            complete: () => {
               subscription.unsubscribe()
             },
           });
@@ -312,8 +348,8 @@ export class ApiService implements OnDestroy {
     return headers;
   }
 
-  private makeHttpOptions(options: HttpOptions): HttpOptions {
-    options = options ?? {};
+  private makeHttpOptions<T extends Options>(options: T): T {
+    options = options ?? {} as T;
     options = {
       raw: false,
       observe: options.observe ?? 'body',
@@ -322,12 +358,8 @@ export class ApiService implements OnDestroy {
       reportProgress: true,
       responseType: options.responseType ?? 'json',
       withCredentials: false,
-    };
+    } as T;
 
-    if (options.observe === 'body') {
-      return options as BodyHttpOptions;
-    } else {
-      return options as ResponseHttpOptions;
-    }
+    return options;
   }
 }
